@@ -2,12 +2,13 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 
 import Form from "react-bootstrap/Form";
-import ListGroup from "./components/ListGroup";
 import PrimaryButton from "./components/PrimaryButton";
+import ExpandableTable from "./components/ExpandableTable";
 import Textfield from "./components/Textfield";
 import Alert from "./components/Alert";
 import RuleList from "./components/RuleList";
 import CriticalExamples from "./components/CriticalExamples";
+import ListGroup from "./components/ListGroup";
 
 function App() {
   {
@@ -24,16 +25,33 @@ function App() {
   */
   }
 
+  const tableColumns = [
+    { Header: "Ocena", accessor: "column1" },
+    { Header: "ID", accessor: "column2" },
+    { Header: "", accessor: "column3" },
+  ];
   const [criticalInstances, setCriticalInstances] = useState([]);
+  const [detailData, setDetailData] = useState([]);
+  const tableData = formatCriticalInstances(criticalInstances);
+
+  const handleSelectedRowChange = (index) => {
+    setCriticalExampleIndex(index);
+  };
+  const [criticalExampleIndex, setCriticalExampleIndex] = useState(null);
+
   const [userArgument, setUserArgument] = useState("");
   const [highLow, setHighLow] = useState("");
-  const [criticalExampleIndex, setCriticalExampleIndex] = useState([]);
   const [counterExamples, setCounterExamples] = useState([]);
 
-  function formatCriticalInstances(criticalInstances: any[]): string[] {
-    return criticalInstances.map((instance, index) => {
-      return `Credit Score: ${instance.credit_score}  |||  Activity: ${instance.activity_ime}`;
+  function formatCriticalInstances(criticalInstances: any[]) {
+    const data = criticalInstances.map((instance, index) => {
+      return {
+        column1: instance.credit_score,
+        column2: instance.activity_ime,
+      };
     });
+
+    return data;
   }
 
   function formatCounterExamples(counterExamples: any[]): string[] {
@@ -54,7 +72,8 @@ function App() {
     axios
       .get("http://localhost:8000/api/critical-instances/")
       .then((response) => {
-        setCriticalInstances(response.data.critical_instances);
+        setCriticalInstances(response.data.critical_instances[0]);
+        setDetailData(response.data.critical_instances[1]);
       })
       .catch((error) => {
         console.error("Error fetching critical instances:", error);
@@ -101,45 +120,62 @@ function App() {
 
   return (
     <>
-      <div style={{ marginBottom: "20px" }}>
-        <ListGroup
-          items={formatCriticalInstances(criticalInstances)}
-          heading="Critical Examples"
-          onSelectItem={(index) => setCriticalExampleIndex(index)}
+      <div
+        style={{
+          marginBottom: "20px",
+          marginLeft: "20px",
+          marginRight: "20px",
+        }}
+      >
+        <h2>Select Critical Example</h2>
+        <ExpandableTable
+          columns={tableColumns}
+          data={tableData}
+          detailData={detailData}
+          onExpandedRowChange={handleSelectedRowChange}
         />
+        <p>Selected Critical Example Number: {criticalExampleIndex}</p>
       </div>
-      <div
-        style={{
-          marginBottom: "20px",
-          marginLeft: "20px",
-          marginRight: "20px",
-        }}
-      >
-        <Form.Label>Enter argument:</Form.Label>
-        <Form.Control onChange={handleChange} />
-        <Form.Text muted>{"Example: cash<="}</Form.Text>
-      </div>
-      <div
-        style={{
-          marginBottom: "20px",
-          marginLeft: "20px",
-          marginRight: "20px",
-        }}
-      >
-        <Form.Label>Enter high or low:</Form.Label>
-        <Form.Control onChange={handleChangeHighLow} />
-      </div>
-      <div style={{ marginBottom: "40px", textAlign: "center" }}>
-        <PrimaryButton onClick={showCriticalExample}>
-          GET Counter examples
-        </PrimaryButton>
+
+      <div>
+        {criticalExampleIndex !== null && (
+          <>
+            <div
+              style={{
+                marginBottom: "20px",
+                marginLeft: "20px",
+                marginRight: "20px",
+              }}
+            >
+              <Form.Label>Enter argument:</Form.Label>
+              <Form.Control onChange={handleChange} />
+              <Form.Text muted>{"Example: cash<="}</Form.Text>
+            </div>
+            <div
+              style={{
+                marginBottom: "20px",
+                marginLeft: "20px",
+                marginRight: "20px",
+              }}
+            >
+              <Form.Label>Enter high or low:</Form.Label>
+              <Form.Control onChange={handleChangeHighLow} />
+            </div>
+            <div style={{ marginBottom: "40px", textAlign: "center" }}>
+              <PrimaryButton onClick={showCriticalExample}>
+                GET Counter examples
+              </PrimaryButton>
+            </div>
+          </>
+        )}
       </div>
 
       <div>
         <ListGroup
           items={formatCounterExamples(counterExamples)}
-          heading="Counter Examples"
+          heading="Show Counter Examples"
           onSelectItem={(index) => console.log(index)}
+          isVisible={false}
         />
       </div>
     </>

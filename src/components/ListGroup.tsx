@@ -4,20 +4,18 @@ interface Props {
   items: string[];
   heading: string;
   onSelectItem: (item: string) => void;
+  isVisible: boolean;
 }
 
-function ListGroup({ items, heading, onSelectItem }: Props) {
+function ListGroup({ items, heading, onSelectItem, isVisible }: Props) {
   // props.items, props.heading
   const [selectedIndex, setSelectedIndex] = useState(-1);
 
-  const getMessage = () => (items.length === 0 ? <p>No item</p> : null);
-
   return (
     <Fragment>
-      <div style={{ textAlign: "center" }}>
-        <h1>{heading}</h1>
+      <div style={{ marginLeft: "20px" }}>
+        <h2>{heading}</h2>
       </div>
-      {/*{getMessage()}*/}
       <ul
         className="list-group"
         style={{ marginLeft: "20px", marginRight: "20px" }}
