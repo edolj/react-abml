@@ -13,7 +13,7 @@ function ListGroup({ items, heading, onSelectItem, isVisible }: Props) {
 
   return (
     <Fragment>
-      <div style={{ marginLeft: "20px" }}>
+      <div>
         <h2>{heading}</h2>
       </div>
       <ul

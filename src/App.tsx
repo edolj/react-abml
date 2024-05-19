@@ -1,5 +1,9 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import "./App.css";
+
+import Backdrop from "@mui/material/Backdrop";
+import CircularProgress from "@mui/material/CircularProgress";
 
 import Form from "react-bootstrap/Form";
 import PrimaryButton from "./components/PrimaryButton";
@@ -9,6 +13,8 @@ import Alert from "./components/Alert";
 import RuleList from "./components/RuleList";
 import CriticalExamples from "./components/CriticalExamples";
 import ListGroup from "./components/ListGroup";
+import Header from "./components/Header";
+import Footer from "./components/Footer";
 
 function App() {
   {
@@ -32,9 +38,10 @@ function App() {
   ];
   const [criticalInstances, setCriticalInstances] = useState([]);
   const [detailData, setDetailData] = useState([]);
+  const [isLoading, setIsLoading] = useState(true); // Add loading state
   const tableData = formatCriticalInstances(criticalInstances);
 
-  const handleSelectedRowChange = (index) => {
+  const handleSelectedRowChange = (index: any) => {
     setCriticalExampleIndex(index);
   };
   const [criticalExampleIndex, setCriticalExampleIndex] = useState(null);
@@ -56,27 +63,30 @@ function App() {
 
   function formatCounterExamples(counterExamples: any[]): string[] {
     return counterExamples.map((example, index) => {
-      return `Name: ${example.activity_ime}`;
+      return `Name: ${example.activity_ime}, Net Sales: ${example.net_sales}`;
     });
   }
 
-  const handleChange = (event) => {
+  const handleChange = (event: any) => {
     setUserArgument(event.target.value);
   };
 
-  const handleChangeHighLow = (event) => {
+  const handleChangeHighLow = (event: any) => {
     setHighLow(event.target.value);
   };
 
   useEffect(() => {
+    setIsLoading(true);
     axios
       .get("http://localhost:8000/api/critical-instances/")
       .then((response) => {
         setCriticalInstances(response.data.critical_instances[0]);
         setDetailData(response.data.critical_instances[1]);
+        setIsLoading(false);
       })
       .catch((error) => {
         console.error("Error fetching critical instances:", error);
+        setIsLoading(false);
       });
   }, []);
 
@@ -120,64 +130,55 @@ function App() {
 
   return (
     <>
-      <div
-        style={{
-          marginBottom: "20px",
-          marginLeft: "20px",
-          marginRight: "20px",
-        }}
-      >
+      <Header />
+      <div className="container">
         <h2>Select Critical Example</h2>
-        <ExpandableTable
-          columns={tableColumns}
-          data={tableData}
-          detailData={detailData}
-          onExpandedRowChange={handleSelectedRowChange}
-        />
+        {isLoading ? (
+          <Backdrop
+            sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+            open
+          >
+            <CircularProgress color="inherit" />
+          </Backdrop>
+        ) : (
+          <ExpandableTable
+            columns={tableColumns}
+            data={tableData}
+            detailData={detailData}
+            onExpandedRowChange={handleSelectedRowChange}
+          />
+        )}
         <p>Selected Critical Example Number: {criticalExampleIndex}</p>
       </div>
-
       <div>
         {criticalExampleIndex !== null && (
-          <>
-            <div
-              style={{
-                marginBottom: "20px",
-                marginLeft: "20px",
-                marginRight: "20px",
-              }}
-            >
-              <Form.Label>Enter argument:</Form.Label>
+          <div className="container">
+            <div style={{ marginBottom: "20px" }}>
+              <Form.Label>Input argument:</Form.Label>
               <Form.Control onChange={handleChange} />
               <Form.Text muted>{"Example: cash<="}</Form.Text>
             </div>
-            <div
-              style={{
-                marginBottom: "20px",
-                marginLeft: "20px",
-                marginRight: "20px",
-              }}
-            >
+            <div style={{ marginBottom: "20px" }}>
               <Form.Label>Enter high or low:</Form.Label>
               <Form.Control onChange={handleChangeHighLow} />
             </div>
             <div style={{ marginBottom: "40px", textAlign: "center" }}>
               <PrimaryButton onClick={showCriticalExample}>
-                GET Counter examples
+                CONFIRM
               </PrimaryButton>
             </div>
-          </>
+          </div>
         )}
       </div>
-
-      <div>
+      <div className="container" style={{ marginBottom: "40px" }}>
         <ListGroup
           items={formatCounterExamples(counterExamples)}
-          heading="Show Counter Examples"
+          heading="Found Counter Examples"
           onSelectItem={(index) => console.log(index)}
           isVisible={false}
         />
       </div>
+      <Footer />
     </>
   );
 }
