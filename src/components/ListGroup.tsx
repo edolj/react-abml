@@ -20,7 +20,7 @@ function ListGroup({ items, heading, onSelectItem, isVisible }: Props) {
         className="list-group"
         style={{ marginLeft: "20px", marginRight: "20px" }}
       >
-        {items.map((item, index) => (
+        {items.map((item, index: any) => (
           <li
             className={
               selectedIndex === index

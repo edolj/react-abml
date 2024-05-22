@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { NavLink } from "react-router-dom";
 import axios from "axios";
 import "./App.css";
 
@@ -8,8 +9,8 @@ import CircularProgress from "@mui/material/CircularProgress";
 import Form from "react-bootstrap/Form";
 import PrimaryButton from "./components/PrimaryButton";
 import ExpandableTable from "./components/ExpandableTable";
-import Textfield from "./components/Textfield";
 import Alert from "./components/Alert";
+import Textfield from "./components/Textfield";
 import RuleList from "./components/RuleList";
 import CriticalExamples from "./components/CriticalExamples";
 import ListGroup from "./components/ListGroup";
@@ -75,6 +76,19 @@ function App() {
     setHighLow(event.target.value);
   };
 
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
+
+  const handleShowAlert = (message: any) => {
+    setAlertMessage(message);
+    setShowAlert(true);
+  };
+
+  const handleCloseAlert = () => {
+    setShowAlert(false);
+    setAlertMessage("");
+  };
+
   useEffect(() => {
     setIsLoading(true);
     axios
@@ -108,9 +122,10 @@ function App() {
       .then((response) => {
         if (response.ok) {
           response.json().then((data) => {
+            setShowAlert(false);
             // Check if the response contains counter examples
             if (data.counterExamples) {
-              console.log("Counter Examples:", data.counterExamples);
+              // console.log(data.counterExamples);
               setCounterExamples(data.counterExamples);
             } else {
               // Handle other successful responses
@@ -119,18 +134,19 @@ function App() {
           });
         } else {
           response.json().then((error) => {
-            console.error("Request failed:", error.error);
+            handleShowAlert(error.error);
           });
         }
       })
       .catch((error) => {
-        console.error("Error:", error);
+        handleShowAlert("An unexpected error occurred. Please try again.");
       });
   };
 
   return (
     <>
       <Header />
+      {showAlert && <Alert onClose={handleCloseAlert}>{alertMessage}</Alert>}
       <div className="container">
         <h2>Select Critical Example</h2>
         {isLoading ? (
@@ -170,14 +186,16 @@ function App() {
           </div>
         )}
       </div>
-      <div className="container" style={{ marginBottom: "40px" }}>
-        <ListGroup
-          items={formatCounterExamples(counterExamples)}
-          heading="Found Counter Examples"
-          onSelectItem={(index) => console.log(index)}
-          isVisible={false}
-        />
-      </div>
+      {!showAlert && (
+        <div className="container" style={{ marginBottom: "40px" }}>
+          <ListGroup
+            items={formatCounterExamples(counterExamples)}
+            heading="Found Counter Examples"
+            onSelectItem={(index) => console.log(index)}
+            isVisible={false}
+          />
+        </div>
+      )}
       <Footer />
     </>
   );
