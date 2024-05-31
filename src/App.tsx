@@ -43,7 +43,11 @@ function App() {
   const tableData = formatCriticalInstances(criticalInstances);
 
   const handleSelectedRowChange = (index: any) => {
-    setCriticalExampleIndex(index);
+    if (index !== null) {
+      const criticalIndexString = criticalInstances[index].critical_index;
+      const criticalIndex = parseInt(criticalIndexString, 10);
+      setCriticalExampleIndex(criticalIndex);
+    }
   };
   const [criticalExampleIndex, setCriticalExampleIndex] = useState(null);
 
@@ -164,7 +168,7 @@ function App() {
             onExpandedRowChange={handleSelectedRowChange}
           />
         )}
-        <p>Selected Critical Example Number: {criticalExampleIndex}</p>
+        <p>Selected Example Critical Index: {criticalExampleIndex}</p>
       </div>
       <div>
         {criticalExampleIndex !== null && (
