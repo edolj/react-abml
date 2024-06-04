@@ -1,0 +1,80 @@
+import { useState, useEffect } from "react";
+import MainTable from "./MainTable";
+import Backdrop from "@mui/material/Backdrop";
+import CircularProgress from "@mui/material/CircularProgress";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+
+function SelectExampleView() {
+  const navigate = useNavigate();
+
+  const tableColumns = [
+    { Header: "ID", accessor: "column1" },
+    { Header: "Err", accessor: "column2" },
+    { Header: "Class", accessor: "column3" },
+  ];
+
+  const [criticalInstances, setCriticalInstances] = useState([]);
+  const [detailData, setDetailData] = useState([]);
+  const [isLoading, setIsLoading] = useState(true); // Add loading state
+  const tableData = formatCriticalInstances(criticalInstances);
+
+  const handleRowClick = (index: any) => {
+    if (index !== null) {
+      const criticalIndex = criticalInstances[index].critical_index;
+      const idName = criticalInstances[index].id;
+      navigate(`/selectExample/${criticalIndex}`, {
+        state: { detailData: detailData[index], id: idName },
+      });
+    }
+  };
+
+  function formatCriticalInstances(criticalInstances: any[]) {
+    const data = criticalInstances.map((instance) => {
+      return {
+        column1: instance.id,
+        column2: instance.problematic,
+        column3: instance.credit_score,
+      };
+    });
+
+    return data;
+  }
+
+  useEffect(() => {
+    setIsLoading(true);
+    axios
+      .get("http://localhost:8000/api/critical-instances/")
+      .then((response) => {
+        setCriticalInstances(response.data.critical_instances[0]);
+        setDetailData(response.data.critical_instances[1]);
+        setIsLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error fetching critical instances:", error);
+        setIsLoading(false);
+      });
+  }, []);
+
+  return (
+    <div className="container">
+      <h2>Select Critical Example</h2>
+      {isLoading ? (
+        <Backdrop
+          sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+          open
+        >
+          <CircularProgress color="inherit" />
+        </Backdrop>
+      ) : (
+        <MainTable
+          columns={tableColumns}
+          data={tableData}
+          onRowClick={handleRowClick}
+        />
+      )}
+    </div>
+  );
+}
+
+export default SelectExampleView;
