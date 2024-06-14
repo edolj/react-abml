@@ -22,7 +22,7 @@ function ArgumentView() {
     value: detail[1],
   }));
 
-  const handleChange = (event: any) => {
+  const readUserArgument = (event: any) => {
     setUserArgument(event.target.value);
   };
 
@@ -34,6 +34,7 @@ function ArgumentView() {
 
   const [userArgument, setUserArgument] = useState("");
   const [counterExamples, setCounterExamples] = useState([]);
+  const [hintBestRule, setBestRule] = useState("");
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
 
@@ -52,7 +53,6 @@ function ArgumentView() {
     const requestData = {
       index: criticalIndex,
       userArgument: userArgument,
-      highLow: "highLow",
     };
 
     fetch("http://localhost:8000/api/counter-examples/", {
@@ -66,14 +66,8 @@ function ArgumentView() {
         if (response.ok) {
           response.json().then((data) => {
             setShowAlert(false);
-            // Check if the response contains counter examples
-            if (data.counterExamples) {
-              // console.log(data.counterExamples);
-              setCounterExamples(data.counterExamples);
-            } else {
-              // Handle other successful responses
-              console.log("Request sent successfully");
-            }
+            setCounterExamples(data.counterExamples);
+            setBestRule(data.bestRule);
           });
         } else {
           response.json().then((error) => {
@@ -93,7 +87,7 @@ function ArgumentView() {
         <div className="container">
           <div style={{ marginBottom: "20px" }}>
             <Form.Label>Input argument:</Form.Label>
-            <Form.Control onChange={handleChange} />
+            <Form.Control onChange={readUserArgument} />
             <Form.Text muted>{"Example: cash<="}</Form.Text>
           </div>
           <div style={{ marginBottom: "40px", textAlign: "center" }}>
