@@ -1,5 +1,9 @@
 import { useParams, useLocation } from "react-router-dom";
 import { useState } from "react";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import Backdrop from "@mui/material/Backdrop";
+import CircularProgress from "@mui/material/CircularProgress";
 
 import Form from "react-bootstrap/Form";
 import PrimaryButton from "./PrimaryButton";
@@ -26,6 +30,18 @@ function ArgumentView() {
     setUserArgument(event.target.value);
   };
 
+  const showToast = (message: string) => {
+    toast.info(message, {
+      position: "top-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+    });
+  };
+
   // function formatCounterExamples(counterExamples: any[]): string[] {
   //   return counterExamples.map((example, index) => {
   //     return `Name: ${example.activity_ime}, Net Sales: ${example.net_sales}`;
@@ -37,6 +53,7 @@ function ArgumentView() {
   const [hintBestRule, setBestRule] = useState("");
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleShowAlert = (message: any) => {
     setAlertMessage(message);
@@ -48,7 +65,13 @@ function ArgumentView() {
     setAlertMessage("");
   };
 
+  const showHintMessage = () => {
+    showToast(hintBestRule);
+  };
+
   const showCriticalExample = () => {
+    setIsLoading(true);
+
     // Data to be sent in the request body
     const requestData = {
       index: criticalIndex,
@@ -74,14 +97,17 @@ function ArgumentView() {
             handleShowAlert(error.error);
           });
         }
+        setIsLoading(false);
       })
       .catch((error) => {
+        setIsLoading(false);
         handleShowAlert("An unexpected error occurred. Please try again.");
       });
   };
 
   return (
     <>
+      <ToastContainer />
       {showAlert && <Alert onClose={handleCloseAlert}>{alertMessage}</Alert>}
       <div className="container" style={{ marginBottom: "40px" }}>
         <div className="container">
@@ -92,6 +118,12 @@ function ArgumentView() {
           </div>
           <div style={{ marginBottom: "40px", textAlign: "center" }}>
             <PrimaryButton onClick={showCriticalExample}>CONFIRM</PrimaryButton>
+            <PrimaryButton
+              onClick={showHintMessage}
+              style={{ marginLeft: "10px" }}
+            >
+              SHOW HINT
+            </PrimaryButton>
           </div>
         </div>
         <h3>Details for {idName}</h3>
@@ -113,6 +145,16 @@ function ArgumentView() {
             ))}
           </tbody>
         </Table>
+      </div>
+      <div>
+        {isLoading ? (
+          <Backdrop
+            sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+            open
+          >
+            <CircularProgress color="inherit" />
+          </Backdrop>
+        ) : null}
       </div>
       {/*
       {!showAlert && (
