@@ -1,5 +1,6 @@
 import React from "react";
 import Table from "react-bootstrap/Table";
+import "../css/Corners.css";
 
 function MainTable({ columns, data, onRowClick }) {
   const handleRowClick = (rowIndex: any) => {
@@ -7,7 +8,7 @@ function MainTable({ columns, data, onRowClick }) {
   };
 
   return (
-    <Table striped bordered hover>
+    <Table striped bordered hover className="rounded-table">
       <thead>
         <tr>
           {columns.map((column: any, columnIndex: number) => (

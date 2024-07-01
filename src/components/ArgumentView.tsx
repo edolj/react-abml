@@ -1,7 +1,8 @@
-import { useParams, useLocation } from "react-router-dom";
+import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import "../css/Corners.css";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 
@@ -11,6 +12,7 @@ import Table from "react-bootstrap/Table";
 import Alert from "./Alert";
 
 function ArgumentView() {
+  const navigate = useNavigate();
   const { criticalIndex } = useParams();
   const location = useLocation();
   const detailData = location.state?.detailData || [];
@@ -105,6 +107,10 @@ function ArgumentView() {
       });
   };
 
+  const doneWithArgumentation = () => {
+    navigate(-1);
+  };
+
   return (
     <>
       <ToastContainer />
@@ -114,20 +120,28 @@ function ArgumentView() {
           <div style={{ marginBottom: "20px" }}>
             <Form.Label>Input argument:</Form.Label>
             <Form.Control onChange={readUserArgument} />
-            <Form.Text muted>{"Example: cash<="}</Form.Text>
+            <Form.Text muted>{"Example: debt<="}</Form.Text>
           </div>
           <div style={{ marginBottom: "40px", textAlign: "center" }}>
-            <PrimaryButton onClick={showCriticalExample}>CONFIRM</PrimaryButton>
+            <PrimaryButton onClick={showCriticalExample}>
+              Send arguments
+            </PrimaryButton>
+            <PrimaryButton
+              onClick={doneWithArgumentation}
+              style={{ marginLeft: "10px" }}
+            >
+              Done and show next example
+            </PrimaryButton>
             <PrimaryButton
               onClick={showHintMessage}
               style={{ marginLeft: "10px" }}
             >
-              SHOW HINT
+              Show hint
             </PrimaryButton>
           </div>
         </div>
         <h3>Details for {idName}</h3>
-        <Table striped bordered hover>
+        <Table striped bordered hover responsive className="rounded-table">
           <thead>
             <tr>
               {columns.map((column, columnIndex) => (

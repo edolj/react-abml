@@ -1,0 +1,27 @@
+.rounded-table {
+  border-collapse: separate;
+  border-spacing: 0;
+  border: 1px solid black;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.rounded-table thead th:first-child {
+  border-top-left-radius: 10px;
+}
+
+.rounded-table thead th:last-child {
+  border-top-right-radius: 10px;
+}
+
+.rounded-table tbody tr:last-child td:first-child {
+  border-bottom-left-radius: 10px;
+}
+
+.rounded-table tbody tr:last-child td:last-child {
+  border-bottom-right-radius: 10px;
+}
+
+.rounded-table thead th {
+  border-bottom: 1px solid black;  /* Only the first row in thead will have bottom border */
+}

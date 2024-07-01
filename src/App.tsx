@@ -2,7 +2,6 @@ import { Routes, Route, useNavigate } from "react-router-dom";
 import "./App.css";
 
 import PrimaryButton from "./components/PrimaryButton";
-import ListGroup from "./components/ListGroup";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import SelectExampleView from "./components/SelectExampleView";
