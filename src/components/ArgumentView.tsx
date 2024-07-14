@@ -5,6 +5,7 @@ import "react-toastify/dist/ReactToastify.css";
 import "../css/Corners.css";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
+import ProgressBar from "react-bootstrap/ProgressBar";
 
 import Form from "react-bootstrap/Form";
 import PrimaryButton from "./PrimaryButton";
@@ -18,15 +19,27 @@ function ArgumentView() {
   const detailData = location.state?.detailData || [];
   const idName = location.state?.id || "N/A";
 
-  const columns = [
+  const [columns, setColumns] = useState([
     { Header: "Attribute", accessor: "key" },
     { Header: "Value", accessor: "value" },
-  ];
+  ]);
 
-  const formattedData = detailData.map((detail: any, index: number) => ({
-    key: detail[0],
-    value: detail[1],
-  }));
+  const [formattedData, setFormattedData] = useState(
+    detailData.map((detail: any) => ({
+      key: detail[0],
+      value: detail[1],
+    }))
+  );
+
+  const getRowStyle = (domain: string) => {
+    const cleanedText = userArgument.replace(/[<>=]/g, "");
+    const args = cleanedText.split(",").map((arg) => arg.trim());
+
+    if (args.includes(domain)) {
+      return { backgroundColor: "#bbdefb" };
+    }
+    return {};
+  };
 
   const readUserArgument = (event: any) => {
     setUserArgument(event.target.value);
@@ -44,14 +57,8 @@ function ArgumentView() {
     });
   };
 
-  // function formatCounterExamples(counterExamples: any[]): string[] {
-  //   return counterExamples.map((example, index) => {
-  //     return `Name: ${example.activity_ime}, Net Sales: ${example.net_sales}`;
-  //   });
-  // }
-
   const [userArgument, setUserArgument] = useState("");
-  const [counterExamples, setCounterExamples] = useState([]);
+  const [m_score, setMScore] = useState(0.0);
   const [hintBestRule, setBestRule] = useState("");
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
@@ -91,8 +98,42 @@ function ArgumentView() {
         if (response.ok) {
           response.json().then((data) => {
             setShowAlert(false);
-            setCounterExamples(data.counterExamples);
+
+            // Add new columns for each counter value
+            const newColumns = data.counterExamples.map(
+              (_: any, idx: number) => ({
+                Header: `Counter Value ${idx + 1}`,
+                accessor: `counterValue${idx + 1}`,
+              })
+            );
+
+            setColumns((prevColumns) => [
+              ...prevColumns,
+              ...newColumns.filter(
+                (newColumn: any) =>
+                  !prevColumns.some(
+                    (col) => col.accessor === newColumn.accessor
+                  )
+              ),
+            ]);
+
+            // Merge counter values into formatted data
+            const newFormattedData = formattedData.map(
+              (item: any, index: number) => {
+                const newItem = { ...item };
+                data.counterExamples.forEach(
+                  (counterExample: any, counterIndex: number) => {
+                    newItem[`counterValue${counterIndex + 1}`] =
+                      counterExample[index] || "";
+                  }
+                );
+                return newItem;
+              }
+            );
+
+            setFormattedData(newFormattedData);
             setBestRule(data.bestRule);
+            setMScore(Math.floor(data.m_score * 100));
           });
         } else {
           response.json().then((error) => {
@@ -122,7 +163,7 @@ function ArgumentView() {
             <Form.Control onChange={readUserArgument} />
             <Form.Text muted>{"Example: debt<="}</Form.Text>
           </div>
-          <div style={{ marginBottom: "40px", textAlign: "center" }}>
+          <div style={{ marginBottom: "20px", textAlign: "center" }}>
             <PrimaryButton onClick={showCriticalExample}>
               Send arguments
             </PrimaryButton>
@@ -140,6 +181,10 @@ function ArgumentView() {
             </PrimaryButton>
           </div>
         </div>
+        <div style={{ marginBottom: "40px" }}>
+          M score ({m_score / 100}):
+          <ProgressBar now={m_score} label={`${m_score}`} />
+        </div>
         <h3>Details for {idName}</h3>
         <Table striped bordered hover responsive className="rounded-table">
           <thead>
@@ -153,7 +198,9 @@ function ArgumentView() {
             {formattedData.map((row: any, rowIndex: number) => (
               <tr key={rowIndex}>
                 {columns.map((column, columnIndex) => (
-                  <td key={columnIndex}>{row[column.accessor]}</td>
+                  <td key={columnIndex} style={getRowStyle(row.key)}>
+                    {row[column.accessor]}
+                  </td>
                 ))}
               </tr>
             ))}
@@ -170,17 +217,6 @@ function ArgumentView() {
           </Backdrop>
         ) : null}
       </div>
-      {/*
-      {!showAlert && (
-        <div className="container" style={{ marginBottom: "40px" }}>
-          <ListGroup
-            items={formatCounterExamples(counterExamples)}
-            heading="Found Counter Examples"
-            onSelectItem={(index) => console.log(index)}
-            isVisible={false}
-          />
-        </div>
-      )} */}
     </>
   );
 }

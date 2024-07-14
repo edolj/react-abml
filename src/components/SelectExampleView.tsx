@@ -11,7 +11,7 @@ function SelectExampleView() {
   const tableColumns = [
     { Header: "ID", accessor: "column1" },
     { Header: "Err", accessor: "column2" },
-    { Header: "Class", accessor: "column3" },
+    { Header: "Credit Score", accessor: "column3" },
   ];
 
   const [criticalInstances, setCriticalInstances] = useState([]);
@@ -34,7 +34,7 @@ function SelectExampleView() {
       return {
         column1: instance.id,
         column2: instance.problematic,
-        column3: instance.credit_score,
+        column3: instance.target_class,
       };
     });
 
