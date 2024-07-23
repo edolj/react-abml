@@ -9,8 +9,8 @@ function SelectExampleView() {
   const navigate = useNavigate();
 
   const tableColumns = [
-    { Header: "ID", accessor: "column1" },
-    { Header: "Err", accessor: "column2" },
+    { Header: "Name", accessor: "column1" },
+    { Header: "Critical", accessor: "column2" },
     { Header: "Credit Score", accessor: "column3" },
   ];
 
@@ -19,7 +19,7 @@ function SelectExampleView() {
   const [isLoading, setIsLoading] = useState(true); // Add loading state
   const tableData = formatCriticalInstances(criticalInstances);
 
-  const handleRowClick = (index: any) => {
+  const handleRowClick = (index: number) => {
     if (index !== null) {
       const criticalIndex = criticalInstances[index].critical_index;
       const idName = criticalInstances[index].id;
@@ -58,7 +58,7 @@ function SelectExampleView() {
 
   return (
     <div className="container">
-      <h2>Select Critical Example</h2>
+      <h4>Select critical example from:</h4>
       {isLoading ? (
         <Backdrop
           sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}

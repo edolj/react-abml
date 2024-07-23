@@ -4,3 +4,10 @@
     margin: 0 auto; /* Centers the container */
     padding: 20px; /* Optional: Adds some padding */
 }
+
+.box-with-border {
+    border: 2px solid #ccc; /* Gray border */
+    padding: 20px;
+    border-radius: 5px; /* Optional: makes the corners rounded */
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2); /* Shadow */
+}
