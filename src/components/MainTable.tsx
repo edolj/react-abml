@@ -2,7 +2,13 @@ import React from "react";
 import Table from "react-bootstrap/Table";
 import "../css/Corners.css";
 
-function MainTable({ columns, data, onRowClick }) {
+interface Props {
+  columns: any;
+  data: any;
+  onRowClick: (rowIndex: number) => void;
+}
+
+function MainTable({ columns, data, onRowClick }: Props) {
   const handleRowClick = (rowIndex: any) => {
     onRowClick(rowIndex);
   };

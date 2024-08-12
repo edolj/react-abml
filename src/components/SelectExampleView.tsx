@@ -5,6 +5,13 @@ import CircularProgress from "@mui/material/CircularProgress";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
+interface CriticalInstance {
+  critical_index: string;
+  problematic: string;
+  target_class: string;
+  id: string;
+}
+
 function SelectExampleView() {
   const navigate = useNavigate();
 
@@ -14,13 +21,15 @@ function SelectExampleView() {
     { Header: "Credit Score", accessor: "column3" },
   ];
 
-  const [criticalInstances, setCriticalInstances] = useState([]);
+  const [criticalInstances, setCriticalInstances] = useState<
+    CriticalInstance[]
+  >([]);
   const [detailData, setDetailData] = useState([]);
   const [isLoading, setIsLoading] = useState(true); // Add loading state
   const tableData = formatCriticalInstances(criticalInstances);
 
   const handleRowClick = (index: number) => {
-    if (index !== null) {
+    if (index >= 0 && index < criticalInstances.length) {
       const criticalIndex = criticalInstances[index].critical_index;
       const idName = criticalInstances[index].id;
       navigate(`/selectExample/${criticalIndex}`, {

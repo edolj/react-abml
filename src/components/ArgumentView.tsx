@@ -157,16 +157,16 @@ function ArgumentView() {
       <ToastContainer />
       {showAlert && <Alert onClose={handleCloseAlert}>{alertMessage}</Alert>}
       <div className="container" style={{ marginBottom: "40px" }}>
-        <div>
+        <div
+          className="box-with-border"
+          style={{ marginTop: "10px", marginBottom: "10px" }}
+        >
           <div style={{ marginBottom: "20px" }}>
             <Form.Label>Input argument:</Form.Label>
             <Form.Control onChange={readUserArgument} />
             <Form.Text muted>{"Example: debt<="}</Form.Text>
           </div>
-          <div
-            style={{ marginBottom: "20px", textAlign: "center" }}
-            className="box-with-border"
-          >
+          <div style={{ textAlign: "center" }}>
             <PrimaryButton onClick={showCriticalExample}>
               Send arguments
             </PrimaryButton>
