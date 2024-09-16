@@ -86,11 +86,13 @@ function ArgumentView() {
       index: criticalIndex,
       userArgument: userArgument,
     };
+    const token = localStorage.getItem("token");
 
     fetch("http://localhost:8000/api/counter-examples/", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Token ${token}`,
       },
       body: JSON.stringify(requestData),
     })

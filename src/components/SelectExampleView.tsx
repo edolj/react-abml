@@ -52,8 +52,13 @@ function SelectExampleView() {
 
   useEffect(() => {
     setIsLoading(true);
+    const token = localStorage.getItem("token");
     axios
-      .get("http://localhost:8000/api/critical-instances/")
+      .get("http://localhost:8000/api/critical-instances/", {
+        headers: {
+          Authorization: `Token ${token}`,
+        },
+      })
       .then((response) => {
         setCriticalInstances(response.data.critical_instances[0]);
         setDetailData(response.data.critical_instances[1]);
