@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import MainTable from "./MainTable";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
-import { useNavigate } from "react-router-dom";
+import Alert from "./Alert";
 import axios from "axios";
 
 interface CriticalInstance {
@@ -26,6 +27,7 @@ function SelectExampleView() {
   >([]);
   const [detailData, setDetailData] = useState([]);
   const [isLoading, setIsLoading] = useState(true); // Add loading state
+  const [alertError, setAlertError] = useState<string | null>(null);
   const tableData = formatCriticalInstances(criticalInstances);
 
   const handleRowClick = (index: number) => {
@@ -63,16 +65,23 @@ function SelectExampleView() {
         setCriticalInstances(response.data.critical_instances[0]);
         setDetailData(response.data.critical_instances[1]);
         setIsLoading(false);
+        setAlertError(null);
       })
       .catch((error) => {
         console.error("Error fetching critical instances:", error);
         setIsLoading(false);
+        setAlertError(
+          "Failed to fetch critical examples. Please try again later."
+        );
       });
   }, []);
 
   return (
     <div className="container">
       <h4>Select critical example from:</h4>
+      {alertError && (
+        <Alert onClose={() => setAlertError(null)}>{alertError}</Alert>
+      )}
       {isLoading ? (
         <Backdrop
           sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}

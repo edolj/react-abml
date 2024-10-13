@@ -60,25 +60,15 @@ function ArgumentView() {
   const [userArgument, setUserArgument] = useState("");
   const [m_score, setMScore] = useState(0.0);
   const [hintBestRule, setBestRule] = useState("");
-  const [showAlert, setShowAlert] = useState(false);
-  const [alertMessage, setAlertMessage] = useState("");
+  const [alertError, setAlertError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-
-  const handleShowAlert = (message: any) => {
-    setAlertMessage(message);
-    setShowAlert(true);
-  };
-
-  const handleCloseAlert = () => {
-    setShowAlert(false);
-    setAlertMessage("");
-  };
 
   const showHintMessage = () => {
     showToast(hintBestRule);
   };
 
   const showCriticalExample = () => {
+    setAlertError(null);
     setIsLoading(true);
 
     // Data to be sent in the request body
@@ -99,7 +89,7 @@ function ArgumentView() {
       .then((response) => {
         if (response.ok) {
           response.json().then((data) => {
-            setShowAlert(false);
+            setAlertError(null);
 
             // Add new columns for each counter value
             const newColumns = data.counterExamples.map(
@@ -139,14 +129,15 @@ function ArgumentView() {
           });
         } else {
           response.json().then((error) => {
-            handleShowAlert(error.error);
+            setAlertError(error.error);
           });
         }
         setIsLoading(false);
       })
       .catch((error) => {
+        console.log("Argument view POST method error:", error);
         setIsLoading(false);
-        handleShowAlert("An unexpected error occurred. Please try again.");
+        setAlertError("An unexpected error occurred. Please try again.");
       });
   };
 
@@ -157,7 +148,6 @@ function ArgumentView() {
   return (
     <>
       <ToastContainer />
-      {showAlert && <Alert onClose={handleCloseAlert}>{alertMessage}</Alert>}
       <div className="container" style={{ marginBottom: "40px" }}>
         <div
           className="box-with-border"
@@ -168,6 +158,9 @@ function ArgumentView() {
             <Form.Control onChange={readUserArgument} />
             <Form.Text muted>{"Example: debt<="}</Form.Text>
           </div>
+          {alertError && (
+            <Alert onClose={() => setAlertError(null)}>{alertError}</Alert>
+          )}
           <div style={{ textAlign: "center" }}>
             <PrimaryButton onClick={showCriticalExample}>
               Send arguments
