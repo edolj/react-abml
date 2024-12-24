@@ -64,10 +64,19 @@ function ArgumentView() {
   const [isLoading, setIsLoading] = useState(false);
 
   const showHintMessage = () => {
-    showToast(hintBestRule);
+    if (hintBestRule === "") {
+      showToast("First input your arguments.");
+      return;
+    }
+    showToast(processRule(hintBestRule));
   };
 
   const showCriticalExample = () => {
+    if (!userArgument.trim()) {
+      setAlertError("The argument input field cannot be empty!")
+      return;
+    }
+
     setAlertError(null);
     setIsLoading(true);
 
@@ -142,47 +151,72 @@ function ArgumentView() {
   };
 
   const doneWithArgumentation = () => {
+    if (!userArgument.trim()) {
+      setAlertError("The argument input field cannot be empty!")
+      return;
+    }
     navigate(-1);
+  };
+
+  const processRule = (rule: string) => {
+    // Replace only numerical values after relational operators with ''
+    return rule.replace(/([<>=!]+)\s*([\d.]+)/g, (match, operator) => {
+      return `${operator} `;
+    });
   };
 
   return (
     <>
       <ToastContainer />
       <div className="container" style={{ marginBottom: "40px" }}>
+        {/* Box for Argument Input and M score */}
         <div
-          className="box-with-border"
-          style={{ marginTop: "10px", marginBottom: "10px" }}
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "flex-start",
+            marginTop: "10px",
+            marginBottom: "10px",
+          }}
         >
-          <div style={{ marginBottom: "20px" }}>
-            <Form.Label>Input argument:</Form.Label>
-            <Form.Control onChange={readUserArgument} />
-            <Form.Text muted>{"Example: debt<="}</Form.Text>
+          {/* Argument Input Box */}
+          <div style={{ flex: 1, marginRight: "20px" }} className="box-with-border">
+            <div style={{ marginBottom: "20px" }}>
+              <Form.Label>Input argument:</Form.Label>
+              <Form.Control onChange={readUserArgument} />
+              <Form.Text muted>{"Example: debt<="}</Form.Text>
+            </div>
+            {alertError && (<Alert onClose={() => setAlertError(null)}>{alertError}</Alert> )}
+            <div style={{ textAlign: "center" }}>
+              <PrimaryButton onClick={showCriticalExample}>
+                Send arguments
+              </PrimaryButton>
+              <PrimaryButton
+                onClick={doneWithArgumentation}
+                style={{ marginLeft: "10px" }}
+              >
+                Show next example
+              </PrimaryButton>
+              <PrimaryButton
+                onClick={showHintMessage}
+                style={{ marginLeft: "10px" }}
+              >
+                Show hint
+              </PrimaryButton>
+            </div>
           </div>
-          {alertError && (
-            <Alert onClose={() => setAlertError(null)}>{alertError}</Alert>
-          )}
-          <div style={{ textAlign: "center" }}>
-            <PrimaryButton onClick={showCriticalExample}>
-              Send arguments
-            </PrimaryButton>
-            <PrimaryButton
-              onClick={doneWithArgumentation}
-              style={{ marginLeft: "10px" }}
-            >
-              Done and show next example
-            </PrimaryButton>
-            <PrimaryButton
-              onClick={showHintMessage}
-              style={{ marginLeft: "10px" }}
-            >
-              Show hint
-            </PrimaryButton>
+
+          {/* M-Score Box */}
+          <div style={{ flex: "0 0 300px" }}>
+            <div style={{ marginBottom: "40px" }} className="box-with-border">
+              M score ({m_score / 100}):
+              <ProgressBar now={m_score} label={`${m_score}`} />
+            </div>
           </div>
-        </div>
-        <div style={{ marginBottom: "40px" }} className="box-with-border">
-          M score ({m_score / 100}):
-          <ProgressBar now={m_score} label={`${m_score}`} />
-        </div>
+      </div>
+
+      {/* Table Section */}
+      <div style={{ marginTop: "50px" }}>
         <h3>Details for {idName}</h3>
         <Table striped bordered hover responsive className="rounded-table">
           <thead>
@@ -205,16 +239,17 @@ function ArgumentView() {
           </tbody>
         </Table>
       </div>
-      <div>
-        {isLoading ? (
-          <Backdrop
-            sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
-            open
-          >
-            <CircularProgress color="inherit" />
-          </Backdrop>
-        ) : null}
-      </div>
+
+      {/* Loading Indicator */}
+      {isLoading && (
+        <Backdrop
+          sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+          open
+        >
+          <CircularProgress color="inherit" />
+        </Backdrop>
+      )}
+    </div>
     </>
   );
 }
