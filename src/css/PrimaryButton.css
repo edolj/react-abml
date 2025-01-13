@@ -1,0 +1,16 @@
+.custom-primary-button:hover {
+    transform: scale(1.05);
+}
+
+.card-view {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 16px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+    padding: 20px;
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+  
+.card-view:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12);
+}

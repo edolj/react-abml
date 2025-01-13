@@ -23,5 +23,9 @@
 }
 
 .rounded-table thead th {
-  border-bottom: 1px solid black;  /* Only the first row in thead will have bottom border */
+  border-bottom: 2px solid black;  /* Only the first row in thead will have bottom border */
+}
+
+.center-text {
+  text-align: center;
 }

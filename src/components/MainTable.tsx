@@ -18,7 +18,9 @@ function MainTable({ columns, data, onRowClick }: Props) {
       <thead>
         <tr>
           {columns.map((column: any, columnIndex: number) => (
-            <th key={columnIndex}>{column.Header}</th>
+            <th key={columnIndex} className={
+              columnIndex >= columns.length - 2 ? "center-text" : ""
+            }>{column.Header}</th>
           ))}
         </tr>
       </thead>
@@ -27,7 +29,9 @@ function MainTable({ columns, data, onRowClick }: Props) {
           <React.Fragment key={rowIndex}>
             <tr onClick={() => handleRowClick(rowIndex)}>
               {columns.map((column: any, columnIndex: number) => (
-                <td key={columnIndex}>{row[column.accessor]}</td>
+                <td key={columnIndex} className={
+                  columnIndex >= columns.length - 2 ? "center-text" : ""
+                }>{row[column.accessor]}</td>
               ))}
             </tr>
           </React.Fragment>

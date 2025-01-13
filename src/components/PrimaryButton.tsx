@@ -8,7 +8,7 @@ const PrimaryButton = ({ children, onClick, style }: Props) => {
   return (
     <button
       type="button"
-      className="btn btn-primary"
+      className="btn btn-primary custom-primary-button"
       onClick={onClick}
       style={style}
     >

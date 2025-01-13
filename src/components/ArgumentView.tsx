@@ -2,6 +2,7 @@ import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import "../css/PrimaryButton.css";
 import "../css/Corners.css";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -30,16 +31,6 @@ function ArgumentView() {
       value: detail[1],
     }))
   );
-
-  const getRowStyle = (domain: string) => {
-    const cleanedText = userArgument.replace(/[<>=]/g, "");
-    const args = cleanedText.split(",").map((arg) => arg.trim());
-
-    if (args.includes(domain)) {
-      return { backgroundColor: "#bbdefb" };
-    }
-    return {};
-  };
 
   const readUserArgument = (event: any) => {
     setUserArgument(event.target.value);
@@ -168,51 +159,50 @@ function ArgumentView() {
   return (
     <>
       <ToastContainer />
-      <div className="container" style={{ marginBottom: "40px" }}>
-        {/* Box for Argument Input and M score */}
+      <div className="container">
         <div
           style={{
             display: "flex",
-            justifyContent: "space-between",
-            alignItems: "flex-start",
+            flexDirection: "column",
+            gap: "20px",
             marginTop: "10px",
             marginBottom: "10px",
           }}
         >
-          {/* Argument Input Box */}
-          <div style={{ flex: 1, marginRight: "20px" }} className="box-with-border">
-            <div style={{ marginBottom: "20px" }}>
-              <Form.Label>Input argument:</Form.Label>
-              <Form.Control onChange={readUserArgument} />
-              <Form.Text muted>{"Example: debt<="}</Form.Text>
-            </div>
-            {alertError && (<Alert onClose={() => setAlertError(null)}>{alertError}</Alert> )}
-            <div style={{ textAlign: "center" }}>
-              <PrimaryButton onClick={showCriticalExample}>
-                Send arguments
-              </PrimaryButton>
-              <PrimaryButton
-                onClick={doneWithArgumentation}
-                style={{ marginLeft: "10px" }}
-              >
-                Show next example
-              </PrimaryButton>
-              <PrimaryButton
-                onClick={showHintMessage}
-                style={{ marginLeft: "10px" }}
-              >
-                Show hint
-              </PrimaryButton>
-            </div>
+        {/* Argument Input Box */}
+        <div className="box-with-border card-view">
+          <div style={{ marginBottom: "20px" }}>
+            <Form.Label>Input argument:</Form.Label>
+            <Form.Control onChange={readUserArgument} />
+            <Form.Text muted>{"Example: debt<="}</Form.Text>
           </div>
+          {alertError && (
+            <Alert onClose={() => setAlertError(null)}>{alertError}</Alert>
+          )}
+          <div style={{ textAlign: "center" }}>
+            <PrimaryButton onClick={showCriticalExample}>
+              Send arguments
+            </PrimaryButton>
+            <PrimaryButton
+              onClick={doneWithArgumentation}
+              style={{ marginLeft: "10px" }}
+            >
+              Show next example
+            </PrimaryButton>
+            <PrimaryButton
+              onClick={showHintMessage}
+              style={{ marginLeft: "10px" }}
+            >
+              Show hint
+            </PrimaryButton>
+          </div>
+        </div>
 
-          {/* M-Score Box */}
-          <div style={{ flex: "0 0 300px" }}>
-            <div style={{ marginBottom: "40px" }} className="box-with-border">
-              M score ({m_score / 100}):
-              <ProgressBar now={m_score} label={`${m_score}`} />
-            </div>
-          </div>
+        {/* M-Score Box */}
+        <div className="box-with-border card-view">
+          M score ({m_score / 100}):
+          <ProgressBar now={m_score} label={`${m_score}`} />
+        </div>
       </div>
 
       {/* Table Section */}
@@ -230,7 +220,7 @@ function ArgumentView() {
             {formattedData.map((row: any, rowIndex: number) => (
               <tr key={rowIndex}>
                 {columns.map((column, columnIndex) => (
-                  <td key={columnIndex} style={getRowStyle(row.key)}>
+                  <td key={columnIndex}>
                     {row[column.accessor]}
                   </td>
                 ))}
