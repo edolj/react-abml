@@ -1,7 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 import "./App.css";
 
-import Header from "./components/Header";
 import SelectExampleView from "./components/SelectExampleView";
 import ArgumentView from "./components/ArgumentView";
 import LoginForm from "./components/LoginForm";
@@ -11,7 +10,6 @@ import PrivateRoute from "./context/PrivateRoute";
 function App() {
   return (
     <>
-      <Header />
       <Routes>
         <Route path="/" element={<LoginForm />} />
         <Route path="/register" element={<RegistrationForm />} />

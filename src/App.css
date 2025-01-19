@@ -1,3 +1,9 @@
+body {
+    background: linear-gradient(to bottom, #e4f0fd 30%, #ffffff 60%);
+    min-height: 100vh;
+    margin: 0;
+}
+
 .container {
     width: 100%;
     max-width: 1200px; /* Set the max-width as needed */

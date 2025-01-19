@@ -5,6 +5,7 @@ import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import Alert from "./Alert";
 import axios from "axios";
+import Header from "./Header";
 
 interface CriticalInstance {
   critical_index: string;
@@ -77,26 +78,30 @@ function SelectExampleView() {
   }, []);
 
   return (
-    <div className="container">
-      <h4>Select critical example from:</h4>
-      {alertError && (
-        <Alert onClose={() => setAlertError(null)}>{alertError}</Alert>
-      )}
-      {isLoading ? (
-        <Backdrop
-          sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
-          open
-        >
-          <CircularProgress color="inherit" />
-        </Backdrop>
-      ) : (
-        <MainTable
-          columns={tableColumns}
-          data={tableData}
-          onRowClick={handleRowClick}
-        />
-      )}
-    </div>
+    <>
+      <div>
+        <Header />
+      </div>
+      <div className="container">
+        {alertError && (
+          <Alert onClose={() => setAlertError(null)}>{alertError}</Alert>
+        )}
+        {isLoading ? (
+          <Backdrop
+            sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+            open
+          >
+            <CircularProgress color="inherit" />
+          </Backdrop>
+        ) : (
+          <MainTable
+            columns={tableColumns}
+            data={tableData}
+            onRowClick={handleRowClick}
+          />
+        )}
+      </div>
+    </>
   );
 }
 

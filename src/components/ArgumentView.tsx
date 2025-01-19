@@ -12,6 +12,7 @@ import Form from "react-bootstrap/Form";
 import PrimaryButton from "./PrimaryButton";
 import Table from "react-bootstrap/Table";
 import Alert from "./Alert";
+import Header from "./Header";
 
 function ArgumentView() {
   const navigate = useNavigate();
@@ -64,7 +65,7 @@ function ArgumentView() {
 
   const showCriticalExample = () => {
     if (!userArgument.trim()) {
-      setAlertError("The argument input field cannot be empty!")
+      setAlertError("The argument input field cannot be empty!");
       return;
     }
 
@@ -143,7 +144,7 @@ function ArgumentView() {
 
   const doneWithArgumentation = () => {
     if (!userArgument.trim()) {
-      setAlertError("The argument input field cannot be empty!")
+      setAlertError("The argument input field cannot be empty!");
       return;
     }
     navigate(-1);
@@ -158,6 +159,9 @@ function ArgumentView() {
 
   return (
     <>
+      <div>
+        <Header />
+      </div>
       <ToastContainer />
       <div className="container">
         <div
@@ -169,77 +173,75 @@ function ArgumentView() {
             marginBottom: "10px",
           }}
         >
-        {/* Argument Input Box */}
-        <div className="box-with-border card-view">
-          <div style={{ marginBottom: "20px" }}>
-            <Form.Label>Input argument:</Form.Label>
-            <Form.Control onChange={readUserArgument} />
-            <Form.Text muted>{"Example: debt<="}</Form.Text>
+          {/* Argument Input Box */}
+          <div className="box-with-border card-view">
+            <div style={{ marginBottom: "20px" }}>
+              <Form.Label>Input argument:</Form.Label>
+              <Form.Control onChange={readUserArgument} />
+              <Form.Text muted>{"Example: debt<="}</Form.Text>
+            </div>
+            {alertError && (
+              <Alert onClose={() => setAlertError(null)}>{alertError}</Alert>
+            )}
+            <div style={{ textAlign: "center" }}>
+              <PrimaryButton onClick={showCriticalExample}>
+                Send arguments
+              </PrimaryButton>
+              <PrimaryButton
+                onClick={doneWithArgumentation}
+                style={{ marginLeft: "10px" }}
+              >
+                Show next example
+              </PrimaryButton>
+              <PrimaryButton
+                onClick={showHintMessage}
+                style={{ marginLeft: "10px" }}
+              >
+                Show hint
+              </PrimaryButton>
+            </div>
           </div>
-          {alertError && (
-            <Alert onClose={() => setAlertError(null)}>{alertError}</Alert>
-          )}
-          <div style={{ textAlign: "center" }}>
-            <PrimaryButton onClick={showCriticalExample}>
-              Send arguments
-            </PrimaryButton>
-            <PrimaryButton
-              onClick={doneWithArgumentation}
-              style={{ marginLeft: "10px" }}
-            >
-              Show next example
-            </PrimaryButton>
-            <PrimaryButton
-              onClick={showHintMessage}
-              style={{ marginLeft: "10px" }}
-            >
-              Show hint
-            </PrimaryButton>
+
+          {/* M-Score Box */}
+          <div className="box-with-border card-view">
+            M score ({m_score / 100}):
+            <ProgressBar now={m_score} label={`${m_score}`} />
           </div>
         </div>
 
-        {/* M-Score Box */}
-        <div className="box-with-border card-view">
-          M score ({m_score / 100}):
-          <ProgressBar now={m_score} label={`${m_score}`} />
-        </div>
-      </div>
-
-      {/* Table Section */}
-      <div style={{ marginTop: "50px" }}>
-        <h3>Details for {idName}</h3>
-        <Table striped bordered hover responsive className="rounded-table">
-          <thead>
-            <tr>
-              {columns.map((column, columnIndex) => (
-                <th key={columnIndex}>{column.Header}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {formattedData.map((row: any, rowIndex: number) => (
-              <tr key={rowIndex}>
+        {/* Table Section */}
+        <div style={{ marginTop: "50px" }}>
+          <h3>Details for {idName}</h3>
+          <Table striped bordered hover responsive className="rounded-table">
+            <thead>
+              <tr>
                 {columns.map((column, columnIndex) => (
-                  <td key={columnIndex}>
-                    {row[column.accessor]}
-                  </td>
+                  <th key={columnIndex}>{column.Header}</th>
                 ))}
               </tr>
-            ))}
-          </tbody>
-        </Table>
-      </div>
+            </thead>
+            <tbody>
+              {formattedData.map((row: any, rowIndex: number) => (
+                <tr key={rowIndex}>
+                  {columns.map((column, columnIndex) => (
+                    <td key={columnIndex}>{row[column.accessor]}</td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+        </div>
 
-      {/* Loading Indicator */}
-      {isLoading && (
-        <Backdrop
-          sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
-          open
-        >
-          <CircularProgress color="inherit" />
-        </Backdrop>
-      )}
-    </div>
+        {/* Loading Indicator */}
+        {isLoading && (
+          <Backdrop
+            sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+            open
+          >
+            <CircularProgress color="inherit" />
+          </Backdrop>
+        )}
+      </div>
     </>
   );
 }

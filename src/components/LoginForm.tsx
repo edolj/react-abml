@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import NavBar from "./NavBar";
 import axios from "axios";
 import "../css/LoginForm.css";
 
@@ -26,6 +27,7 @@ const LoginForm = () => {
 
   return (
     <div className="login-container">
+      <NavBar />
       <form onSubmit={handleSubmit} className="login-form">
         <h2>Login</h2>
         <input

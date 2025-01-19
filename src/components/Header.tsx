@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { FaSignOutAlt } from "react-icons/fa";
 import axios from "axios";
 import "../css/Header.css";
 
@@ -32,6 +33,7 @@ const Header = () => {
       <div className="nav">
         {isLoggedIn && (
           <button className="logout-button" onClick={handleLogout}>
+            <FaSignOutAlt size={18} style={{ marginRight: "8px" }} />
             Logout
           </button>
         )}
