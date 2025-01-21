@@ -22,7 +22,7 @@ function ArgumentView() {
   const idName = location.state?.id || "N/A";
 
   const [columns, setColumns] = useState([
-    { Header: "Attribute", accessor: "key" },
+    { Header: "Attribute Name", accessor: "key" },
     { Header: "Value", accessor: "value" },
   ]);
 

@@ -6,6 +6,7 @@ import ArgumentView from "./components/ArgumentView";
 import LoginForm from "./components/LoginForm";
 import RegistrationForm from "./components/RegistrationForm";
 import PrivateRoute from "./context/PrivateRoute";
+import DomainView from "./components/DomainView";
 
 function App() {
   return (
@@ -13,6 +14,14 @@ function App() {
       <Routes>
         <Route path="/" element={<LoginForm />} />
         <Route path="/register" element={<RegistrationForm />} />
+        <Route
+          path="/selectDomain"
+          element={
+            <PrivateRoute>
+              <DomainView />
+            </PrivateRoute>
+          }
+        />
         <Route
           path="/selectExample"
           element={

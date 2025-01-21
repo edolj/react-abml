@@ -18,7 +18,7 @@ const LoginForm = () => {
       .then((res) => {
         localStorage.setItem("token", res.data.token);
         setIsLoggedIn(true); // Update the authentication state
-        navigate("/selectExample"); // Redirect to home page
+        navigate("/selectDomain"); // Redirect to home page
       })
       .catch((error) => {
         console.error("Authentication error: ", error);
