@@ -1,5 +1,4 @@
 import React from "react";
-import Table from "react-bootstrap/Table";
 import "../css/Corners.css";
 
 interface Props {
@@ -14,13 +13,16 @@ function MainTable({ columns, data, onRowClick }: Props) {
   };
 
   return (
-    <Table striped bordered hover className="rounded-table">
+    <table className="rounded-table">
       <thead>
         <tr>
           {columns.map((column: any, columnIndex: number) => (
-            <th key={columnIndex} className={
-              columnIndex >= columns.length - 2 ? "center-text" : ""
-            }>{column.Header}</th>
+            <th
+              key={columnIndex}
+              className={columnIndex >= columns.length - 2 ? "center-text" : ""}
+            >
+              {column.Header}
+            </th>
           ))}
         </tr>
       </thead>
@@ -29,15 +31,20 @@ function MainTable({ columns, data, onRowClick }: Props) {
           <React.Fragment key={rowIndex}>
             <tr onClick={() => handleRowClick(rowIndex)}>
               {columns.map((column: any, columnIndex: number) => (
-                <td key={columnIndex} className={
-                  columnIndex >= columns.length - 2 ? "center-text" : ""
-                }>{row[column.accessor]}</td>
+                <td
+                  key={columnIndex}
+                  className={
+                    columnIndex >= columns.length - 2 ? "center-text" : ""
+                  }
+                >
+                  {row[column.accessor]}
+                </td>
               ))}
             </tr>
           </React.Fragment>
         ))}
       </tbody>
-    </Table>
+    </table>
   );
 }
 

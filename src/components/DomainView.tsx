@@ -20,7 +20,7 @@ const exampleDomains = [
 
 const DomainView = () => {
   const navigate = useNavigate();
-  const [domains, setDomains] = useState(exampleDomains); // Simulate fetching domains
+  const [domains, setDomains] = useState(exampleDomains);
   const [selectedDomain, setSelectedDomain] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -29,10 +29,10 @@ const DomainView = () => {
     setTimeout(() => {
       setDomains([
         ...domains,
-        { id: domains.length + 1, name: `Domena ${domains.length + 1}` },
+        { id: domains.length + 1, name: `Domain ${domains.length + 1}` },
       ]);
       setLoading(false);
-    }, 1000); // Simulating an API call delay
+    }, 1000);
   };
 
   const handleSelectDomain = (domainName: string) => {
@@ -55,7 +55,7 @@ const DomainView = () => {
       <Container className="my-4">
         <Row className="mb-4">
           <Col>
-            <h2 className="text-center">Select or Add Domain</h2>
+            <h2 className="text-center">Select domain</h2>
           </Col>
         </Row>
 
@@ -87,7 +87,7 @@ const DomainView = () => {
                     className="d-flex align-items-center"
                   >
                     <FaPlay style={{ marginRight: "8px" }} />
-                    Start Flow
+                    Start
                   </Button>
                   <Button
                     variant="primary"
@@ -100,7 +100,7 @@ const DomainView = () => {
                     ) : (
                       <>
                         <FaUpload style={{ marginRight: "8px" }} />
-                        Dodaj domeno
+                        Add domain
                       </>
                     )}
                   </Button>

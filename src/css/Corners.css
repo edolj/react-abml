@@ -1,9 +1,26 @@
 .rounded-table {
+  width: 100%;
+  border: 1px solid black;
   border-collapse: separate;
   border-spacing: 0;
-  border: 1px solid black;
   border-radius: 10px;
   overflow: hidden;
+  font-family: Arial, sans-serif;
+  background-color: white;
+}
+
+.rounded-table thead th {
+  background-color: #333;
+  color: white;
+  font-weight: bold;
+  padding: 10px;
+  border-bottom: 2px solid black;
+  border-right: 1px solid #ddd;
+}
+
+.rounded-table tbody td {
+  padding: 10px;
+  border: 1px solid #ddd;
 }
 
 .rounded-table thead th:first-child {
@@ -22,8 +39,19 @@
   border-bottom-right-radius: 10px;
 }
 
-.rounded-table thead th {
-  border-bottom: 2px solid black;  /* Only the first row in thead will have bottom border */
+/* Hover Effects */
+.rounded-table tbody tr:hover td {
+  background-color: #e3f2fd;
+  color: #004085;
+}
+
+.rounded-table tbody td:hover {
+  background-color: #80cbc4;
+  color: white;
+}
+
+.rounded-table tbody tr:nth-child(even) {
+  background-color: #f9f9f9;
 }
 
 .center-text {

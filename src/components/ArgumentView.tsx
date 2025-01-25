@@ -10,7 +10,6 @@ import ProgressBar from "react-bootstrap/ProgressBar";
 
 import Form from "react-bootstrap/Form";
 import PrimaryButton from "./PrimaryButton";
-import Table from "react-bootstrap/Table";
 import Alert from "./Alert";
 import Header from "./Header";
 
@@ -210,9 +209,12 @@ function ArgumentView() {
         </div>
 
         {/* Table Section */}
-        <div style={{ marginTop: "50px" }}>
-          <h3>Details for {idName}</h3>
-          <Table striped bordered hover responsive className="rounded-table">
+        <div
+          className="box-with-border card-view"
+          style={{ marginTop: "50px" }}
+        >
+          <h4 style={{ marginBottom: "20px" }}>Details for {idName}</h4>
+          <table className="rounded-table">
             <thead>
               <tr>
                 {columns.map((column, columnIndex) => (
@@ -229,7 +231,7 @@ function ArgumentView() {
                 </tr>
               ))}
             </tbody>
-          </Table>
+          </table>
         </div>
 
         {/* Loading Indicator */}

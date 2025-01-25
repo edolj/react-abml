@@ -86,20 +86,23 @@ function SelectExampleView() {
         {alertError && (
           <Alert onClose={() => setAlertError(null)}>{alertError}</Alert>
         )}
-        {isLoading ? (
-          <Backdrop
-            sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
-            open
-          >
-            <CircularProgress color="inherit" />
-          </Backdrop>
-        ) : (
-          <MainTable
-            columns={tableColumns}
-            data={tableData}
-            onRowClick={handleRowClick}
-          />
-        )}
+        <div className="box-with-border card-view">
+          <h2 style={{ marginBottom: "20px" }}>Select critical example</h2>
+          {isLoading ? (
+            <Backdrop
+              sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+              open
+            >
+              <CircularProgress color="inherit" />
+            </Backdrop>
+          ) : (
+            <MainTable
+              columns={tableColumns}
+              data={tableData}
+              onRowClick={handleRowClick}
+            />
+          )}
+        </div>
       </div>
     </>
   );
