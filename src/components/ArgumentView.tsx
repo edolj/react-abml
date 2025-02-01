@@ -1,6 +1,7 @@
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
+import { Button } from "react-bootstrap";
 import "react-toastify/dist/ReactToastify.css";
 import "../css/PrimaryButton.css";
 import "../css/Corners.css";
@@ -32,10 +33,6 @@ function ArgumentView() {
     }))
   );
 
-  const readUserArgument = (event: any) => {
-    setUserArgument(event.target.value);
-  };
-
   const showToast = (message: string) => {
     toast.info(message, {
       position: "top-right",
@@ -53,6 +50,10 @@ function ArgumentView() {
   const [hintBestRule, setBestRule] = useState("");
   const [alertError, setAlertError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+
+  const readUserArgument = (event: any) => {
+    setUserArgument(event.target.value);
+  };
 
   const showHintMessage = () => {
     if (hintBestRule === "") {
@@ -150,10 +151,17 @@ function ArgumentView() {
   };
 
   const processRule = (rule: string) => {
-    // Replace only numerical values after relational operators with ''
-    return rule.replace(/([<>=!]+)\s*([\d.]+)/g, (match, operator) => {
-      return `${operator} `;
-    });
+    return rule.replace(/([<>=!]+)\s*([\d.]+)/g, "$1 ");
+  };
+
+  const getAttributes = (): string[] => {
+    return userArgument.match(/[a-zA-Z]+/g) || [];
+  };
+
+  const getProgressBarColor = (score: number) => {
+    if (score <= 60) return "danger"; // Red
+    if (score <= 90) return "warning"; // Yellow
+    return "success"; // Green
   };
 
   return (
@@ -182,29 +190,35 @@ function ArgumentView() {
             {alertError && (
               <Alert onClose={() => setAlertError(null)}>{alertError}</Alert>
             )}
-            <div style={{ textAlign: "center" }}>
-              <PrimaryButton onClick={showCriticalExample}>
-                Send arguments
-              </PrimaryButton>
-              <PrimaryButton
-                onClick={doneWithArgumentation}
-                style={{ marginLeft: "10px" }}
-              >
-                Show next example
-              </PrimaryButton>
-              <PrimaryButton
-                onClick={showHintMessage}
-                style={{ marginLeft: "10px" }}
-              >
-                Show hint
-              </PrimaryButton>
+            <div className="button-container">
+              <div className="spacer"></div>
+
+              <div className="center-buttons">
+                <Button variant="success" onClick={showCriticalExample}>
+                  Send arguments
+                </Button>
+
+                <Button variant="warning" onClick={showHintMessage}>
+                  Show hint
+                </Button>
+              </div>
+
+              <div className="right-button">
+                <Button variant="primary" onClick={doneWithArgumentation}>
+                  Show next example &gt;
+                </Button>
+              </div>
             </div>
           </div>
 
           {/* M-Score Box */}
           <div className="box-with-border card-view">
             M score ({m_score / 100}):
-            <ProgressBar now={m_score} label={`${m_score}`} />
+            <ProgressBar
+              now={m_score}
+              label={`${m_score}`}
+              variant={getProgressBarColor(m_score)}
+            />
           </div>
         </div>
 
@@ -225,8 +239,18 @@ function ArgumentView() {
             <tbody>
               {formattedData.map((row: any, rowIndex: number) => (
                 <tr key={rowIndex}>
-                  {columns.map((column, columnIndex) => (
-                    <td key={columnIndex}>{row[column.accessor]}</td>
+                  {columns.map((column, colIndex) => (
+                    <td
+                      key={colIndex}
+                      style={{
+                        backgroundColor:
+                          colIndex > 0 && getAttributes().includes(row.key)
+                            ? "lightblue"
+                            : "transparent",
+                      }}
+                    >
+                      {row[column.accessor] || "-"}
+                    </td>
                   ))}
                 </tr>
               ))}
