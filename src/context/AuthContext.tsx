@@ -1,4 +1,11 @@
-import React, { createContext, useState, useContext, ReactNode } from "react";
+import React, {
+  createContext,
+  useState,
+  useContext,
+  ReactNode,
+  useEffect,
+} from "react";
+import axios from "axios";
 
 interface AuthContextType {
   isLoggedIn: boolean;
@@ -10,9 +17,25 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(
-    !!localStorage.getItem("token")
-  );
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+
+  useEffect(() => {
+    // Check if the session is still valid by calling an endpoint in the backend
+    axios
+      .get("http://localhost:8000/api/check_session/", {
+        withCredentials: true,
+      })
+      .then((response) => {
+        if (response.data.is_authenticated) {
+          setIsLoggedIn(true);
+        } else {
+          setIsLoggedIn(false);
+        }
+      })
+      .catch(() => {
+        setIsLoggedIn(false);
+      });
+  }, []);
 
   return (
     <AuthContext.Provider value={{ isLoggedIn, setIsLoggedIn }}>

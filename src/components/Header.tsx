@@ -8,19 +8,26 @@ const Header = () => {
   const navigate = useNavigate();
   const { isLoggedIn, setIsLoggedIn } = useAuth();
 
+  const csrfToken = document.cookie
+    .split(";")
+    .find((cookie) => cookie.trim().startsWith("csrftoken="))
+    ?.split("=")[1];
+
   const handleLogout = () => {
     axios
       .post(
         "http://localhost:8000/api/logout/",
         {},
         {
-          headers: { Authorization: `Token ${localStorage.getItem("token")}` },
+          headers: {
+            "X-CSRFToken": csrfToken,
+          },
+          withCredentials: true,
         }
       )
       .then(() => {
-        localStorage.removeItem("token");
-        setIsLoggedIn(false); // Update the authentication state
-        navigate("/"); // Redirect to login page
+        setIsLoggedIn(false);
+        navigate("/");
       })
       .catch((error) => {
         console.error("Logout error:", error);

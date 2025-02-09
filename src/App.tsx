@@ -7,10 +7,12 @@ import LoginForm from "./components/LoginForm";
 import RegistrationForm from "./components/RegistrationForm";
 import PrivateRoute from "./context/PrivateRoute";
 import DomainView from "./components/DomainView";
+import Header from "./components/Header";
 
 function App() {
   return (
     <>
+      <Header />
       <Routes>
         <Route path="/" element={<LoginForm />} />
         <Route path="/register" element={<RegistrationForm />} />

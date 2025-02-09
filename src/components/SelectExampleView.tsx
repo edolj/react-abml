@@ -5,7 +5,6 @@ import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import Alert from "./Alert";
 import axios from "axios";
-import Header from "./Header";
 
 interface CriticalInstance {
   critical_index: string;
@@ -55,12 +54,16 @@ function SelectExampleView() {
 
   useEffect(() => {
     setIsLoading(true);
-    const token = localStorage.getItem("token");
+    const csrfToken = document.cookie
+      .split(";")
+      .find((cookie) => cookie.trim().startsWith("csrftoken="))
+      ?.split("=")[1];
     axios
       .get("http://localhost:8000/api/critical-instances/", {
         headers: {
-          Authorization: `Token ${token}`,
+          "X-CSRFToken": csrfToken,
         },
+        withCredentials: true,
       })
       .then((response) => {
         setCriticalInstances(response.data.critical_instances[0]);
@@ -79,9 +82,6 @@ function SelectExampleView() {
 
   return (
     <>
-      <div>
-        <Header />
-      </div>
       <div className="container">
         {alertError && (
           <Alert onClose={() => setAlertError(null)}>{alertError}</Alert>

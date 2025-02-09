@@ -2,17 +2,16 @@ import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import { Button } from "react-bootstrap";
+import { FaArrowRight, FaLightbulb } from "react-icons/fa";
+import axios from "axios";
 import "react-toastify/dist/ReactToastify.css";
 import "../css/PrimaryButton.css";
 import "../css/Corners.css";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import ProgressBar from "react-bootstrap/ProgressBar";
-
 import Form from "react-bootstrap/Form";
-import PrimaryButton from "./PrimaryButton";
 import Alert from "./Alert";
-import Header from "./Header";
 
 function ArgumentView() {
   const navigate = useNavigate();
@@ -77,68 +76,67 @@ function ArgumentView() {
       index: criticalIndex,
       userArgument: userArgument,
     };
-    const token = localStorage.getItem("token");
 
-    fetch("http://localhost:8000/api/counter-examples/", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Token ${token}`,
-      },
-      body: JSON.stringify(requestData),
-    })
+    const csrfToken = document.cookie
+      .split(";")
+      .find((cookie) => cookie.trim().startsWith("csrftoken="))
+      ?.split("=")[1];
+
+    axios
+      .post("http://localhost:8000/api/counter-examples/", requestData, {
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": csrfToken,
+        },
+        withCredentials: true,
+      })
       .then((response) => {
-        if (response.ok) {
-          response.json().then((data) => {
-            setAlertError(null);
+        // response.data already contains parsed JSON
+        const data = response.data;
+        setAlertError(null);
 
-            // Add new columns for each counter value
-            const newColumns = data.counterExamples.map(
-              (_: any, idx: number) => ({
-                Header: `Counter Value ${idx + 1}`,
-                accessor: `counterValue${idx + 1}`,
-              })
-            );
+        // Add new columns for each counter value
+        const newColumns = data.counterExamples.map((_: any, idx: number) => ({
+          Header: `Counter Value ${idx + 1}`,
+          accessor: `counterValue${idx + 1}`,
+        }));
 
-            setColumns((prevColumns) => [
-              ...prevColumns,
-              ...newColumns.filter(
-                (newColumn: any) =>
-                  !prevColumns.some(
-                    (col) => col.accessor === newColumn.accessor
-                  )
-              ),
-            ]);
+        setColumns((prevColumns) => [
+          ...prevColumns,
+          ...newColumns.filter(
+            (newColumn: any) =>
+              !prevColumns.some((col) => col.accessor === newColumn.accessor)
+          ),
+        ]);
 
-            // Merge counter values into formatted data
-            const newFormattedData = formattedData.map(
-              (item: any, index: number) => {
-                const newItem = { ...item };
-                data.counterExamples.forEach(
-                  (counterExample: any, counterIndex: number) => {
-                    newItem[`counterValue${counterIndex + 1}`] =
-                      counterExample[index] || "";
-                  }
-                );
-                return newItem;
+        // Merge counter values into formatted data
+        const newFormattedData = formattedData.map(
+          (item: any, index: number) => {
+            const newItem = { ...item };
+            data.counterExamples.forEach(
+              (counterExample: any, counterIndex: number) => {
+                newItem[`counterValue${counterIndex + 1}`] =
+                  counterExample[index] || "";
               }
             );
+            return newItem;
+          }
+        );
 
-            setFormattedData(newFormattedData);
-            setBestRule(data.bestRule);
-            setMScore(Math.floor(data.m_score * 100));
-          });
-        } else {
-          response.json().then((error) => {
-            setAlertError(error.error);
-          });
-        }
+        setFormattedData(newFormattedData);
+        setBestRule(data.bestRule);
+        setMScore(Math.floor(data.m_score * 100));
+
         setIsLoading(false);
       })
       .catch((error) => {
-        console.log("Argument view POST method error:", error);
+        console.error("Argument view POST method error:", error);
+
+        setAlertError(
+          error.response?.data?.error ||
+            "An unexpected error occurred. Please try again."
+        );
         setIsLoading(false);
-        setAlertError("An unexpected error occurred. Please try again.");
       });
   };
 
@@ -166,9 +164,6 @@ function ArgumentView() {
 
   return (
     <>
-      <div>
-        <Header />
-      </div>
       <ToastContainer />
       <div className="container">
         <div
@@ -198,14 +193,24 @@ function ArgumentView() {
                   Send arguments
                 </Button>
 
-                <Button variant="warning" onClick={showHintMessage}>
-                  Show hint
+                <Button onClick={showHintMessage}>
+                  <FaLightbulb
+                    style={{
+                      marginRight: "8px",
+                      marginBottom: "2px",
+                      color: "white",
+                    }}
+                  />
+                  Hint
                 </Button>
               </div>
 
               <div className="right-button">
                 <Button variant="primary" onClick={doneWithArgumentation}>
-                  Show next example &gt;
+                  Next example
+                  <FaArrowRight
+                    style={{ marginLeft: "8px", marginBottom: "2px" }}
+                  />
                 </Button>
               </div>
             </div>

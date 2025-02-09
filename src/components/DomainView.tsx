@@ -10,7 +10,6 @@ import {
 } from "react-bootstrap";
 import { FaUpload, FaPlay } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import Header from "./Header";
 
 const exampleDomains = [
   { id: 1, name: "Bonitete" },
@@ -49,9 +48,6 @@ const DomainView = () => {
 
   return (
     <>
-      <div>
-        <Header />
-      </div>
       <Container className="my-4">
         <Row className="mb-4">
           <Col>

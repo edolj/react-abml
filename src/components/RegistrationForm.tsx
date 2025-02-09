@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import "../css/RegistrationForm.css";
-import NavBar from "./NavBar";
 
 const RegistrationForm = () => {
   const [username, setUsername] = useState("");
@@ -19,22 +18,25 @@ const RegistrationForm = () => {
     }
 
     axios
-      .post("http://localhost:8000/api/register/", { username, password })
+      .post("http://localhost:8000/api/register/", {
+        username,
+        password,
+        password_confirm: passwordConfirm,
+      })
       .then((response) => {
         console.log("Registration successful:", response.data);
         navigate("/");
       })
       .catch((error) => {
-        console.error(
-          "Registration error:",
-          error.response ? error.response.data : error.message
-        );
+        const errorMessage = error.response
+          ? error.response.data.non_field_errors || error.response.data
+          : error.message;
+        alert(errorMessage);
       });
   };
 
   return (
     <div className="registration-container">
-      <NavBar />
       <form onSubmit={handleSubmit} className="registration-form">
         <h2>Register</h2>
         <input
