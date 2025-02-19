@@ -36,15 +36,22 @@ const Header = () => {
 
   return (
     <div className="header">
-      <div className="logo">ABML</div>
-      <div className="nav">
+      <div className="left-nav">
+        <div className="logo">ABML</div>
         {isLoggedIn && (
-          <button className="logout-button" onClick={handleLogout}>
-            <FaSignOutAlt size={18} style={{ marginRight: "8px" }} />
-            Logout
-          </button>
+          <div className="menu">
+            <button onClick={() => navigate("/selectDomain")}>DOMAIN</button>
+            <button onClick={() => navigate("/users")}>USERS</button>
+            <button onClick={() => navigate("/selectExample")}>APP</button>
+          </div>
         )}
       </div>
+      {isLoggedIn && (
+        <button className="logout-button" onClick={handleLogout}>
+          <FaSignOutAlt size={18} style={{ marginRight: "8px" }} />
+          Logout
+        </button>
+      )}
     </div>
   );
 };

@@ -8,6 +8,7 @@ import RegistrationForm from "./components/RegistrationForm";
 import PrivateRoute from "./context/PrivateRoute";
 import DomainView from "./components/DomainView";
 import Header from "./components/Header";
+import Users from "./components/Users";
 
 function App() {
   return (
@@ -37,6 +38,14 @@ function App() {
           element={
             <PrivateRoute>
               <ArgumentView />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/users"
+          element={
+            <PrivateRoute>
+              <Users />
             </PrivateRoute>
           }
         />

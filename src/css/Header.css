@@ -1,58 +1,83 @@
 .header {
-    background: linear-gradient(90deg, #1a1a1a, #333333);;
-    padding: 15px 30px;
-    color: #fff;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background: black;
+  padding: 15px 30px;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.header .logo {
-    font-size: 28px;
-    font-weight: 700;
-    font-family: "Poppins", sans-serif;
-    text-transform: uppercase;
+.left-nav {
+  display: flex;
+  align-items: center;
+  gap: 30px;
 }
 
-.header .nav {
-    display: flex;
-    align-items: center;
+.logo {
+  font-size: 28px;
+  font-weight: 700;
+  font-family: "Poppins", sans-serif;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+
+.menu {
+  display: flex;
+  gap: 20px;
+}
+
+.menu button {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.menu button:hover {
+  color: #ffcc00;
 }
 
 .logout-button {
-    background: #ff4d4d;
-    color: #fff;
-    border: none;
-    border-radius: 20px;
-    padding: 10px 20px;
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: 500;
-    display: flex;
-    align-items: center;
-    transition: all 0.3s ease;
+  background: #ff4d4d;
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  transition: all 0.3s ease;
 }
 
 .logout-button:hover {
-    background: #cc0000;
-    box-shadow: 0 4px 12px rgba(255, 77, 77, 0.5);
+  background: #cc0000;
+  box-shadow: 0 4px 12px rgba(255, 77, 77, 0.5);
+  transform: scale(1.05);
 }
 
 @media (max-width: 768px) {
-    .header {
-        padding: 10px 20px;
-        flex-direction: column;
-        align-items: center;
-    }
+  .header {
+    flex-direction: column;
+    height: auto;
+    padding: 10px 20px;
+  }
 
-    .header .logo {
-        font-size: 24px;
-        margin-bottom: 10px;
-    }
+  .left-nav {
+    flex-direction: column;
+    gap: 10px;
+  }
 
-    .header .nav {
-        flex-direction: column;
-        gap: 10px;
-    }
+  .menu {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .logout-button {
+    margin-top: 10px;
+  }
 }
