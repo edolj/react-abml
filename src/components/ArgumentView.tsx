@@ -46,6 +46,7 @@ function ArgumentView() {
 
   const [userArgument, setUserArgument] = useState("");
   const [m_score, setMScore] = useState(0.0);
+  const [hint_m_score, setHintMScore] = useState(0.0);
   const [hintBestRule, setBestRule] = useState("");
   const [alertError, setAlertError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -57,6 +58,10 @@ function ArgumentView() {
   const showHintMessage = () => {
     if (hintBestRule === "") {
       showToast("First input your arguments.");
+      return;
+    }
+    if (hintBestRule === "No hints") {
+      showToast("No hints.");
       return;
     }
     showToast(processRule(hintBestRule));
@@ -125,7 +130,11 @@ function ArgumentView() {
 
         setFormattedData(newFormattedData);
         setBestRule(data.bestRule);
-        setMScore(Math.floor(data.m_score * 100));
+        if (data.arg_m_score > data.best_m_score) {
+          setBestRule("No hints");
+        }
+        setMScore(Math.floor(data.arg_m_score * 100));
+        setHintMScore(Math.floor(data.best_m_score * 100));
 
         setIsLoading(false);
       })
@@ -145,7 +154,32 @@ function ArgumentView() {
       setAlertError("The argument input field cannot be empty!");
       return;
     }
-    navigate(-1);
+
+    const csrfToken = document.cookie
+      .split(";")
+      .find((cookie) => cookie.trim().startsWith("csrftoken="))
+      ?.split("=")[1];
+
+    axios
+      .put(
+        "http://localhost:8000/api/update-iteration/",
+        {},
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": csrfToken,
+          },
+          withCredentials: true,
+        }
+      )
+      .then((response) => {
+        console.log("Iteration updated successfully.", response);
+        navigate(-1);
+      })
+      .catch((error) => {
+        console.error("Error updating iteration:", error);
+        setAlertError("Failed to update iteration number. Please try again.");
+      });
   };
 
   const processRule = (rule: string) => {
@@ -219,11 +253,10 @@ function ArgumentView() {
           {/* M-Score Box */}
           <div className="box-with-border card-view">
             M score ({m_score / 100}):
-            <ProgressBar
-              now={m_score}
-              label={`${m_score}`}
-              variant={getProgressBarColor(m_score)}
-            />
+            <ProgressBar>
+              <ProgressBar now={m_score} variant="info" />
+              <ProgressBar now={hint_m_score - m_score} variant="success" />
+            </ProgressBar>
           </div>
         </div>
 

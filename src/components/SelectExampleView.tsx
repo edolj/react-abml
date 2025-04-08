@@ -28,6 +28,7 @@ function SelectExampleView() {
   const [detailData, setDetailData] = useState([]);
   const [isLoading, setIsLoading] = useState(true); // Add loading state
   const [alertError, setAlertError] = useState<string | null>(null);
+  const [iterationNumber, setIterationNumber] = useState<number | null>(null);
   const tableData = formatCriticalInstances(criticalInstances);
 
   const handleRowClick = (index: number) => {
@@ -58,6 +59,21 @@ function SelectExampleView() {
       .split(";")
       .find((cookie) => cookie.trim().startsWith("csrftoken="))
       ?.split("=")[1];
+
+    axios
+      .get("http://localhost:8000/api/get-iteration/", {
+        headers: {
+          "X-CSRFToken": csrfToken,
+        },
+        withCredentials: true,
+      })
+      .then((response) => {
+        setIterationNumber(response.data.iterationNumber);
+      })
+      .catch((error) => {
+        console.error("Error fetching iteration number:", error);
+      });
+
     axios
       .get("http://localhost:8000/api/critical-instances/", {
         headers: {
@@ -102,6 +118,7 @@ function SelectExampleView() {
               onRowClick={handleRowClick}
             />
           )}
+          <div style={{ marginTop: "20px" }}>Iteration {iterationNumber}</div>
         </div>
       </div>
     </>
