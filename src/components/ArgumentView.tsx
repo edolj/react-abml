@@ -32,39 +32,53 @@ function ArgumentView() {
     }))
   );
 
-  const showToast = (message: string) => {
-    toast.info(message, {
-      position: "top-right",
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-    });
+  const showToast = (score: string, rule: string) => {
+    toast.info(
+      <>
+        {score && <div>{score}</div>}
+        <div>{rule}</div>
+      </>,
+      {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      }
+    );
   };
 
   const [userArgument, setUserArgument] = useState("");
   const [m_score, setMScore] = useState(0.0);
   const [hint_m_score, setHintMScore] = useState(0.0);
   const [hintBestRule, setBestRule] = useState("");
+  const [highlightedAttr, setHighlightedAttributes] = useState<string[]>([]);
+  const [hasCounterExamples, setHasCounterExamples] = useState(false);
   const [alertError, setAlertError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const readUserArgument = (event: any) => {
-    setUserArgument(event.target.value);
+    const val = event.target.value;
+    setUserArgument(val);
+    const extracted = extractAttributes(val);
+    setHighlightedAttributes(extracted);
   };
 
   const showHintMessage = () => {
     if (hintBestRule === "") {
-      showToast("First input your arguments.");
+      showToast("", "First input your arguments.");
       return;
     }
     if (hintBestRule === "No hints") {
-      showToast("No hints.");
+      showToast("", "No hints.");
       return;
     }
-    showToast(processRule(hintBestRule));
+
+    const score = "m: " + hint_m_score / 100;
+    const rule = processRule(hintBestRule);
+    showToast(score, rule);
   };
 
   const showCriticalExample = () => {
@@ -100,11 +114,21 @@ function ArgumentView() {
         const data = response.data;
         setAlertError(null);
 
+        // Limit to 2 counter examples to show in table
+        const limitedCounterExamples = data.counterExamples.slice(0, 2);
+        if (limitedCounterExamples.length > 0) {
+          setHasCounterExamples(true);
+        } else {
+          setHasCounterExamples(false);
+        }
+
         // Add new columns for each counter value
-        const newColumns = data.counterExamples.map((_: any, idx: number) => ({
-          Header: `Counter Value ${idx + 1}`,
-          accessor: `counterValue${idx + 1}`,
-        }));
+        const newColumns = limitedCounterExamples.map(
+          (_: any, idx: number) => ({
+            Header: `Counter Value ${idx + 1}`,
+            accessor: `counterValue${idx + 1}`,
+          })
+        );
 
         setColumns((prevColumns) => [
           ...prevColumns,
@@ -118,7 +142,7 @@ function ArgumentView() {
         const newFormattedData = formattedData.map(
           (item: any, index: number) => {
             const newItem = { ...item };
-            data.counterExamples.forEach(
+            limitedCounterExamples.forEach(
               (counterExample: any, counterIndex: number) => {
                 newItem[`counterValue${counterIndex + 1}`] =
                   counterExample[index] || "";
@@ -186,14 +210,11 @@ function ArgumentView() {
     return rule.replace(/([<>=!]+)\s*([\d.]+)/g, "$1 ");
   };
 
-  const getAttributes = (): string[] => {
-    return userArgument.match(/[a-zA-Z]+/g) || [];
-  };
-
-  const getProgressBarColor = (score: number) => {
-    if (score <= 60) return "danger"; // Red
-    if (score <= 90) return "warning"; // Yellow
-    return "success"; // Green
+  const extractAttributes = (input: string) => {
+    const regex = /([\w.]+)\s*(?:<=|>=|=|<|>)/g;
+    const matches = input.matchAll(regex);
+    const attributes = Array.from(matches, (m) => m[1]);
+    return attributes;
   };
 
   return (
@@ -227,7 +248,7 @@ function ArgumentView() {
                   Send arguments
                 </Button>
 
-                <Button onClick={showHintMessage}>
+                <Button variant="primary" onClick={showHintMessage}>
                   <FaLightbulb
                     style={{
                       marginRight: "8px",
@@ -252,10 +273,20 @@ function ArgumentView() {
 
           {/* M-Score Box */}
           <div className="box-with-border card-view">
-            M score ({m_score / 100}):
+            M-score for chosen arguments: {m_score / 100}
             <ProgressBar>
-              <ProgressBar now={m_score} variant="info" />
-              <ProgressBar now={hint_m_score - m_score} variant="success" />
+              <ProgressBar
+                striped
+                now={m_score}
+                label={m_score}
+                variant="primary"
+              />
+              <ProgressBar
+                striped
+                now={hint_m_score - m_score}
+                label={hint_m_score - m_score}
+                variant="success"
+              />
             </ProgressBar>
           </div>
         </div>
@@ -275,23 +306,22 @@ function ArgumentView() {
               </tr>
             </thead>
             <tbody>
-              {formattedData.map((row: any, rowIndex: number) => (
-                <tr key={rowIndex}>
-                  {columns.map((column, colIndex) => (
-                    <td
-                      key={colIndex}
-                      style={{
-                        backgroundColor:
-                          colIndex > 0 && getAttributes().includes(row.key)
-                            ? "lightblue"
-                            : "transparent",
-                      }}
-                    >
-                      {row[column.accessor] || "-"}
-                    </td>
-                  ))}
-                </tr>
-              ))}
+              {formattedData.map((row: any, rowIndex: number) => {
+                const isHighlighted =
+                  hasCounterExamples && highlightedAttr.includes(row.key);
+                return (
+                  <tr
+                    key={rowIndex}
+                    style={{
+                      backgroundColor: isHighlighted ? "#fff3cd" : "inherit",
+                    }}
+                  >
+                    {columns.map((column, colIndex) => (
+                      <td key={colIndex}>{row[column.accessor] || "-"}</td>
+                    ))}
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
