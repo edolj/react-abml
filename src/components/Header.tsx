@@ -42,7 +42,6 @@ const Header = () => {
           <div className="menu">
             <button onClick={() => navigate("/selectDomain")}>DOMAIN</button>
             <button onClick={() => navigate("/users")}>USERS</button>
-            <button onClick={() => navigate("/selectExample")}>APP</button>
           </div>
         )}
       </div>
