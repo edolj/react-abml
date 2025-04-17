@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import MainTable from "./MainTable";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -15,6 +15,8 @@ interface CriticalInstance {
 
 function SelectExampleView() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const selectedDomain = location.state?.selectedDomain;
 
   const tableColumns = [
     { Header: "Name", accessor: "column1" },
@@ -54,6 +56,8 @@ function SelectExampleView() {
   }
 
   useEffect(() => {
+    if (!selectedDomain) return;
+
     setIsLoading(true);
     const csrfToken = document.cookie
       .split(";")
@@ -75,12 +79,16 @@ function SelectExampleView() {
       });
 
     axios
-      .get("http://localhost:8000/api/critical-instances/", {
-        headers: {
-          "X-CSRFToken": csrfToken,
-        },
-        withCredentials: true,
-      })
+      .post(
+        "http://localhost:8000/api/critical-instances/",
+        { domain: selectedDomain },
+        {
+          headers: {
+            "X-CSRFToken": csrfToken,
+          },
+          withCredentials: true,
+        }
+      )
       .then((response) => {
         setCriticalInstances(response.data.critical_instances[0]);
         setDetailData(response.data.critical_instances[1]);
