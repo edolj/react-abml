@@ -12,6 +12,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import ProgressBar from "react-bootstrap/ProgressBar";
 import Form from "react-bootstrap/Form";
 import Alert from "./Alert";
+import ExpertAttributesModal from "./ExpertAttributesModal";
 
 function ArgumentView() {
   const navigate = useNavigate();
@@ -230,6 +231,7 @@ function ArgumentView() {
             marginBottom: "10px",
           }}
         >
+          <h4 style={{ marginBottom: "20px" }}>Details for {idName}</h4>
           {/* Argument Input Box */}
           <div className="box-with-border card-view">
             <div style={{ marginBottom: "20px" }}>
@@ -258,6 +260,8 @@ function ArgumentView() {
                   />
                   Hint
                 </Button>
+
+                <ExpertAttributesModal></ExpertAttributesModal>
               </div>
 
               <div className="right-button">
@@ -273,16 +277,12 @@ function ArgumentView() {
 
           {/* M-Score Box */}
           <div className="box-with-border card-view">
-            M-score for chosen arguments: {m_score / 100}
+            <div style={{ marginBottom: "20px" }}>
+              M-score for chosen arguments: {m_score / 100}
+            </div>
             <ProgressBar>
+              <ProgressBar now={m_score} label={m_score} variant="primary" />
               <ProgressBar
-                striped
-                now={m_score}
-                label={m_score}
-                variant="primary"
-              />
-              <ProgressBar
-                striped
                 now={hint_m_score - m_score}
                 label={hint_m_score - m_score}
                 variant="success"
@@ -292,11 +292,7 @@ function ArgumentView() {
         </div>
 
         {/* Table Section */}
-        <div
-          className="box-with-border card-view"
-          style={{ marginTop: "50px" }}
-        >
-          <h4 style={{ marginBottom: "20px" }}>Details for {idName}</h4>
+        <div style={{ marginTop: "50px" }}>
           <table className="rounded-table">
             <thead>
               <tr>
