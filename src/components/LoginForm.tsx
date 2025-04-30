@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import axios from "axios";
+import Alert from "./Alert";
 import "../css/LoginForm.css";
 
 const getCSRFToken = () => {
@@ -17,6 +18,8 @@ const LoginForm = () => {
   const [password, setPassword] = useState("");
   const { setIsLoggedIn } = useAuth();
   const navigate = useNavigate();
+
+  const [alertError, setAlertError] = useState<string | null>(null);
 
   const handleSubmit = (event: any) => {
     event.preventDefault();
@@ -37,11 +40,12 @@ const LoginForm = () => {
         console.log("User data:", response.data.user);
         console.log("Session cookies:", document.cookie);
         setIsLoggedIn(true);
+        setAlertError(null);
         navigate("/selectDomain");
       })
       .catch((error) => {
         console.error("Login error:", error);
-        alert("Invalid credentials");
+        setAlertError("Invalid credentials");
       });
   };
 
@@ -52,17 +56,24 @@ const LoginForm = () => {
         <input
           type="text"
           value={username}
-          onChange={(e) => setUsername(e.target.value)}
+          onChange={(e) => {
+            setUsername(e.target.value);
+            setAlertError(null);
+          }}
           placeholder="Username"
           className="login-input"
         />
         <input
           type="password"
           value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          onChange={(e) => {
+            setPassword(e.target.value);
+            setAlertError(null);
+          }}
           placeholder="Password"
           className="login-input"
         />
+        {alertError && <div className="error-text">{alertError}</div>}
         <button type="submit" className="login-button">
           Login
         </button>

@@ -110,24 +110,35 @@ function SelectExampleView() {
         {alertError && (
           <Alert onClose={() => setAlertError(null)}>{alertError}</Alert>
         )}
-        <div className="box-with-border card-view">
-          <h2 style={{ marginBottom: "20px" }}>Select critical example</h2>
-          {isLoading ? (
-            <Backdrop
-              sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
-              open
-            >
-              <CircularProgress color="inherit" />
-            </Backdrop>
-          ) : (
-            <MainTable
-              columns={tableColumns}
-              data={tableData}
-              onRowClick={handleRowClick}
-            />
-          )}
-          <div style={{ marginTop: "20px" }}>Iteration {iterationNumber}</div>
+        <div
+          className="box-with-border card-view"
+          style={{ marginBottom: "20px" }}
+        >
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <h2 style={{ margin: 0 }}>Select critical example</h2>
+            <div>Iteration {iterationNumber}</div>
+          </div>
         </div>
+        {isLoading ? (
+          <Backdrop
+            sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+            open
+          >
+            <CircularProgress color="inherit" />
+          </Backdrop>
+        ) : (
+          <MainTable
+            columns={tableColumns}
+            data={tableData}
+            onRowClick={handleRowClick}
+          />
+        )}
       </div>
     </>
   );

@@ -85,7 +85,7 @@ const DomainView = () => {
 
         <Row>
           <Col md={6} className="offset-md-3">
-            <Card>
+            <Card className="box-with-border card-view">
               <Card.Body>
                 <ListGroup variant="flush">
                   {domains.map((domain: any) => (

@@ -86,9 +86,6 @@ function ExpertAttributesModal() {
           {derivedAttributes.map((attr) => (
             <div key={attr.key} className="mb-4">
               <h5>{attr.name}</h5>
-              <p className="text-muted">
-                <em>{attr.key}</em>
-              </p>
               <p>{attr.description}</p>
               <hr />
             </div>

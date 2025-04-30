@@ -3,16 +3,22 @@ import { useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import { Button } from "react-bootstrap";
 import { FaArrowRight, FaLightbulb } from "react-icons/fa";
+import {
+  attributesDisplayNames,
+  tooltipDescriptions,
+  eurAttr,
+} from "./BoniteteAttributes";
 import axios from "axios";
 import "react-toastify/dist/ReactToastify.css";
 import "../css/PrimaryButton.css";
 import "../css/Corners.css";
+import Alert from "./Alert";
+import ExpertAttributesModal from "./ExpertAttributesModal";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import ProgressBar from "react-bootstrap/ProgressBar";
 import Form from "react-bootstrap/Form";
-import Alert from "./Alert";
-import ExpertAttributesModal from "./ExpertAttributesModal";
+import Tooltip from "@mui/material/Tooltip";
 
 function ArgumentView() {
   const navigate = useNavigate();
@@ -22,7 +28,7 @@ function ArgumentView() {
   const idName = location.state?.id || "N/A";
 
   const [columns, setColumns] = useState([
-    { Header: "Attribute Name", accessor: "key" },
+    { Header: "Attribute", accessor: "key" },
     { Header: "Value", accessor: "value" },
   ]);
 
@@ -265,8 +271,8 @@ function ArgumentView() {
               </div>
 
               <div className="right-button">
-                <Button variant="primary" onClick={doneWithArgumentation}>
-                  Next example
+                <Button variant="link" onClick={doneWithArgumentation}>
+                  Next Example
                   <FaArrowRight
                     style={{ marginLeft: "8px", marginBottom: "2px" }}
                   />
@@ -312,9 +318,30 @@ function ArgumentView() {
                       backgroundColor: isHighlighted ? "#fff3cd" : "inherit",
                     }}
                   >
-                    {columns.map((column, colIndex) => (
-                      <td key={colIndex}>{row[column.accessor] || "-"}</td>
-                    ))}
+                    {columns.map((column, colIndex) => {
+                      const cellValue =
+                        column.accessor === "key"
+                          ? attributesDisplayNames[row.key] || row.key
+                          : row[column.accessor] || "-";
+
+                      const formattedValue =
+                        column.accessor !== "key" &&
+                        eurAttr.includes(row.key) &&
+                        cellValue !== "-"
+                          ? `${Number(cellValue).toLocaleString("en-US", {
+                              maximumFractionDigits: 1,
+                            })} €`
+                          : cellValue;
+
+                      const tooltipText = tooltipDescriptions[row.key] || "";
+                      return (
+                        <td key={colIndex}>
+                          <Tooltip title={tooltipText} arrow>
+                            {formattedValue}
+                          </Tooltip>
+                        </td>
+                      );
+                    })}
                   </tr>
                 );
               })}

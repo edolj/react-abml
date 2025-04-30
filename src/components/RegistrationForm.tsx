@@ -1,6 +1,7 @@
-import React, { useState } from "react";
-import axios from "axios";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import Alert from "./Alert";
 import "../css/RegistrationForm.css";
 
 const RegistrationForm = () => {
@@ -9,11 +10,13 @@ const RegistrationForm = () => {
   const [passwordConfirm, setPasswordConfirm] = useState("");
   const navigate = useNavigate();
 
+  const [alertError, setAlertError] = useState<string | null>(null);
+
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     if (password !== passwordConfirm) {
-      alert("Passwords do not match.");
+      setAlertError("Passwords do not match.");
       return;
     }
 
@@ -43,7 +46,10 @@ const RegistrationForm = () => {
           type="text"
           placeholder="Username"
           value={username}
-          onChange={(e) => setUsername(e.target.value)}
+          onChange={(e) => {
+            setUsername(e.target.value);
+            setAlertError(null);
+          }}
           className="registration-input"
           required
         />
@@ -51,7 +57,10 @@ const RegistrationForm = () => {
           type="password"
           placeholder="Password"
           value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          onChange={(e) => {
+            setPassword(e.target.value);
+            setAlertError(null);
+          }}
           className="registration-input"
           required
         />
@@ -59,10 +68,14 @@ const RegistrationForm = () => {
           type="password"
           placeholder="Confirm Password"
           value={passwordConfirm}
-          onChange={(e) => setPasswordConfirm(e.target.value)}
+          onChange={(e) => {
+            setPasswordConfirm(e.target.value);
+            setAlertError(null);
+          }}
           className="registration-input"
           required
         />
+        {alertError && <div className="error-text">{alertError}</div>}
         <button type="submit" className="registration-button">
           Register
         </button>

@@ -41,7 +41,6 @@ const Header = () => {
         {isLoggedIn && (
           <div className="menu">
             <button onClick={() => navigate("/selectDomain")}>DOMAIN</button>
-            <button onClick={() => navigate("/users")}>USERS</button>
           </div>
         )}
       </div>
