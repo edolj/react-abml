@@ -32,7 +32,9 @@ const DomainView = () => {
     setSelectedDomain(domainName);
   };
 
-  const handleStartFlow = () => {
+  const handleStartFlow = (mode: string) => {
+    localStorage.setItem("mode", mode);
+
     if (selectedDomain) {
       navigate("/selectExample", {
         state: { selectedDomain },
@@ -117,15 +119,27 @@ const DomainView = () => {
                 </ListGroup>
 
                 <div className="d-flex justify-content-between mt-5">
-                  <Button
-                    variant="success"
-                    onClick={handleStartFlow}
-                    disabled={!selectedDomain}
-                    className="d-flex align-items-center"
-                  >
-                    <FaPlay style={{ marginRight: "8px" }} />
-                    Start
-                  </Button>
+                  <div className="d-flex gap-3">
+                    <Button
+                      variant="success"
+                      onClick={() => handleStartFlow("continue")}
+                      disabled={!selectedDomain}
+                      className="d-flex align-items-center"
+                    >
+                      <FaPlay className="me-2" />
+                      Continue
+                    </Button>
+
+                    <Button
+                      variant="success"
+                      onClick={() => handleStartFlow("new")}
+                      disabled={!selectedDomain}
+                      className="d-flex align-items-center"
+                    >
+                      <FaPlay className="me-2" />
+                      New start
+                    </Button>
+                  </div>
 
                   <Button
                     variant="primary"
@@ -137,7 +151,7 @@ const DomainView = () => {
                       <Spinner animation="border" size="sm" />
                     ) : (
                       <>
-                        <FaUpload style={{ marginRight: "8px" }} />
+                        <FaUpload className="me-2" />
                         Add Domain
                       </>
                     )}

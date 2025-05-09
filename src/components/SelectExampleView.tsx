@@ -57,6 +57,7 @@ function SelectExampleView() {
 
   useEffect(() => {
     if (!selectedDomain) return;
+    const isNewSession = localStorage.getItem("mode") === "new";
 
     setIsLoading(true);
     const csrfToken = document.cookie
@@ -64,24 +65,26 @@ function SelectExampleView() {
       .find((cookie) => cookie.trim().startsWith("csrftoken="))
       ?.split("=")[1];
 
-    axios
-      .get("http://localhost:8000/api/get-iteration/", {
-        headers: {
-          "X-CSRFToken": csrfToken,
-        },
-        withCredentials: true,
-      })
-      .then((response) => {
-        setIterationNumber(response.data.iterationNumber);
-      })
-      .catch((error) => {
-        console.error("Error fetching iteration number:", error);
-      });
+    if (isNewSession) {
+      setIterationNumber(0);
+    } else {
+      axios
+        .get("http://localhost:8000/api/get-iteration/", {
+          headers: { "X-CSRFToken": csrfToken },
+          withCredentials: true,
+        })
+        .then((response) => {
+          setIterationNumber(response.data.iterationNumber);
+        })
+        .catch((error) => {
+          console.error("Error fetching iteration number:", error);
+        });
+    }
 
     axios
       .post(
         "http://localhost:8000/api/critical-instances/",
-        { domain: selectedDomain },
+        { domain: selectedDomain, startNew: isNewSession },
         {
           headers: {
             "X-CSRFToken": csrfToken,
@@ -94,6 +97,8 @@ function SelectExampleView() {
         setDetailData(response.data.critical_instances[1]);
         setIsLoading(false);
         setAlertError(null);
+
+        localStorage.setItem("mode", "continue");
       })
       .catch((error) => {
         console.error("Error fetching critical instances:", error);
