@@ -12,7 +12,7 @@ const derivedAttributes = [
     key: "current.ratio",
     name: "Current Ratio",
     description:
-      "Indicates the company’s ability to cover short-term obligations. Ideal value ≈ 1.5.",
+      "Indicates the company's ability to cover short-term obligations. Ideal value ≈ 1.5.",
   },
   {
     key: "lt.sales.growth",

@@ -127,7 +127,7 @@ function SelectExampleView() {
             }}
           >
             <h2 style={{ margin: 0 }}>Select critical example</h2>
-            <div>Iteration {iterationNumber}</div>
+            {false && <div>Iteration {iterationNumber}</div>}
           </div>
         </div>
         {isLoading ? (

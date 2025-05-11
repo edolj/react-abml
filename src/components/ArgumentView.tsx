@@ -1,5 +1,6 @@
 import { useParams, useLocation, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { MultiValue, ActionMeta, StylesConfig, GroupBase } from "react-select";
 import { ToastContainer, toast } from "react-toastify";
 import { Button } from "react-bootstrap";
 import { FaArrowRight, FaLightbulb } from "react-icons/fa";
@@ -19,6 +20,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import ProgressBar from "react-bootstrap/ProgressBar";
 import Form from "react-bootstrap/Form";
 import Tooltip from "@mui/material/Tooltip";
+import Select from "react-select";
 
 function ArgumentView() {
   const navigate = useNavigate();
@@ -26,6 +28,40 @@ function ArgumentView() {
   const location = useLocation();
   const detailData = location.state?.detailData || [];
   const idName = location.state?.id || "N/A";
+
+  useEffect(() => {
+    const csrfToken = document.cookie
+      .split(";")
+      .find((cookie) => cookie.trim().startsWith("csrftoken="))
+      ?.split("=")[1];
+
+    axios
+      .get("http://localhost:8000/api/attributes/", {
+        headers: { "X-CSRFToken": csrfToken },
+        withCredentials: true,
+      })
+      .then((response) => {
+        const attributes = response.data;
+
+        let options: OptionType[] = [];
+        attributes.forEach((attr: { name: string; type: string }) => {
+          const displayName = attributesDisplayNames[attr.name] || attr.name;
+          if (attr.type === "continuous") {
+            options.push(
+              { value: `${attr.name}<=`, label: `${displayName} is low` },
+              { value: `${attr.name}>=`, label: `${displayName} is high` }
+            );
+          } else if (attr.type === "discrete") {
+            options.push({ value: attr.name, label: displayName });
+          }
+        });
+
+        setAttributeOptions(options);
+      })
+      .catch((error) => {
+        console.error("Error fetching attributes:", error);
+      });
+  }, []);
 
   const [columns, setColumns] = useState([
     { Header: "Attribute", accessor: "key" },
@@ -89,10 +125,17 @@ function ArgumentView() {
   };
 
   const showCriticalExample = () => {
-    if (!userArgument.trim()) {
+    if (selectedFilters.length === 0) {
       setAlertError("The argument input field cannot be empty!");
       return;
     }
+
+    if (selectedFilters.length > 3) {
+      setAlertError("Too many arguments provided!");
+      return;
+    }
+
+    const userArgument = selectedFilters.map((item) => item.value).join(",");
 
     setAlertError(null);
     setIsLoading(true);
@@ -181,7 +224,7 @@ function ArgumentView() {
   };
 
   const doneWithArgumentation = () => {
-    if (!userArgument.trim()) {
+    if (selectedFilters.length === 0) {
       setAlertError("The argument input field cannot be empty!");
       return;
     }
@@ -214,7 +257,7 @@ function ArgumentView() {
   };
 
   const processRule = (rule: string) => {
-    return rule.replace(/([<>=!]+)\s*([\d.]+)/g, "$1 ");
+    return rule.replace(/([<>=!]+)\s*(-?[\d.]+)/g, "$1 ");
   };
 
   const extractAttributes = (input: string) => {
@@ -222,6 +265,40 @@ function ArgumentView() {
     const matches = input.matchAll(regex);
     const attributes = Array.from(matches, (m) => m[1]);
     return attributes;
+  };
+
+  type OptionType = {
+    value: string;
+    label: string;
+  };
+
+  const customStyles: StylesConfig<OptionType, true, GroupBase<OptionType>> = {
+    multiValue: (base) => ({
+      ...base,
+      backgroundColor: "#007bff",
+      color: "white",
+      borderRadius: "16px",
+      padding: "0 10px",
+    }),
+    multiValueLabel: (base) => ({
+      ...base,
+      color: "white",
+    }),
+    multiValueRemove: (base) => ({
+      ...base,
+      color: "white",
+      ":hover": { backgroundColor: "darkblue" },
+    }),
+  };
+
+  const [attributeOptions, setAttributeOptions] = useState<OptionType[]>([]);
+  const [selectedFilters, setSelectedFilters] = useState<OptionType[]>([]);
+
+  const handleChange = (
+    selectedOptions: MultiValue<OptionType>,
+    actionMeta: ActionMeta<OptionType>
+  ) => {
+    setSelectedFilters([...selectedOptions]);
   };
 
   return (
@@ -242,8 +319,14 @@ function ArgumentView() {
           <div className="box-with-border card-view">
             <div style={{ marginBottom: "20px" }}>
               <Form.Label>Input argument:</Form.Label>
-              <Form.Control onChange={readUserArgument} />
-              <Form.Text muted>{"Example: debt<="}</Form.Text>
+              <Select
+                options={attributeOptions}
+                isMulti
+                value={selectedFilters}
+                onChange={handleChange}
+                placeholder="Select"
+                styles={customStyles}
+              />
             </div>
             {alertError && (
               <Alert onClose={() => setAlertError(null)}>{alertError}</Alert>
