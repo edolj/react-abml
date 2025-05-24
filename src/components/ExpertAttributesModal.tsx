@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Modal, Button } from "react-bootstrap";
+import { FaInfoCircle } from "react-icons/fa";
 
 const derivedAttributes = [
   {
@@ -73,6 +74,13 @@ function ExpertAttributesModal() {
   return (
     <>
       <Button variant="primary" onClick={handleShow}>
+        <FaInfoCircle
+          style={{
+            marginRight: "8px",
+            marginBottom: "2px",
+            color: "white",
+          }}
+        />{" "}
         Info
       </Button>
 

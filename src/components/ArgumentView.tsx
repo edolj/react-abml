@@ -4,11 +4,10 @@ import { MultiValue, ActionMeta, StylesConfig, GroupBase } from "react-select";
 import { ToastContainer, toast } from "react-toastify";
 import { Button } from "react-bootstrap";
 import { FaArrowRight, FaLightbulb } from "react-icons/fa";
-import {
-  attributesDisplayNames,
-  tooltipDescriptions,
-  eurAttr,
-} from "./BoniteteAttributes";
+import { Tabs, Tab } from "react-bootstrap";
+import { attributesDisplayNames } from "./BoniteteAttributes";
+import { tooltipDescriptions } from "./BoniteteAttributes";
+import { eurAttr, attributeGroups } from "./BoniteteAttributes";
 import axios from "axios";
 import "react-toastify/dist/ReactToastify.css";
 import "../css/PrimaryButton.css";
@@ -314,7 +313,22 @@ function ArgumentView() {
             marginBottom: "10px",
           }}
         >
-          <h4 style={{ marginBottom: "20px" }}>Details for {idName}</h4>
+          <div
+            className="box-with-border card-view"
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <h4>Details for {idName}</h4>
+            <Button variant="link" onClick={doneWithArgumentation}>
+              Next Example
+              <FaArrowRight
+                style={{ marginLeft: "8px", marginBottom: "2px" }}
+              />
+            </Button>
+          </div>
           {/* Argument Input Box */}
           <div className="box-with-border card-view">
             <div style={{ marginBottom: "20px" }}>
@@ -332,8 +346,6 @@ function ArgumentView() {
               <Alert onClose={() => setAlertError(null)}>{alertError}</Alert>
             )}
             <div className="button-container">
-              <div className="spacer"></div>
-
               <div className="center-buttons">
                 <Button variant="success" onClick={showCriticalExample}>
                   Send arguments
@@ -352,84 +364,103 @@ function ArgumentView() {
 
                 <ExpertAttributesModal></ExpertAttributesModal>
               </div>
-
-              <div className="right-button">
-                <Button variant="link" onClick={doneWithArgumentation}>
-                  Next Example
-                  <FaArrowRight
-                    style={{ marginLeft: "8px", marginBottom: "2px" }}
-                  />
-                </Button>
-              </div>
             </div>
           </div>
 
           {/* M-Score Box */}
-          <div className="box-with-border card-view">
-            <div style={{ marginBottom: "20px" }}>
-              M-score for chosen arguments: {m_score / 100}
+          {false && (
+            <div className="box-with-border card-view">
+              <div style={{ marginBottom: "20px" }}>
+                M-score for chosen arguments: {m_score / 100}
+              </div>
+              <ProgressBar>
+                <ProgressBar now={m_score} label={m_score} variant="primary" />
+                <ProgressBar
+                  now={hint_m_score - m_score}
+                  label={hint_m_score - m_score}
+                  variant="success"
+                />
+              </ProgressBar>
             </div>
-            <ProgressBar>
-              <ProgressBar now={m_score} label={m_score} variant="primary" />
-              <ProgressBar
-                now={hint_m_score - m_score}
-                label={hint_m_score - m_score}
-                variant="success"
-              />
-            </ProgressBar>
-          </div>
+          )}
         </div>
 
-        {/* Table Section */}
-        <div style={{ marginTop: "50px" }}>
-          <table className="rounded-table">
-            <thead>
-              <tr>
-                {columns.map((column, columnIndex) => (
-                  <th key={columnIndex}>{column.Header}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {formattedData.map((row: any, rowIndex: number) => {
-                const isHighlighted =
-                  hasCounterExamples && highlightedAttr.includes(row.key);
-                return (
-                  <tr
-                    key={rowIndex}
-                    style={{
-                      backgroundColor: isHighlighted ? "#fff3cd" : "inherit",
-                    }}
-                  >
-                    {columns.map((column, colIndex) => {
-                      const cellValue =
-                        column.accessor === "key"
-                          ? attributesDisplayNames[row.key] || row.key
-                          : row[column.accessor] || "-";
+        <div className="box-with-border card-view">
+          <Tabs
+            defaultActiveKey={Object.keys(attributeGroups)[0]}
+            id="attribute-groups-tabs"
+            className="mb-3"
+          >
+            {Object.entries(attributeGroups).map(([groupName, attributes]) => {
+              const groupRows = formattedData.filter((item: any) =>
+                attributes.includes(item.key)
+              );
 
-                      const formattedValue =
-                        column.accessor !== "key" &&
-                        eurAttr.includes(row.key) &&
-                        cellValue !== "-"
-                          ? `${Number(cellValue).toLocaleString("en-US", {
-                              maximumFractionDigits: 1,
-                            })} €`
-                          : cellValue;
+              if (groupRows.length === 0) return null;
 
-                      const tooltipText = tooltipDescriptions[row.key] || "";
-                      return (
-                        <td key={colIndex}>
-                          <Tooltip title={tooltipText} arrow>
-                            {formattedValue}
-                          </Tooltip>
-                        </td>
-                      );
-                    })}
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+              return (
+                <Tab eventKey={groupName} title={groupName} key={groupName}>
+                  <div style={{ overflowX: "auto" }}>
+                    <table className="rounded-table">
+                      <thead>
+                        <tr>
+                          {columns.map((column, columnIndex) => (
+                            <th key={columnIndex}>{column.Header}</th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {groupRows.map((row: any, rowIndex: number) => {
+                          const isHighlighted =
+                            hasCounterExamples &&
+                            highlightedAttr.includes(row.key);
+                          return (
+                            <tr
+                              key={rowIndex}
+                              style={{
+                                backgroundColor: isHighlighted
+                                  ? "#fff3cd"
+                                  : "inherit",
+                              }}
+                            >
+                              {columns.map((column, colIndex) => {
+                                const cellValue =
+                                  column.accessor === "key"
+                                    ? attributesDisplayNames[row.key] || row.key
+                                    : row[column.accessor] || "-";
+
+                                const formattedValue =
+                                  column.accessor !== "key" &&
+                                  eurAttr.includes(row.key) &&
+                                  cellValue !== "-"
+                                    ? `${Number(cellValue).toLocaleString(
+                                        "en-US",
+                                        {
+                                          maximumFractionDigits: 1,
+                                        }
+                                      )} €`
+                                    : cellValue;
+
+                                const tooltipText =
+                                  tooltipDescriptions[row.key] || "";
+                                return (
+                                  <td key={colIndex}>
+                                    <Tooltip title={tooltipText} arrow>
+                                      {formattedValue}
+                                    </Tooltip>
+                                  </td>
+                                );
+                              })}
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                </Tab>
+              );
+            })}
+          </Tabs>
         </div>
 
         {/* Loading Indicator */}
