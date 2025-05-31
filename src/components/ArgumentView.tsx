@@ -411,18 +411,8 @@ function ArgumentView() {
                       </thead>
                       <tbody>
                         {groupRows.map((row: any, rowIndex: number) => {
-                          const isHighlighted =
-                            hasCounterExamples &&
-                            highlightedAttr.includes(row.key);
                           return (
-                            <tr
-                              key={rowIndex}
-                              style={{
-                                backgroundColor: isHighlighted
-                                  ? "#fff3cd"
-                                  : "inherit",
-                              }}
-                            >
+                            <tr key={rowIndex}>
                               {columns.map((column, colIndex) => {
                                 const cellValue =
                                   column.accessor === "key"
@@ -444,7 +434,13 @@ function ArgumentView() {
                                 const tooltipText =
                                   tooltipDescriptions[row.key] || "";
                                 return (
-                                  <td key={colIndex}>
+                                  <td
+                                    key={colIndex}
+                                    style={{
+                                      textAlign:
+                                        colIndex > 0 ? "right" : "left",
+                                    }}
+                                  >
                                     <Tooltip title={tooltipText} arrow>
                                       {formattedValue}
                                     </Tooltip>

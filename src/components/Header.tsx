@@ -6,7 +6,7 @@ import "../css/Header.css";
 
 const Header = () => {
   const navigate = useNavigate();
-  const { isLoggedIn, setIsLoggedIn } = useAuth();
+  const { isLoggedIn, setIsLoggedIn, username } = useAuth();
 
   const csrfToken = document.cookie
     .split(";")
@@ -45,10 +45,23 @@ const Header = () => {
         )}
       </div>
       {isLoggedIn && (
-        <button className="logout-button" onClick={handleLogout}>
-          <FaSignOutAlt size={18} style={{ marginRight: "8px" }} />
-          Logout
-        </button>
+        <>
+          <div
+            style={{ display: "inline-flex", alignItems: "center", gap: 20 }}
+          >
+            <span style={{ color: "#fff", fontWeight: 500, marginRight: 0 }}>
+              {username}
+            </span>
+            <button
+              className="logout-button"
+              onClick={handleLogout}
+              style={{ marginLeft: 0 }}
+            >
+              <FaSignOutAlt size={18} style={{ marginRight: "8px" }} />
+              Logout
+            </button>
+          </div>
+        </>
       )}
     </div>
   );

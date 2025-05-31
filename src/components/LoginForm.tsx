@@ -16,7 +16,7 @@ const getCSRFToken = () => {
 const LoginForm = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const { setIsLoggedIn } = useAuth();
+  const { setIsLoggedIn, setAuthUsername } = useAuth();
   const navigate = useNavigate();
 
   const [alertError, setAlertError] = useState<string | null>(null);
@@ -37,8 +37,7 @@ const LoginForm = () => {
         }
       )
       .then((response) => {
-        console.log("User data:", response.data.user);
-        console.log("Session cookies:", document.cookie);
+        setAuthUsername(response.data.user.username);
         setIsLoggedIn(true);
         setAlertError(null);
         navigate("/selectDomain");
@@ -73,7 +72,9 @@ const LoginForm = () => {
           placeholder="Password"
           className="login-input"
         />
-        {alertError && <div className="error-text">{alertError}</div>}
+        {alertError && (
+          <Alert onClose={() => setAlertError(null)}>{alertError}</Alert>
+        )}
         <button type="submit" className="login-button">
           Login
         </button>
