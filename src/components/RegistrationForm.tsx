@@ -79,12 +79,12 @@ const RegistrationForm = () => {
         <button type="submit" className="registration-button">
           Register
         </button>
-        <p>
-          Already have an account?{" "}
+        <p style={{ marginTop: "20px" }}>
+          Already have an account?
+          <br />
           <Link to="/" className="login-link">
             Login here
           </Link>
-          .
         </p>
       </form>
     </div>

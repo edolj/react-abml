@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { Modal, Button } from "react-bootstrap";
+import { Modal } from "react-bootstrap";
 import { FaInfoCircle } from "react-icons/fa";
+import PrimaryButton from "./PrimaryButton";
 
 const derivedAttributes = [
   {
@@ -73,7 +74,7 @@ function ExpertAttributesModal() {
 
   return (
     <>
-      <Button variant="primary" onClick={handleShow}>
+      <PrimaryButton onClick={handleShow}>
         <FaInfoCircle
           style={{
             marginRight: "8px",
@@ -82,14 +83,10 @@ function ExpertAttributesModal() {
           }}
         />{" "}
         Info
-      </Button>
+      </PrimaryButton>
 
       <Modal show={show} onHide={handleClose} size="lg" scrollable>
-        <Modal.Header closeButton>
-          <Modal.Title className="w-100 text-center">
-            Derived Attributes
-          </Modal.Title>
-        </Modal.Header>
+        <Modal.Header closeButton></Modal.Header>
         <Modal.Body>
           {derivedAttributes.map((attr) => (
             <div key={attr.key} className="mb-4">

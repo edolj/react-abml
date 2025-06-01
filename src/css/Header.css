@@ -1,6 +1,6 @@
 .header {
-  background: black;
-  padding: 15px 30px;
+  background: #607ad1;
+  padding: 10px 30px;
   color: #fff;
   display: flex;
   align-items: center;
@@ -41,7 +41,7 @@
 }
 
 .logout-button {
-  background: #ff4d4d;
+  background: black;
   color: #fff;
   border: none;
   border-radius: 20px;

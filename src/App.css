@@ -1,19 +1,19 @@
 body {
-    background: linear-gradient(to bottom, #e4f0fd 30%, #ffffff 60%);
-    min-height: 100vh;
-    margin: 0;
+  background: linear-gradient(to bottom, #e4f0fd 30%, #ffffff 60%);
+  min-height: 100vh;
+  margin: 0;
 }
 
 .container {
-    width: 100%;
-    max-width: 1200px; /* Set the max-width as needed */
-    margin: 0 auto; /* Centers the container */
-    padding: 20px; /* Optional: Adds some padding */
+  width: 100%;
+  max-width: 1200px; /* Set the max-width as needed */
+  margin: 0 auto; /* Centers the container */
+  padding: 20px; /* Optional: Adds some padding */
 }
 
 .box-with-border {
-    border: 2px solid #ccc; /* Gray border */
-    padding: 20px;
-    border-radius: 5px; /* Optional: makes the corners rounded */
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2); /* Shadow */
+  border: 2px solid #ccc; /* Gray border */
+  padding: 20px;
+  border-radius: 5px; /* Optional: makes the corners rounded */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2); /* Shadow */
 }

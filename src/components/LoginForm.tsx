@@ -44,7 +44,7 @@ const LoginForm = () => {
       })
       .catch((error) => {
         console.error("Login error:", error);
-        setAlertError("Invalid credentials");
+        setAlertError("Wrong username or password");
       });
   };
 
@@ -72,18 +72,16 @@ const LoginForm = () => {
           placeholder="Password"
           className="login-input"
         />
-        {alertError && (
-          <Alert onClose={() => setAlertError(null)}>{alertError}</Alert>
-        )}
+        {alertError && <div className="error-text">{alertError}</div>}
         <button type="submit" className="login-button">
           Login
         </button>
-        <p>
-          Don't have an account?{" "}
+        <p style={{ marginTop: "20px" }}>
+          Don't have an account?
+          <br />
           <Link to="/register" className="register-link">
             Register here
           </Link>
-          .
         </p>
       </form>
     </div>

@@ -20,6 +20,7 @@ import ProgressBar from "react-bootstrap/ProgressBar";
 import Form from "react-bootstrap/Form";
 import Tooltip from "@mui/material/Tooltip";
 import Select from "react-select";
+import PrimaryButton from "./PrimaryButton";
 
 function ArgumentView() {
   const navigate = useNavigate();
@@ -347,11 +348,15 @@ function ArgumentView() {
             )}
             <div className="button-container">
               <div className="center-buttons">
-                <Button variant="success" onClick={showCriticalExample}>
+                <Button
+                  variant="success"
+                  onClick={showCriticalExample}
+                  className="custom-primary-button"
+                >
                   Send arguments
                 </Button>
 
-                <Button variant="primary" onClick={showHintMessage}>
+                <PrimaryButton onClick={showHintMessage}>
                   <FaLightbulb
                     style={{
                       marginRight: "8px",
@@ -360,7 +365,7 @@ function ArgumentView() {
                     }}
                   />
                   Hint
-                </Button>
+                </PrimaryButton>
 
                 <ExpertAttributesModal></ExpertAttributesModal>
               </div>

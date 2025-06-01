@@ -1,20 +1,17 @@
 .rounded-table {
   width: 100%;
-  border: 1px solid black;
+  border: 1px solid gray;
   border-collapse: separate;
   border-spacing: 0;
   border-radius: 10px;
-  overflow: hidden;
-  font-family: Arial, sans-serif;
   background-color: white;
 }
 
 .rounded-table thead th {
-  background-color: #333;
+  background-color: #607ad1;
   color: white;
   font-weight: bold;
   padding: 10px;
-  border-bottom: 2px solid black;
   border-right: 1px solid #ddd;
 }
 
@@ -58,7 +55,8 @@
   text-align: center;
 }
 
-.btn-high, .btn-low {
+.btn-high,
+.btn-low {
   padding: 4px;
   border-radius: 50%;
   background-color: transparent;

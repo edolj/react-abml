@@ -1,5 +1,5 @@
 interface Props {
-  children: string;
+  children: React.ReactNode;
   onClick?: () => void;
   style?: React.CSSProperties;
 }
