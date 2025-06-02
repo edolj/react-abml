@@ -7,7 +7,7 @@ import { FaArrowRight, FaLightbulb } from "react-icons/fa";
 import { Tabs, Tab } from "react-bootstrap";
 import { attributesDisplayNames } from "./BoniteteAttributes";
 import { tooltipDescriptions } from "./BoniteteAttributes";
-import { eurAttr, attributeGroups } from "./BoniteteAttributes";
+import { eurAttr, attributeGroups, ratioAttr } from "./BoniteteAttributes";
 import axios from "axios";
 import "react-toastify/dist/ReactToastify.css";
 import "../css/PrimaryButton.css";
@@ -425,15 +425,24 @@ function ArgumentView() {
                                     : row[column.accessor] || "-";
 
                                 const formattedValue =
-                                  column.accessor !== "key" &&
-                                  eurAttr.includes(row.key) &&
-                                  cellValue !== "-"
-                                    ? `${Number(cellValue).toLocaleString(
-                                        "en-US",
-                                        {
-                                          maximumFractionDigits: 1,
-                                        }
-                                      )} €`
+                                  column.accessor !== "key" && cellValue !== "-"
+                                    ? eurAttr.includes(row.key)
+                                      ? `${Number(cellValue).toLocaleString(
+                                          "sl-SI",
+                                          {
+                                            minimumFractionDigits: 0,
+                                            maximumFractionDigits: 0,
+                                          }
+                                        )} €`
+                                      : ratioAttr.includes(row.key)
+                                      ? Number(cellValue).toLocaleString(
+                                          "sl-SI",
+                                          {
+                                            minimumFractionDigits: 2,
+                                            maximumFractionDigits: 2,
+                                          }
+                                        )
+                                      : cellValue
                                     : cellValue;
 
                                 const tooltipText =

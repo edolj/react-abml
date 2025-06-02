@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Button, ListGroup, Container, Modal } from "react-bootstrap";
 import { Row, Col, Card, Spinner, Form } from "react-bootstrap";
-import { FaUpload, FaPlay } from "react-icons/fa";
+import { FaUpload } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
@@ -126,7 +126,6 @@ const DomainView = () => {
                       disabled={!selectedDomain}
                       className="d-flex align-items-center"
                     >
-                      <FaPlay className="me-2" />
                       Continue
                     </Button>
 
@@ -136,7 +135,6 @@ const DomainView = () => {
                       disabled={!selectedDomain}
                       className="d-flex align-items-center"
                     >
-                      <FaPlay className="me-2" />
                       New start
                     </Button>
                   </div>

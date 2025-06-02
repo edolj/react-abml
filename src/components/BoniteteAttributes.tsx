@@ -100,6 +100,18 @@ export const eurAttr = [
   "OCF",
 ];
 
+export const ratioAttr = [
+  "total.oper.liabilities/assets",
+  "current.ratio",
+  "lt.sales.growth",
+  "st.sales.growth",
+  "lt.ebit.margin.change",
+  "net.debt/EBITDA",
+  "equity.ratio",
+  "TIE",
+  "ROA",
+];
+
 export const attributeGroups = {
   "Income Statement": [
     "net.sales",
