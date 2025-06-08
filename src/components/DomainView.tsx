@@ -3,22 +3,26 @@ import { Button, ListGroup, Container, Modal } from "react-bootstrap";
 import { Row, Col, Card, Spinner, Form } from "react-bootstrap";
 import { FaUpload } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
 import axios from "axios";
 
 type Domain = {
   id: number;
   name: string;
+  attributes: string[];
+  expert_attributes: string[];
 };
 
 const DomainView = () => {
   const navigate = useNavigate();
 
   const [domains, setDomains] = useState<Domain[]>([]);
-  const [selectedDomain, setSelectedDomain] = useState<string | null>(null);
+  const [selectedDomain, setSelectedDomain] = useState<Domain | null>(null);
   const [loading, setLoading] = useState(false);
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [domainName, setDomainName] = useState("");
   const [file, setFile] = useState<File | null>(null);
+  const [inactiveAttributes, setInactiveAttributes] = useState<string[]>([]);
 
   // Fetch domains
   useEffect(() => {
@@ -28,8 +32,9 @@ const DomainView = () => {
       .catch((err) => console.error(err));
   }, []);
 
-  const handleSelectDomain = (domainName: string) => {
-    setSelectedDomain(domainName);
+  const handleSelectDomain = (domain: Domain) => {
+    setSelectedDomain(domain);
+    setInactiveAttributes(domain.expert_attributes || []);
   };
 
   const handleStartFlow = (mode: string) => {
@@ -37,7 +42,7 @@ const DomainView = () => {
 
     if (selectedDomain) {
       navigate("/selectExample", {
-        state: { selectedDomain },
+        state: { selectedDomain: selectedDomain.name },
       });
     }
   };
@@ -76,27 +81,55 @@ const DomainView = () => {
       });
   };
 
+  const handleSaveInactiveAttributes = () => {
+    if (!selectedDomain) return;
+
+    axios
+      .put(`http://localhost:8000/api/domains/${selectedDomain.id}/update/`, {
+        expert_attributes: inactiveAttributes,
+      })
+      .then(() => {
+        toast.success("Expert attributes saved successfully!");
+        // Update domain in local state
+        setDomains((prev) =>
+          prev.map((d) =>
+            d.id === selectedDomain.id
+              ? { ...d, expert_attributes: inactiveAttributes }
+              : d
+          )
+        );
+        // Also update selectedDomain to keep UI consistent
+        setSelectedDomain((prev) =>
+          prev ? { ...prev, expert_attributes: inactiveAttributes } : prev
+        );
+      })
+      .catch((err) => {
+        alert(
+          "Failed to save: " + err.response?.data?.error || "Unknown error."
+        );
+      });
+  };
+
   return (
     <>
+      <ToastContainer position="top-right" autoClose={3000} />
       <Container className="my-4">
-        <Row className="mb-4">
-          <Col>
-            <h2 className="text-center">Select Domain</h2>
-          </Col>
-        </Row>
-
         <Row>
-          <Col md={6} className="offset-md-3">
+          {/* Left Panel: Domain Selection */}
+          <Col md={6}>
             <Card className="box-with-border card-view">
+              <Card.Header>
+                <h4 className="mb-0">Select Domain</h4>
+              </Card.Header>
               <Card.Body>
                 <ListGroup variant="flush">
                   {domains.map((domain: any) => (
                     <ListGroup.Item
                       key={domain.id}
                       action
-                      onClick={() => handleSelectDomain(domain.name)}
+                      onClick={() => handleSelectDomain(domain)}
                       className={
-                        selectedDomain === domain.name
+                        selectedDomain?.name === domain.name
                           ? "bg-primary text-white"
                           : ""
                       }
@@ -118,31 +151,10 @@ const DomainView = () => {
                   ))}
                 </ListGroup>
 
-                <div className="d-flex justify-content-between mt-5">
-                  <div className="d-flex gap-3">
-                    <Button
-                      variant="success"
-                      onClick={() => handleStartFlow("continue")}
-                      disabled={!selectedDomain}
-                      className="d-flex align-items-center"
-                    >
-                      Continue
-                    </Button>
-
-                    <Button
-                      variant="success"
-                      onClick={() => handleStartFlow("new")}
-                      disabled={!selectedDomain}
-                      className="d-flex align-items-center"
-                    >
-                      New start
-                    </Button>
-                  </div>
-
+                <div className="d-flex justify-content-center mt-5">
                   <Button
                     variant="primary"
                     onClick={() => setShowUploadModal(true)}
-                    className="d-flex align-items-center"
                     disabled={loading}
                   >
                     {loading ? (
@@ -158,6 +170,59 @@ const DomainView = () => {
               </Card.Body>
             </Card>
           </Col>
+
+          {/* Right Panel: Attribute Selection */}
+          <Col md={6}>
+            {selectedDomain && (
+              <>
+                <Card className="box-with-border">
+                  <Card.Header>
+                    <h4 className="mb-0">Attributes - {selectedDomain.name}</h4>
+                  </Card.Header>
+                  <Card.Body>
+                    {selectedDomain.attributes?.map((attr: string) => (
+                      <Form.Check
+                        key={attr}
+                        type="checkbox"
+                        id={`check-${attr}`}
+                        label={attr}
+                        checked={inactiveAttributes.includes(attr)}
+                        onChange={() => {
+                          setInactiveAttributes((prev) =>
+                            prev.includes(attr)
+                              ? prev.filter((a) => a !== attr)
+                              : [...prev, attr]
+                          );
+                        }}
+                      />
+                    ))}
+                    {selectedDomain.attributes?.length === 0 && (
+                      <div className="text-muted">
+                        No attributes found for this domain.
+                      </div>
+                    )}
+                  </Card.Body>
+
+                  <div className="d-flex gap-2 justify-content-center mt-2">
+                    <Button
+                      variant="success"
+                      onClick={handleSaveInactiveAttributes}
+                      disabled={!selectedDomain}
+                    >
+                      Save
+                    </Button>
+                    <Button
+                      variant="success"
+                      onClick={() => handleStartFlow("new")}
+                      disabled={!selectedDomain}
+                    >
+                      Start
+                    </Button>
+                  </div>
+                </Card>
+              </>
+            )}
+          </Col>
         </Row>
       </Container>
 
@@ -169,7 +234,6 @@ const DomainView = () => {
         <Modal.Body>
           <Form>
             <Form.Group controlId="formDomainName" className="mb-3">
-              <Form.Label>Domain Name</Form.Label>
               <Form.Control
                 type="text"
                 placeholder="Enter domain name"

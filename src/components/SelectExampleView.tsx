@@ -21,7 +21,7 @@ function SelectExampleView() {
   const tableColumns = [
     { Header: "Name", accessor: "column1" },
     { Header: "Critical", accessor: "column2" },
-    { Header: "Credit Score", accessor: "column3" },
+    { Header: "Class", accessor: "column3" },
   ];
 
   const [criticalInstances, setCriticalInstances] = useState<

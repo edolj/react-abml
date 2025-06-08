@@ -9,6 +9,7 @@ import PrivateRoute from "./context/PrivateRoute";
 import DomainView from "./components/DomainView";
 import Header from "./components/Header";
 import Users from "./components/Users";
+import HomePage from "./components/HomePage";
 
 function App() {
   return (
@@ -17,6 +18,14 @@ function App() {
       <Routes>
         <Route path="/" element={<LoginForm />} />
         <Route path="/register" element={<RegistrationForm />} />
+        <Route
+          path="/home"
+          element={
+            <PrivateRoute>
+              <HomePage />
+            </PrivateRoute>
+          }
+        />
         <Route
           path="/selectDomain"
           element={

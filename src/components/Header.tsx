@@ -40,6 +40,7 @@ const Header = () => {
         <div className="logo">ABML</div>
         {isLoggedIn && (
           <div className="menu">
+            <button onClick={() => navigate("/home")}>HOME</button>
             <button onClick={() => navigate("/selectDomain")}>DOMAIN</button>
           </div>
         )}

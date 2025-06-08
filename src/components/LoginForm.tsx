@@ -40,7 +40,7 @@ const LoginForm = () => {
         setAuthUsername(response.data.user.username);
         setIsLoggedIn(true);
         setAlertError(null);
-        navigate("/selectDomain");
+        navigate("/home");
       })
       .catch((error) => {
         console.error("Login error:", error);
