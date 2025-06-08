@@ -17,3 +17,13 @@ body {
   border-radius: 5px; /* Optional: makes the corners rounded */
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2); /* Shadow */
 }
+
+.btn-primary {
+  background-color: #607ad1 !important;
+  border-color: #607ad1 !important;
+}
+
+.btn-primary:hover {
+  background-color: #4e66c1 !important;
+  border-color: #4e66c1 !important;
+}

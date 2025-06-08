@@ -42,9 +42,11 @@ const HomePage = () => {
       return;
     }
 
-    navigate("/selectExample", {
-      state: { mode },
-    });
+    if (learningData?.name) {
+      navigate("/selectExample", {
+        state: { selectedDomain: learningData.name },
+      });
+    }
   };
 
   return (
@@ -55,7 +57,7 @@ const HomePage = () => {
           <p className="text-muted mb-4">
             This application helps you explore attribute-based machine learning
             by interacting with domain-specific data. You can review attribute
-            suggestions, select important features, and guide the learning
+            suggestions, select important features and guide the learning
             process in a structured way.
           </p>
 
