@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import Alert from "./Alert";
 import "../css/RegistrationForm.css";
 
 const RegistrationForm = () => {
@@ -34,7 +33,7 @@ const RegistrationForm = () => {
         const errorMessage = error.response
           ? error.response.data.non_field_errors || error.response.data
           : error.message;
-        alert(errorMessage);
+        setAlertError(errorMessage);
       });
   };
 

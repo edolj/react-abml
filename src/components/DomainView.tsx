@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import { Button, ListGroup, Container, Modal } from "react-bootstrap";
 import { Row, Col, Card, Spinner, Form } from "react-bootstrap";
-import { FaUpload } from "react-icons/fa";
+import { FaUpload, FaTimes } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
+import Alert from "./Alert";
 import axios from "axios";
 
 type Domain = {
@@ -15,14 +16,16 @@ type Domain = {
 
 const DomainView = () => {
   const navigate = useNavigate();
-
+  const [loading, setLoading] = useState(false);
   const [domains, setDomains] = useState<Domain[]>([]);
   const [selectedDomain, setSelectedDomain] = useState<Domain | null>(null);
-  const [loading, setLoading] = useState(false);
   const [showUploadModal, setShowUploadModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [domainToDelete, setDomainToDelete] = useState<number | null>(null);
   const [domainName, setDomainName] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [inactiveAttributes, setInactiveAttributes] = useState<string[]>([]);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   // Fetch domains
   useEffect(() => {
@@ -64,20 +67,36 @@ const DomainView = () => {
         setDomainName("");
         setFile(null);
       })
-      .catch((err) => alert(err.response?.data?.error || "Upload failed"))
+      .catch((err) => setErrorMsg(err.response?.data?.error || "Upload failed"))
       .finally(() => setLoading(false));
   };
 
   const handleDeleteDomain = (id: number) => {
-    if (!window.confirm("Are you sure you want to delete this domain?")) return;
+    setDomainToDelete(id);
+    setShowDeleteModal(true);
+  };
+
+  const confirmDeleteDomain = () => {
+    if (domainToDelete === null) return;
 
     axios
-      .delete(`http://localhost:8000/api/domains/${id}/`)
+      .delete(`http://localhost:8000/api/domains/${domainToDelete}/`)
       .then(() => {
-        setDomains((prev) => prev.filter((domain) => domain.id !== id));
+        setDomains((prev) =>
+          prev.filter((domain) => domain.id !== domainToDelete)
+        );
+
+        if (selectedDomain?.id === domainToDelete) {
+          setSelectedDomain(null);
+          setInactiveAttributes([]);
+        }
       })
       .catch((err) => {
-        alert(err.response?.data?.error || "Failed to delete domain.");
+        setErrorMsg(err.response?.data?.error || "Failed to delete domain.");
+      })
+      .finally(() => {
+        setShowDeleteModal(false);
+        setDomainToDelete(null);
       });
   };
 
@@ -104,7 +123,7 @@ const DomainView = () => {
         );
       })
       .catch((err) => {
-        alert(
+        setErrorMsg(
           "Failed to save: " + err.response?.data?.error || "Unknown error."
         );
       });
@@ -112,6 +131,8 @@ const DomainView = () => {
 
   return (
     <>
+      {errorMsg && <Alert onClose={() => setErrorMsg(null)}>{errorMsg}</Alert>}
+
       <ToastContainer position="top-right" autoClose={3000} />
       <Container className="my-4">
         <Row>
@@ -122,34 +143,31 @@ const DomainView = () => {
                 <h4 className="mb-0">Select Domain</h4>
               </Card.Header>
               <Card.Body>
-                <ListGroup variant="flush">
-                  {domains.map((domain: any) => (
-                    <ListGroup.Item
-                      key={domain.id}
-                      action
-                      onClick={() => handleSelectDomain(domain)}
-                      className={
-                        selectedDomain?.name === domain.name
-                          ? "bg-primary text-white"
-                          : ""
-                      }
-                    >
-                      <div className="d-flex align-items-center justify-content-between">
-                        <span>{domain.name}</span>
-                        <Button
-                          variant="danger"
-                          size="sm"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleDeleteDomain(domain.id);
-                          }}
-                        >
-                          X
-                        </Button>
-                      </div>
-                    </ListGroup.Item>
-                  ))}
-                </ListGroup>
+                <div style={{ maxHeight: "50vh", overflowY: "auto" }}>
+                  <ListGroup variant="flush">
+                    {domains.map((domain: any) => (
+                      <ListGroup.Item
+                        key={domain.id}
+                        action
+                        onClick={() => handleSelectDomain(domain)}
+                      >
+                        <div className="d-flex align-items-center justify-content-between">
+                          <span>{domain.name}</span>
+                          <Button
+                            variant="secondary"
+                            size="sm"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDeleteDomain(domain.id);
+                            }}
+                          >
+                            <FaTimes size={14} />
+                          </Button>
+                        </div>
+                      </ListGroup.Item>
+                    ))}
+                  </ListGroup>
+                </div>
 
                 <div className="d-flex justify-content-center mt-5">
                   <Button
@@ -180,27 +198,29 @@ const DomainView = () => {
                     <h4 className="mb-0">Attributes - {selectedDomain.name}</h4>
                   </Card.Header>
                   <Card.Body>
-                    {selectedDomain.attributes?.map((attr: string) => (
-                      <Form.Check
-                        key={attr}
-                        type="checkbox"
-                        id={`check-${attr}`}
-                        label={attr}
-                        checked={inactiveAttributes.includes(attr)}
-                        onChange={() => {
-                          setInactiveAttributes((prev) =>
-                            prev.includes(attr)
-                              ? prev.filter((a) => a !== attr)
-                              : [...prev, attr]
-                          );
-                        }}
-                      />
-                    ))}
-                    {selectedDomain.attributes?.length === 0 && (
-                      <div className="text-muted">
-                        No attributes found for this domain.
-                      </div>
-                    )}
+                    <div style={{ maxHeight: "50vh", overflowY: "auto" }}>
+                      {selectedDomain.attributes?.map((attr: string) => (
+                        <Form.Check
+                          key={attr}
+                          type="checkbox"
+                          id={`check-${attr}`}
+                          label={attr}
+                          checked={inactiveAttributes.includes(attr)}
+                          onChange={() => {
+                            setInactiveAttributes((prev) =>
+                              prev.includes(attr)
+                                ? prev.filter((a) => a !== attr)
+                                : [...prev, attr]
+                            );
+                          }}
+                        />
+                      ))}
+                      {selectedDomain.attributes?.length === 0 && (
+                        <div className="text-muted">
+                          No attributes found for this domain.
+                        </div>
+                      )}
+                    </div>
                   </Card.Body>
 
                   <div className="d-flex gap-2 justify-content-center mt-2">
@@ -227,9 +247,15 @@ const DomainView = () => {
       </Container>
 
       {/* Upload Modal */}
-      <Modal show={showUploadModal} onHide={() => setShowUploadModal(false)}>
+      <Modal
+        show={showUploadModal}
+        onHide={() => setShowUploadModal(false)}
+        centered
+      >
         <Modal.Header closeButton>
-          <Modal.Title>Upload New Domain</Modal.Title>
+          <Modal.Title className="w-100 text-center">
+            Upload New Domain
+          </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form>
@@ -254,12 +280,36 @@ const DomainView = () => {
             </Form.Group>
           </Form>
         </Modal.Body>
-        <Modal.Footer>
+        <Modal.Footer className="justify-content-center">
           <Button variant="secondary" onClick={() => setShowUploadModal(false)}>
             Cancel
           </Button>
           <Button variant="primary" onClick={handleUpload} disabled={loading}>
             {loading ? <Spinner animation="border" size="sm" /> : "Upload"}
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      {/* Delete Modal */}
+      <Modal
+        show={showDeleteModal}
+        onHide={() => setShowDeleteModal(false)}
+        centered
+      >
+        <Modal.Header closeButton>
+          <Modal.Title className="w-100 text-center">
+            Confirm Deletion
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body className="text-center">
+          Are you sure you want to delete this domain?
+        </Modal.Body>
+        <Modal.Footer className="justify-content-center">
+          <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
+            Cancel
+          </Button>
+          <Button variant="danger" onClick={confirmDeleteDomain}>
+            Confirm
           </Button>
         </Modal.Footer>
       </Modal>
