@@ -5,7 +5,7 @@ import { FaUpload, FaTimes } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import Alert from "./Alert";
-import axios from "axios";
+import apiClient from "../api/apiClient";
 
 type Domain = {
   id: number;
@@ -29,8 +29,8 @@ const DomainView = () => {
 
   // Fetch domains
   useEffect(() => {
-    axios
-      .get("http://localhost:8000/api/domains/")
+    apiClient
+      .get("/domains/")
       .then((res) => setDomains(res.data))
       .catch((err) => console.error(err));
   }, []);
@@ -59,8 +59,10 @@ const DomainView = () => {
     formData.append("name", domainName);
     formData.append("file", file);
 
-    axios
-      .post("http://localhost:8000/api/upload-domain/", formData)
+    apiClient
+      .post("/upload-domain/", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      })
       .then((res) => {
         setDomains((prev) => [...prev, res.data]);
         setShowUploadModal(false);
@@ -79,8 +81,8 @@ const DomainView = () => {
   const confirmDeleteDomain = () => {
     if (domainToDelete === null) return;
 
-    axios
-      .delete(`http://localhost:8000/api/domains/${domainToDelete}/`)
+    apiClient
+      .delete(`/domains/${domainToDelete}/`)
       .then(() => {
         setDomains((prev) =>
           prev.filter((domain) => domain.id !== domainToDelete)
@@ -103,8 +105,8 @@ const DomainView = () => {
   const handleSaveInactiveAttributes = () => {
     if (!selectedDomain) return;
 
-    axios
-      .put(`http://localhost:8000/api/domains/${selectedDomain.id}/update/`, {
+    apiClient
+      .put(`/domains/${selectedDomain.id}/update/`, {
         expert_attributes: inactiveAttributes,
       })
       .then(() => {
@@ -139,7 +141,7 @@ const DomainView = () => {
           {/* Left Panel: Domain Selection */}
           <Col md={6}>
             <Card className="box-with-border card-view">
-              <Card.Header>
+              <Card.Header style={{ backgroundColor: "transparent" }}>
                 <h4 className="mb-0">Select Domain</h4>
               </Card.Header>
               <Card.Body>
@@ -194,7 +196,7 @@ const DomainView = () => {
             {selectedDomain && (
               <>
                 <Card className="box-with-border">
-                  <Card.Header>
+                  <Card.Header style={{ backgroundColor: "transparent" }}>
                     <h4 className="mb-0">Attributes - {selectedDomain.name}</h4>
                   </Card.Header>
                   <Card.Body>

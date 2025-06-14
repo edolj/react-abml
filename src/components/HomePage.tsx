@@ -1,36 +1,21 @@
 import { useEffect, useState } from "react";
 import { Container, Card, Button, Spinner } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import { getObject, LearningObjectResponse } from "../api/apiHomePage";
 
 const HomePage = () => {
   const navigate = useNavigate();
-  const [learningData, setLearningData] = useState<{ name?: string } | null>(
-    null
-  );
+  const [learningData, setLearningData] =
+    useState<LearningObjectResponse | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const csrfToken = document.cookie
-      .split(";")
-      .find((cookie) => cookie.trim().startsWith("csrftoken="))
-      ?.split("=")[1];
-
-    axios
-      .get("http://localhost:8000/api/get-learning-object/", {
-        headers: { "X-CSRFToken": csrfToken },
-        withCredentials: true,
-      })
-      .then((res) => {
-        console.log(res.data);
-        if (res.data && Object.keys(res.data).length > 0) {
-          setLearningData(res.data);
-        } else {
-          setLearningData(null);
-        }
+    getObject()
+      .then((data) => {
+        setLearningData(data);
       })
       .catch((err) => {
-        console.error(err);
+        console.error("Error fetching learning object:", err);
         setLearningData(null);
       })
       .finally(() => setLoading(false));

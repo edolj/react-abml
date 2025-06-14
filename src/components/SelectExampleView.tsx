@@ -4,7 +4,7 @@ import MainTable from "./MainTable";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import Alert from "./Alert";
-import axios from "axios";
+import apiClient from "../api/apiClient";
 
 interface CriticalInstance {
   critical_index: string;
@@ -37,8 +37,13 @@ function SelectExampleView() {
     if (index >= 0 && index < criticalInstances.length) {
       const criticalIndex = criticalInstances[index].critical_index;
       const idName = criticalInstances[index].id;
+      const targetClass = criticalInstances[index].target_class;
       navigate(`/selectExample/${criticalIndex}`, {
-        state: { detailData: detailData[index], id: idName },
+        state: {
+          detailData: detailData[index],
+          id: idName,
+          targetClass: targetClass,
+        },
       });
     }
   };
@@ -60,19 +65,11 @@ function SelectExampleView() {
     const isNewSession = localStorage.getItem("mode") === "new";
 
     setIsLoading(true);
-    const csrfToken = document.cookie
-      .split(";")
-      .find((cookie) => cookie.trim().startsWith("csrftoken="))
-      ?.split("=")[1];
-
     if (isNewSession) {
       setIterationNumber(0);
     } else {
-      axios
-        .get("http://localhost:8000/api/get-iteration/", {
-          headers: { "X-CSRFToken": csrfToken },
-          withCredentials: true,
-        })
+      apiClient
+        .get("/get-iteration/")
         .then((response) => {
           setIterationNumber(response.data.iterationNumber);
         })
@@ -81,17 +78,11 @@ function SelectExampleView() {
         });
     }
 
-    axios
-      .post(
-        "http://localhost:8000/api/critical-instances/",
-        { domain: selectedDomain, startNew: isNewSession },
-        {
-          headers: {
-            "X-CSRFToken": csrfToken,
-          },
-          withCredentials: true,
-        }
-      )
+    apiClient
+      .post("/critical-instances/", {
+        domain: selectedDomain,
+        startNew: isNewSession,
+      })
       .then((response) => {
         setCriticalInstances(response.data.critical_instances[0]);
         setDetailData(response.data.critical_instances[1]);

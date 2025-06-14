@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
+import { register } from "../api/apiRegister";
 import "../css/RegistrationForm.css";
 
 const RegistrationForm = () => {
@@ -11,30 +11,24 @@ const RegistrationForm = () => {
 
   const [alertError, setAlertError] = useState<string | null>(null);
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     if (password !== passwordConfirm) {
       setAlertError("Passwords do not match.");
       return;
     }
 
-    axios
-      .post("http://localhost:8000/api/register/", {
-        username,
-        password,
-        password_confirm: passwordConfirm,
-      })
-      .then((response) => {
-        console.log("Registration successful:", response.data);
-        navigate("/");
-      })
-      .catch((error) => {
-        const errorMessage = error.response
-          ? error.response.data.non_field_errors || error.response.data
-          : error.message;
-        setAlertError(errorMessage);
-      });
+    try {
+      await register({ username, password, password_confirm: passwordConfirm });
+      // redirect after success
+      navigate("/");
+    } catch (error: any) {
+      const errorMessage =
+        error.response?.data?.non_field_errors ||
+        error.message ||
+        "Registration failed";
+      setAlertError(errorMessage);
+    }
   };
 
   return (

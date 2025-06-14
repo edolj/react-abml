@@ -1,30 +1,16 @@
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { FaSignOutAlt } from "react-icons/fa";
-import axios from "axios";
+import apiClient from "../api/apiClient";
 import "../css/Header.css";
 
 const Header = () => {
   const navigate = useNavigate();
   const { isLoggedIn, setIsLoggedIn, username } = useAuth();
 
-  const csrfToken = document.cookie
-    .split(";")
-    .find((cookie) => cookie.trim().startsWith("csrftoken="))
-    ?.split("=")[1];
-
   const handleLogout = () => {
-    axios
-      .post(
-        "http://localhost:8000/api/logout/",
-        {},
-        {
-          headers: {
-            "X-CSRFToken": csrfToken,
-          },
-          withCredentials: true,
-        }
-      )
+    apiClient
+      .post("/logout/")
       .then(() => {
         setIsLoggedIn(false);
         navigate("/");

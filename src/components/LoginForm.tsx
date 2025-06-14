@@ -1,16 +1,8 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import axios from "axios";
+import { login } from "../api/apiLogin";
 import "../css/LoginForm.css";
-
-const getCSRFToken = () => {
-  const csrfToken = document.cookie
-    .split(";")
-    .find((cookie) => cookie.trim().startsWith("csrftoken="))
-    ?.split("=")[1];
-  return csrfToken;
-};
 
 const LoginForm = () => {
   const [username, setUsername] = useState("");
@@ -20,31 +12,19 @@ const LoginForm = () => {
 
   const [alertError, setAlertError] = useState<string | null>(null);
 
-  const handleSubmit = (event: any) => {
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    const csrfToken = getCSRFToken();
 
-    axios
-      .post(
-        "http://localhost:8000/api/login/",
-        { username, password },
-        {
-          headers: {
-            "X-CSRFToken": csrfToken,
-          },
-          withCredentials: true,
-        }
-      )
-      .then((response) => {
-        setAuthUsername(response.data.user.username);
-        setIsLoggedIn(true);
-        setAlertError(null);
-        navigate("/home");
-      })
-      .catch((error) => {
-        console.error("Login error:", error);
-        setAlertError("Wrong username or password");
-      });
+    try {
+      const data = await login({ username, password });
+      setAuthUsername(data.user.username);
+      setIsLoggedIn(true);
+      setAlertError(null);
+      navigate("/home");
+    } catch (error) {
+      console.error("Login error:", error);
+      setAlertError("Wrong username or password");
+    }
   };
 
   return (

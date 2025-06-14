@@ -8,7 +8,7 @@ import { Tabs, Tab } from "react-bootstrap";
 import { attributesDisplayNames } from "./BoniteteAttributes";
 import { tooltipDescriptions } from "./BoniteteAttributes";
 import { eurAttr, attributeGroups, ratioAttr } from "./BoniteteAttributes";
-import axios from "axios";
+import apiClient from "../api/apiClient";
 import "react-toastify/dist/ReactToastify.css";
 import "../css/PrimaryButton.css";
 import "../css/Corners.css";
@@ -28,18 +28,11 @@ function ArgumentView() {
   const location = useLocation();
   const detailData = location.state?.detailData || [];
   const idName = location.state?.id || "N/A";
+  const targetClass = location.state.targetClass;
 
   useEffect(() => {
-    const csrfToken = document.cookie
-      .split(";")
-      .find((cookie) => cookie.trim().startsWith("csrftoken="))
-      ?.split("=")[1];
-
-    axios
-      .get("http://localhost:8000/api/attributes/", {
-        headers: { "X-CSRFToken": csrfToken },
-        withCredentials: true,
-      })
+    apiClient
+      .get("/attributes/")
       .then((response) => {
         const attributes = response.data;
 
@@ -93,21 +86,13 @@ function ArgumentView() {
     );
   };
 
-  const [userArgument, setUserArgument] = useState("");
-  const [m_score, setMScore] = useState(0.0);
-  const [hint_m_score, setHintMScore] = useState(0.0);
+  const [mScore, setMScore] = useState(0.0);
+  const [hintScore, setHintMScore] = useState(0.0);
   const [hintBestRule, setBestRule] = useState("");
-  const [highlightedAttr, setHighlightedAttributes] = useState<string[]>([]);
   const [hasCounterExamples, setHasCounterExamples] = useState(false);
   const [alertError, setAlertError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-
-  const readUserArgument = (event: any) => {
-    const val = event.target.value;
-    setUserArgument(val);
-    const extracted = extractAttributes(val);
-    setHighlightedAttributes(extracted);
-  };
+  const [argumentsSent, setArgumentsSent] = useState(false);
 
   const showHintMessage = () => {
     if (hintBestRule === "") {
@@ -119,7 +104,7 @@ function ArgumentView() {
       return;
     }
 
-    const score = "m: " + hint_m_score / 100;
+    const score = "m: " + hintScore / 100;
     const rule = processRule(hintBestRule);
     showToast(score, rule);
   };
@@ -127,11 +112,6 @@ function ArgumentView() {
   const showCriticalExample = () => {
     if (selectedFilters.length === 0) {
       setAlertError("The argument input field cannot be empty!");
-      return;
-    }
-
-    if (selectedFilters.length > 3) {
-      setAlertError("Too many arguments provided!");
       return;
     }
 
@@ -146,19 +126,8 @@ function ArgumentView() {
       userArgument: userArgument,
     };
 
-    const csrfToken = document.cookie
-      .split(";")
-      .find((cookie) => cookie.trim().startsWith("csrftoken="))
-      ?.split("=")[1];
-
-    axios
-      .post("http://localhost:8000/api/counter-examples/", requestData, {
-        headers: {
-          "Content-Type": "application/json",
-          "X-CSRFToken": csrfToken,
-        },
-        withCredentials: true,
-      })
+    apiClient
+      .post("/counter-examples/", requestData)
       .then((response) => {
         // response.data already contains parsed JSON
         const data = response.data;
@@ -211,6 +180,7 @@ function ArgumentView() {
         setHintMScore(Math.floor(data.best_m_score * 100));
 
         setIsLoading(false);
+        setArgumentsSent(true);
       })
       .catch((error) => {
         console.error("Argument view POST method error:", error);
@@ -229,23 +199,8 @@ function ArgumentView() {
       return;
     }
 
-    const csrfToken = document.cookie
-      .split(";")
-      .find((cookie) => cookie.trim().startsWith("csrftoken="))
-      ?.split("=")[1];
-
-    axios
-      .put(
-        "http://localhost:8000/api/update-iteration/",
-        {},
-        {
-          headers: {
-            "Content-Type": "application/json",
-            "X-CSRFToken": csrfToken,
-          },
-          withCredentials: true,
-        }
-      )
+    apiClient
+      .put("/update-iteration/")
       .then((response) => {
         console.log("Iteration updated successfully.", response);
         navigate(-1);
@@ -304,91 +259,102 @@ function ArgumentView() {
   return (
     <>
       <ToastContainer />
-      <div className="container">
+      <div
+        className="container"
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "10px",
+        }}
+      >
         <div
+          className="box-with-border card-view"
           style={{
             display: "flex",
-            flexDirection: "column",
-            gap: "20px",
-            marginTop: "10px",
-            marginBottom: "10px",
+            justifyContent: "space-between",
+            alignItems: "center",
           }}
         >
-          <div
-            className="box-with-border card-view"
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
+          <div style={{ display: "flex", flexDirection: "column" }}>
             <h4>Details for {idName}</h4>
+            <span>
+              Class: <b>{targetClass}</b>
+            </span>
+          </div>
+          {argumentsSent && (
             <Button variant="link" onClick={doneWithArgumentation}>
               Next Example
               <FaArrowRight
                 style={{ marginLeft: "8px", marginBottom: "2px" }}
               />
             </Button>
-          </div>
-          {/* Argument Input Box */}
-          <div className="box-with-border card-view">
-            <div style={{ marginBottom: "20px" }}>
-              <Form.Label>Input argument:</Form.Label>
-              <Select
-                options={attributeOptions}
-                isMulti
-                value={selectedFilters}
-                onChange={handleChange}
-                placeholder="Select"
-                styles={customStyles}
-              />
-            </div>
-            {alertError && (
-              <Alert onClose={() => setAlertError(null)}>{alertError}</Alert>
-            )}
-            <div className="button-container">
-              <div className="center-buttons">
-                <Button
-                  variant="success"
-                  onClick={showCriticalExample}
-                  className="custom-primary-button"
-                >
-                  Send arguments
-                </Button>
-
-                <PrimaryButton onClick={showHintMessage}>
-                  <FaLightbulb
-                    style={{
-                      marginRight: "8px",
-                      marginBottom: "2px",
-                      color: "white",
-                    }}
-                  />
-                  Hint
-                </PrimaryButton>
-
-                <ExpertAttributesModal></ExpertAttributesModal>
-              </div>
-            </div>
-          </div>
-
-          {/* M-Score Box */}
-          {false && (
-            <div className="box-with-border card-view">
-              <div style={{ marginBottom: "20px" }}>
-                M-score for chosen arguments: {m_score / 100}
-              </div>
-              <ProgressBar>
-                <ProgressBar now={m_score} label={m_score} variant="primary" />
-                <ProgressBar
-                  now={hint_m_score - m_score}
-                  label={hint_m_score - m_score}
-                  variant="success"
-                />
-              </ProgressBar>
-            </div>
           )}
         </div>
+
+        {/* Argument Input Box */}
+        <div className="box-with-border card-view">
+          <div style={{ marginBottom: "20px" }}>
+            <Form.Label>Input argument:</Form.Label>
+            <Select
+              options={attributeOptions}
+              isMulti
+              value={selectedFilters}
+              onChange={handleChange}
+              placeholder="Select"
+              styles={customStyles}
+            />
+          </div>
+          {alertError && (
+            <Alert onClose={() => setAlertError(null)}>{alertError}</Alert>
+          )}
+          <div className="button-container">
+            <div className="center-buttons">
+              <Button
+                variant="success"
+                onClick={showCriticalExample}
+                className="custom-primary-button"
+              >
+                Send arguments
+              </Button>
+
+              <ExpertAttributesModal></ExpertAttributesModal>
+            </div>
+          </div>
+        </div>
+
+        {/* M-Score Box */}
+        {argumentsSent && (
+          <div className="box-with-border card-view">
+            <div
+              style={{
+                marginBottom: "20px",
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              M-score for chosen arguments: {mScore / 100}
+              <PrimaryButton onClick={showHintMessage}>
+                <FaLightbulb
+                  style={{
+                    marginRight: "8px",
+                    marginBottom: "2px",
+                    color: "white",
+                  }}
+                />
+                Hint
+              </PrimaryButton>
+            </div>
+            <ProgressBar>
+              <ProgressBar now={mScore} label={mScore} variant="primary" />
+              <ProgressBar
+                now={hintScore - mScore}
+                label={hintScore - mScore}
+                variant="success"
+              />
+            </ProgressBar>
+          </div>
+        )}
 
         <div className="box-with-border card-view">
           <Tabs

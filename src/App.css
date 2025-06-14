@@ -6,16 +6,14 @@ body {
 
 .container {
   width: 100%;
-  max-width: 1200px; /* Set the max-width as needed */
-  margin: 0 auto; /* Centers the container */
-  padding: 20px; /* Optional: Adds some padding */
+  padding: 10px;
 }
 
 .box-with-border {
-  border: 2px solid #ccc; /* Gray border */
-  padding: 20px;
-  border-radius: 5px; /* Optional: makes the corners rounded */
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2); /* Shadow */
+  border: 2px solid #ccc;
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
 .btn-primary {
