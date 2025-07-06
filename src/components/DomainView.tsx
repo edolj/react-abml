@@ -145,13 +145,18 @@ const DomainView = () => {
                 <h4 className="mb-0">Select Domain</h4>
               </Card.Header>
               <Card.Body>
-                <div style={{ maxHeight: "50vh", overflowY: "auto" }}>
+                <div className="scrollable">
                   <ListGroup variant="flush">
                     {domains.map((domain: any) => (
                       <ListGroup.Item
                         key={domain.id}
                         action
                         onClick={() => handleSelectDomain(domain)}
+                        className={
+                          domain.id === selectedDomain?.id
+                            ? "selected-item"
+                            : ""
+                        }
                       >
                         <div className="d-flex align-items-center justify-content-between">
                           <span>{domain.name}</span>
@@ -200,12 +205,13 @@ const DomainView = () => {
                     <h4 className="mb-0">Attributes - {selectedDomain.name}</h4>
                   </Card.Header>
                   <Card.Body>
-                    <div style={{ maxHeight: "50vh", overflowY: "auto" }}>
+                    <div>
                       {selectedDomain.attributes?.map((attr: string) => (
                         <Form.Check
                           key={attr}
                           type="checkbox"
                           id={`check-${attr}`}
+                          className="custom-checkbox"
                           label={attr}
                           checked={inactiveAttributes.includes(attr)}
                           onChange={() => {

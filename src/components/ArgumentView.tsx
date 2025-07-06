@@ -21,6 +21,13 @@ import Form from "react-bootstrap/Form";
 import Tooltip from "@mui/material/Tooltip";
 import Select from "react-select";
 import PrimaryButton from "./PrimaryButton";
+import Bubbles from "./Bubbles";
+import AttributeList from "./AttributeList";
+
+export type Argument = {
+  key: string;
+  operator?: string;
+};
 
 function ArgumentView() {
   const navigate = useNavigate();
@@ -29,32 +36,6 @@ function ArgumentView() {
   const detailData = location.state?.detailData || [];
   const idName = location.state?.id || "N/A";
   const targetClass = location.state.targetClass;
-
-  useEffect(() => {
-    apiClient
-      .get("/attributes/")
-      .then((response) => {
-        const attributes = response.data;
-
-        let options: OptionType[] = [];
-        attributes.forEach((attr: { name: string; type: string }) => {
-          const displayName = attributesDisplayNames[attr.name] || attr.name;
-          if (attr.type === "continuous") {
-            options.push(
-              { value: `${attr.name}<=`, label: `${displayName} is low` },
-              { value: `${attr.name}>=`, label: `${displayName} is high` }
-            );
-          } else if (attr.type === "discrete") {
-            options.push({ value: attr.name, label: displayName });
-          }
-        });
-
-        setAttributeOptions(options);
-      })
-      .catch((error) => {
-        console.error("Error fetching attributes:", error);
-      });
-  }, []);
 
   const [columns, setColumns] = useState([
     { Header: "Attribute", accessor: "key" },
@@ -93,6 +74,34 @@ function ArgumentView() {
   const [alertError, setAlertError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [argumentsSent, setArgumentsSent] = useState(false);
+  const [selectedFilters, setSelectedFilters] = useState<Argument[]>([]);
+  const [boxplots, setBoxplots] = useState<Record<string, number[]>>({});
+
+  useEffect(() => {
+    apiClient
+      .get("/get-charts-data/")
+      .then((res) => {
+        console.log(res.data);
+        setBoxplots(res.data);
+      })
+      .catch((err) => {
+        console.error("Failed to load visual representation data", err);
+      });
+  }, []);
+
+  const addBubble = (newBubble: Argument) => {
+    setSelectedFilters((prev) => {
+      return [
+        // Filter out previous entries with the same key
+        ...prev.filter((b) => b.key !== newBubble.key),
+        newBubble,
+      ];
+    });
+  };
+
+  const removeBubble = (keyToRemove: string) => {
+    setSelectedFilters((prev) => prev.filter((b) => b.key !== keyToRemove));
+  };
 
   const showHintMessage = () => {
     if (hintBestRule === "") {
@@ -111,11 +120,14 @@ function ArgumentView() {
 
   const showCriticalExample = () => {
     if (selectedFilters.length === 0) {
-      setAlertError("The argument input field cannot be empty!");
+      setAlertError("The argument field cannot be empty!");
       return;
     }
 
-    const userArgument = selectedFilters.map((item) => item.value).join(",");
+    // const userArgument = selectedFilters.map((item) => item.value).join(",");
+    const userArgument = selectedFilters
+      .map((item) => (item.operator ? `${item.key}${item.operator}` : item.key))
+      .join(",");
 
     setAlertError(null);
     setIsLoading(true);
@@ -195,7 +207,7 @@ function ArgumentView() {
 
   const doneWithArgumentation = () => {
     if (selectedFilters.length === 0) {
-      setAlertError("The argument input field cannot be empty!");
+      setAlertError("The argument field cannot be empty!");
       return;
     }
 
@@ -215,46 +227,65 @@ function ArgumentView() {
     return rule.replace(/([<>=!]+)\s*(-?[\d.]+)/g, "$1 ");
   };
 
-  const extractAttributes = (input: string) => {
-    const regex = /([\w.]+)\s*(?:<=|>=|=|<|>)/g;
-    const matches = input.matchAll(regex);
-    const attributes = Array.from(matches, (m) => m[1]);
-    return attributes;
-  };
+  // useEffect(() => {
+  //   apiClient
+  //     .get("/attributes/")
+  //     .then((response) => {
+  //       const attributes = response.data;
 
-  type OptionType = {
-    value: string;
-    label: string;
-  };
+  //       let options: OptionType[] = [];
+  //       attributes.forEach((attr: { name: string; type: string }) => {
+  //         const displayName = attributesDisplayNames[attr.name] || attr.name;
+  //         if (attr.type === "continuous") {
+  //           options.push(
+  //             { value: `${attr.name}<=`, label: `${displayName} is low` },
+  //             { value: `${attr.name}>=`, label: `${displayName} is high` }
+  //           );
+  //         } else if (attr.type === "discrete") {
+  //           options.push({ value: attr.name, label: displayName });
+  //         }
+  //       });
 
-  const customStyles: StylesConfig<OptionType, true, GroupBase<OptionType>> = {
-    multiValue: (base) => ({
-      ...base,
-      backgroundColor: "#007bff",
-      color: "white",
-      borderRadius: "16px",
-      padding: "0 10px",
-    }),
-    multiValueLabel: (base) => ({
-      ...base,
-      color: "white",
-    }),
-    multiValueRemove: (base) => ({
-      ...base,
-      color: "white",
-      ":hover": { backgroundColor: "darkblue" },
-    }),
-  };
+  //       setAttributeOptions(options);
+  //     })
+  //     .catch((error) => {
+  //       console.error("Error fetching attributes:", error);
+  //     });
+  // }, []);
 
-  const [attributeOptions, setAttributeOptions] = useState<OptionType[]>([]);
-  const [selectedFilters, setSelectedFilters] = useState<OptionType[]>([]);
+  // type OptionType = {
+  //   value: string;
+  //   label: string;
+  // };
 
-  const handleChange = (
-    selectedOptions: MultiValue<OptionType>,
-    actionMeta: ActionMeta<OptionType>
-  ) => {
-    setSelectedFilters([...selectedOptions]);
-  };
+  // const customStyles: StylesConfig<OptionType, true, GroupBase<OptionType>> = {
+  //   multiValue: (base) => ({
+  //     ...base,
+  //     backgroundColor: "#607ad1",
+  //     color: "white",
+  //     borderRadius: "16px",
+  //     padding: "0 10px",
+  //   }),
+  //   multiValueLabel: (base) => ({
+  //     ...base,
+  //     color: "white",
+  //   }),
+  //   multiValueRemove: (base) => ({
+  //     ...base,
+  //     color: "white",
+  //     ":hover": { backgroundColor: "darkblue" },
+  //   }),
+  // };
+
+  // const [attributeOptions, setAttributeOptions] = useState<OptionType[]>([]);
+  // const [selectedFilters, setSelectedFilters] = useState<OptionType[]>([]);
+
+  // const handleChange = (
+  //   selectedOptions: MultiValue<OptionType>,
+  //   actionMeta: ActionMeta<OptionType>
+  // ) => {
+  //   setSelectedFilters([...selectedOptions]);
+  // };
 
   return (
     <>
@@ -292,7 +323,7 @@ function ArgumentView() {
         </div>
 
         {/* Argument Input Box */}
-        <div className="box-with-border card-view">
+        {/* <div className="box-with-border card-view">
           <div style={{ marginBottom: "20px" }}>
             <Form.Label>Input argument:</Form.Label>
             <Select
@@ -320,7 +351,7 @@ function ArgumentView() {
               <ExpertAttributesModal></ExpertAttributesModal>
             </div>
           </div>
-        </div>
+        </div> */}
 
         {/* M-Score Box */}
         {argumentsSent && (
@@ -357,6 +388,52 @@ function ArgumentView() {
         )}
 
         <div className="box-with-border card-view">
+          <div
+            style={{
+              border: "1px solid #ccc",
+              borderRadius: 4,
+              padding: "0.5rem",
+              marginBottom: 8,
+            }}
+          >
+            {selectedFilters.length === 0 ? (
+              <div style={{ color: "#888", fontStyle: "italic" }}>
+                Select arguments from list
+              </div>
+            ) : (
+              <Bubbles bubbles={selectedFilters} onRemove={removeBubble} />
+            )}
+          </div>
+          {alertError && (
+            <Alert onClose={() => setAlertError(null)}>{alertError}</Alert>
+          )}
+          <div
+            style={{
+              marginTop: 16,
+              marginBottom: 24,
+              display: "flex",
+              justifyContent: "center",
+            }}
+          >
+            <Button
+              variant="success"
+              onClick={showCriticalExample}
+              className="custom-primary-button"
+            >
+              Send arguments
+            </Button>
+          </div>
+
+          <AttributeList
+            attributes={formattedData}
+            hasCounterExamples={hasCounterExamples}
+            boxplots={boxplots}
+            onHighClick={(key) => addBubble({ key, operator: ">=" })}
+            onLowClick={(key) => addBubble({ key, operator: "<=" })}
+          />
+        </div>
+
+        {/* <div className="box-with-border card-view">
           <Tabs
             defaultActiveKey={Object.keys(attributeGroups)[0]}
             id="attribute-groups-tabs"
@@ -437,7 +514,7 @@ function ArgumentView() {
               );
             })}
           </Tabs>
-        </div>
+        </div>*/}
 
         {/* Loading Indicator */}
         {isLoading && (

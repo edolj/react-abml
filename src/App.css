@@ -6,7 +6,7 @@ body {
 
 .container {
   width: 100%;
-  padding: 10px;
+  padding: 20px;
 }
 
 .box-with-border {
@@ -24,4 +24,23 @@ body {
 .btn-primary:hover {
   background-color: #4e66c1 !important;
   border-color: #4e66c1 !important;
+}
+
+.scrollable {
+  max-height: 50vh;
+  overflow-y: auto;
+}
+
+.selected-item {
+  background-color: #ecf1fd !important;
+  font-weight: 500;
+}
+
+.custom-checkbox .form-check-input:checked {
+  background-color: #607ad1;
+  border-color: #607ad1;
+}
+
+.custom-checkbox .form-check-input:focus {
+  box-shadow: 0 0 0 0.2rem rgba(96, 122, 209, 0.25);
 }

@@ -67,10 +67,11 @@ const HomePage = () => {
                   )}
                 </div>
               </Container>
+              {learningData && <Container>OR</Container>}
               <Container>
                 <div>
                   <Button
-                    variant="primary"
+                    variant="success"
                     onClick={() => handleStartFlow("new")}
                   >
                     Start New Session
