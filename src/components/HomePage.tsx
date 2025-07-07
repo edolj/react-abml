@@ -36,7 +36,7 @@ const HomePage = () => {
 
   return (
     <Container className="my-5">
-      <Card className="shadow p-4">
+      <Card className="box-with-border card-view">
         <Card.Body>
           <h2 className="mb-3">Welcome to ABML Tutor</h2>
           <p className="text-muted mb-4">

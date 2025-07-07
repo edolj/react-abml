@@ -4,6 +4,7 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import BoxPlot from "./BoxPlot";
 import Checkbox from "@mui/material/Checkbox";
+import Divider from "@mui/material/Divider";
 import { FaChevronUp, FaChevronDown } from "react-icons/fa";
 import { IconButton } from "@mui/material";
 import { Argument } from "./ArgumentView";
@@ -48,19 +49,20 @@ const AttributeList: React.FC<Props> = ({
             <Paper
               elevation={0}
               style={{
-                padding: "0.5rem 1rem",
+                padding: "1rem 1rem",
+                backgroundColor: "#f0f3fa",
               }}
             >
               <Box display="flex" justifyContent="space-around">
                 <Typography
-                  variant="caption"
+                  variant="body1"
                   fontWeight="bold"
                   style={{ flexGrow: 1, textAlign: "right" }}
                 >
                   Counter Value 1
                 </Typography>
                 <Typography
-                  variant="caption"
+                  variant="body1"
                   fontWeight="bold"
                   style={{ flexGrow: 1, textAlign: "right" }}
                 >
@@ -78,7 +80,7 @@ const AttributeList: React.FC<Props> = ({
             elevation={0}
             style={{
               padding: "0.5rem",
-              backgroundColor: index % 2 === 0 ? "#f9f9f9" : "#ffffff",
+              backgroundColor: index % 2 === 0 ? "#ececec" : "#ffffff",
             }}
           >
             <Grid container alignItems="center">
@@ -105,6 +107,13 @@ const AttributeList: React.FC<Props> = ({
                       />
                     )}
                   </Box>
+
+                  {/* Divider */}
+                  <Divider
+                    orientation="vertical"
+                    flexItem
+                    sx={{ borderColor: "black" }}
+                  />
 
                   <Grid item md={2}>
                     <Box

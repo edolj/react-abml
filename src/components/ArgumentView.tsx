@@ -197,7 +197,7 @@ function ArgumentView() {
             limitedCounterExamples.forEach(
               (counterExample: any, counterIndex: number) => {
                 newItem[`counterValue${counterIndex + 1}`] =
-                  counterExample[index] || "";
+                  counterExample[index] || "-";
               }
             );
             return newItem;
@@ -328,9 +328,9 @@ function ArgumentView() {
           }}
         >
           <div style={{ display: "flex", flexDirection: "column" }}>
-            <h4>Details for {idName}</h4>
+            <h4>Details about: {idName}</h4>
             <span>
-              Class: <b>{targetClass}</b>
+              Class: <b style={{ color: "green" }}>{targetClass}</b>
             </span>
           </div>
           {argumentsSent && (
@@ -415,6 +415,9 @@ function ArgumentView() {
               borderRadius: 4,
               padding: "0.5rem",
               marginBottom: 8,
+              background: "white",
+              width: "80%",
+              margin: "0 auto",
             }}
           >
             {selectedFilters.length === 0 ? (
@@ -445,17 +448,25 @@ function ArgumentView() {
             </Button>
           </div>
 
-          <AttributeList
-            attributes={formattedData}
-            hasCounterExamples={hasCounterExamples}
-            boxplots={boxplots}
-            attrTypes={attrTypes}
-            selectedFilters={selectedFilters}
-            onHighClick={(key) => addBubble({ key, operator: ">=" })}
-            onLowClick={(key) => addBubble({ key, operator: "<=" })}
-            onCategoryAddClick={(key) => addBubble({ key })}
-            onCategoryDeleteClick={(key) => removeBubble(key)}
-          />
+          <div
+            style={{
+              width: hasCounterExamples ? "100%" : "80%",
+              margin: "0 auto",
+              marginTop: "40px",
+            }}
+          >
+            <AttributeList
+              attributes={formattedData}
+              hasCounterExamples={hasCounterExamples}
+              boxplots={boxplots}
+              attrTypes={attrTypes}
+              selectedFilters={selectedFilters}
+              onHighClick={(key) => addBubble({ key, operator: ">=" })}
+              onLowClick={(key) => addBubble({ key, operator: "<=" })}
+              onCategoryAddClick={(key) => addBubble({ key })}
+              onCategoryDeleteClick={(key) => removeBubble(key)}
+            />
+          </div>
         </div>
 
         {/* <div className="box-with-border card-view">
