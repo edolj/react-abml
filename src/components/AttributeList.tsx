@@ -3,8 +3,10 @@ import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import BoxPlot from "./BoxPlot";
+import Checkbox from "@mui/material/Checkbox";
 import { FaChevronUp, FaChevronDown } from "react-icons/fa";
 import { IconButton } from "@mui/material";
+import { Argument } from "./ArgumentView";
 
 type AttributeItem = {
   key: string;
@@ -17,16 +19,24 @@ type Props = {
   attributes: AttributeItem[];
   hasCounterExamples: boolean;
   boxplots?: Record<string, number[]>;
+  attrTypes?: Record<string, string>;
+  selectedFilters?: Argument[];
   onHighClick?: (key: string) => void;
   onLowClick?: (key: string) => void;
+  onCategoryAddClick?: (key: string) => void;
+  onCategoryDeleteClick?: (key: string) => void;
 };
 
 const AttributeList: React.FC<Props> = ({
   attributes,
   hasCounterExamples,
   boxplots,
+  attrTypes,
+  selectedFilters,
   onHighClick,
   onLowClick,
+  onCategoryAddClick,
+  onCategoryDeleteClick,
 }) => {
   return (
     <Grid container>
@@ -100,11 +110,11 @@ const AttributeList: React.FC<Props> = ({
                     <Box
                       display="flex"
                       alignItems="center"
-                      justifyContent="flex-end"
+                      justifyContent="center"
                       gap={1}
                       height="100%"
                     >
-                      {boxplots?.[attr.key] ? (
+                      {attrTypes?.[attr.key] === "continuous" ? (
                         <>
                           <IconButton
                             size="small"
@@ -119,14 +129,25 @@ const AttributeList: React.FC<Props> = ({
                             <FaChevronDown />
                           </IconButton>
                         </>
-                      ) : (
-                        <IconButton
-                          size="small"
-                          onClick={() => onLowClick?.(attr.key)}
-                        >
-                          <input type="checkbox" />
-                        </IconButton>
-                      )}
+                      ) : attrTypes?.[attr.key] === "discrete" ? (
+                        <Checkbox
+                          checked={selectedFilters?.some(
+                            (f) => f.key === attr.key
+                          )}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              onCategoryAddClick?.(attr.key);
+                            } else {
+                              onCategoryDeleteClick?.(attr.key);
+                            }
+                          }}
+                          sx={{
+                            "&.Mui-checked": {
+                              color: "#607ad1",
+                            },
+                          }}
+                        />
+                      ) : null}
                     </Box>
                   </Grid>
                 </Box>

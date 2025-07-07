@@ -29,6 +29,11 @@ export type Argument = {
   operator?: string;
 };
 
+type AttributeInfo = {
+  name: string;
+  type: "continuous" | "discrete" | "meta" | "target" | "unknown";
+};
+
 function ArgumentView() {
   const navigate = useNavigate();
   const { criticalIndex } = useParams();
@@ -76,12 +81,28 @@ function ArgumentView() {
   const [argumentsSent, setArgumentsSent] = useState(false);
   const [selectedFilters, setSelectedFilters] = useState<Argument[]>([]);
   const [boxplots, setBoxplots] = useState<Record<string, number[]>>({});
+  const [attrTypes, setAttributeTypes] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    apiClient
+      .get("/attributes/")
+      .then((response) => {
+        const mapping: Record<string, string> = {};
+        response.data.forEach((attr: AttributeInfo) => {
+          mapping[attr.name] = attr.type;
+        });
+
+        setAttributeTypes(mapping);
+      })
+      .catch((error) => {
+        console.error("Failed to fetch attribute types:", error);
+      });
+  }, []);
 
   useEffect(() => {
     apiClient
       .get("/get-charts-data/")
       .then((res) => {
-        console.log(res.data);
         setBoxplots(res.data);
       })
       .catch((err) => {
@@ -206,7 +227,7 @@ function ArgumentView() {
   };
 
   const doneWithArgumentation = () => {
-    if (selectedFilters.length === 0) {
+    if (!argumentsSent) {
       setAlertError("The argument field cannot be empty!");
       return;
     }
@@ -428,8 +449,12 @@ function ArgumentView() {
             attributes={formattedData}
             hasCounterExamples={hasCounterExamples}
             boxplots={boxplots}
+            attrTypes={attrTypes}
+            selectedFilters={selectedFilters}
             onHighClick={(key) => addBubble({ key, operator: ">=" })}
             onLowClick={(key) => addBubble({ key, operator: "<=" })}
+            onCategoryAddClick={(key) => addBubble({ key })}
+            onCategoryDeleteClick={(key) => removeBubble(key)}
           />
         </div>
 
