@@ -1,25 +1,20 @@
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { MultiValue, ActionMeta, StylesConfig, GroupBase } from "react-select";
 import { ToastContainer, toast } from "react-toastify";
 import { Button } from "react-bootstrap";
 import { FaArrowRight, FaLightbulb } from "react-icons/fa";
-import { Tabs, Tab } from "react-bootstrap";
-import { attributesDisplayNames } from "./BoniteteAttributes";
-import { tooltipDescriptions } from "./BoniteteAttributes";
-import { eurAttr, attributeGroups, ratioAttr } from "./BoniteteAttributes";
+// import { MultiValue, ActionMeta, StylesConfig, GroupBase } from "react-select";
+// import { Tabs, Tab } from "react-bootstrap";
 import apiClient from "../api/apiClient";
 import "react-toastify/dist/ReactToastify.css";
 import "../css/PrimaryButton.css";
 import "../css/Corners.css";
 import Alert from "./Alert";
-import ExpertAttributesModal from "./ExpertAttributesModal";
+// import ExpertAttributesModal from "./ExpertAttributesModal";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import ProgressBar from "react-bootstrap/ProgressBar";
-import Form from "react-bootstrap/Form";
-import Tooltip from "@mui/material/Tooltip";
-import Select from "react-select";
+// import Select from "react-select";
 import PrimaryButton from "./PrimaryButton";
 import Bubbles from "./Bubbles";
 import AttributeList from "./AttributeList";
@@ -428,9 +423,11 @@ function ArgumentView() {
               <Bubbles bubbles={selectedFilters} onRemove={removeBubble} />
             )}
           </div>
-          {alertError && (
-            <Alert onClose={() => setAlertError(null)}>{alertError}</Alert>
-          )}
+          <div style={{ width: "80%", margin: "0 auto", paddingTop: "10px" }}>
+            {alertError && (
+              <Alert onClose={() => setAlertError(null)}>{alertError}</Alert>
+            )}
+          </div>
           <div
             style={{
               marginTop: 16,

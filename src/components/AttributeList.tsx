@@ -5,9 +5,13 @@ import Box from "@mui/material/Box";
 import BoxPlot from "./BoxPlot";
 import Checkbox from "@mui/material/Checkbox";
 import Divider from "@mui/material/Divider";
+import Tooltip from "@mui/material/Tooltip";
 import { FaChevronUp, FaChevronDown } from "react-icons/fa";
 import { IconButton } from "@mui/material";
 import { Argument } from "./ArgumentView";
+import { attributesDisplayNames } from "./BoniteteAttributes";
+import { tooltipDescriptions } from "./BoniteteAttributes";
+import { eurAttr, ratioAttr } from "./BoniteteAttributes";
 
 type AttributeItem = {
   key: string;
@@ -39,6 +43,26 @@ const AttributeList: React.FC<Props> = ({
   onCategoryAddClick,
   onCategoryDeleteClick,
 }) => {
+  const formatValue = (key: string, value: string | number) => {
+    if (value === "" || value === undefined || value === null) return "-";
+
+    if (eurAttr.includes(key)) {
+      return `${Number(value).toLocaleString("sl-SI", {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      })} €`;
+    }
+
+    if (ratioAttr.includes(key)) {
+      return Number(value).toLocaleString("sl-SI", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      });
+    }
+
+    return value;
+  };
+
   return (
     <Grid container>
       {/* Header row */}
@@ -50,7 +74,7 @@ const AttributeList: React.FC<Props> = ({
               elevation={0}
               style={{
                 padding: "1rem 1rem",
-                backgroundColor: "#f0f3fa",
+                backgroundColor: "#f8d7da",
               }}
             >
               <Box display="flex" justifyContent="space-around">
@@ -80,7 +104,12 @@ const AttributeList: React.FC<Props> = ({
             elevation={0}
             style={{
               padding: "0.5rem",
-              backgroundColor: index % 2 === 0 ? "#ececec" : "#ffffff",
+              backgroundColor:
+                attrTypes?.[attr.key] === "target"
+                  ? "#d1e7dd"
+                  : index % 2 === 0
+                  ? "#ececec"
+                  : "#ffffff",
             }}
           >
             <Grid container alignItems="center">
@@ -88,13 +117,20 @@ const AttributeList: React.FC<Props> = ({
                 <Box display="flex" alignItems="center" height="100%">
                   {/* Label */}
                   <Box flex={1}>
-                    <Typography variant="subtitle1">{attr.key}</Typography>
+                    <Tooltip
+                      title={tooltipDescriptions?.[attr.key] || ""}
+                      arrow
+                    >
+                      <Typography variant="subtitle1">
+                        {attributesDisplayNames[attr.key] ?? attr.key}
+                      </Typography>
+                    </Tooltip>
                   </Box>
 
                   {/* Value */}
                   <Box flex={1} display="flex" justifyContent="flex-end">
                     <Typography variant="body2" fontWeight="bold">
-                      {attr.value}
+                      {formatValue(attr.key, attr.value)}
                     </Typography>
                   </Box>
 
@@ -159,6 +195,14 @@ const AttributeList: React.FC<Props> = ({
                       ) : null}
                     </Box>
                   </Grid>
+
+                  {hasCounterExamples && (
+                    <Divider
+                      orientation="vertical"
+                      flexItem
+                      sx={{ borderColor: "black" }}
+                    />
+                  )}
                 </Box>
               </Grid>
 
@@ -166,12 +210,12 @@ const AttributeList: React.FC<Props> = ({
                 <>
                   <Grid item md={2}>
                     <Typography variant="body2" align="right" fontWeight="bold">
-                      {attr.counterValue1 ?? "-"}
+                      {formatValue(attr.key, attr.counterValue1 ?? "-")}
                     </Typography>
                   </Grid>
                   <Grid item md={2}>
                     <Typography variant="body2" align="right" fontWeight="bold">
-                      {attr.counterValue2 ?? "-"}
+                      {formatValue(attr.key, attr.counterValue2 ?? "-")}
                     </Typography>
                   </Grid>
                 </>
