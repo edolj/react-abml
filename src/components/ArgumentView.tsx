@@ -351,22 +351,6 @@ function ArgumentView() {
               styles={customStyles}
             />
           </div>
-          {alertError && (
-            <Alert onClose={() => setAlertError(null)}>{alertError}</Alert>
-          )}
-          <div className="button-container">
-            <div className="center-buttons">
-              <Button
-                variant="success"
-                onClick={showCriticalExample}
-                className="custom-primary-button"
-              >
-                Send arguments
-              </Button>
-
-              <ExpertAttributesModal></ExpertAttributesModal>
-            </div>
-          </div>
         </div> */}
 
         {/* M-Score Box */}

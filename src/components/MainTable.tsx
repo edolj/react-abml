@@ -1,5 +1,4 @@
 import React from "react";
-import "../css/Corners.css";
 
 interface Props {
   columns: any;

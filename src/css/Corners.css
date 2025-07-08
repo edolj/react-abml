@@ -36,6 +36,17 @@
   border-bottom-right-radius: 10px;
 }
 
+.rounded-table th:nth-child(2),
+.rounded-table td:nth-child(2),
+.rounded-table th:nth-child(3),
+.rounded-table td:nth-child(3) {
+  width: 240px;
+  min-width: 240px;
+  max-width: 240px;
+  text-align: center;
+  white-space: nowrap;
+}
+
 /* Hover Effects */
 .rounded-table tbody tr:hover td {
   background-color: #e3f2fd;
@@ -53,52 +64,4 @@
 
 .center-text {
   text-align: center;
-}
-
-.btn-high,
-.btn-low {
-  padding: 4px;
-  border-radius: 50%;
-  background-color: transparent;
-  transition: transform 0.2s ease-in-out;
-  border: 0px solid gray;
-}
-
-.action-column {
-  width: 120px;
-  text-align: center;
-}
-
-.btn-group {
-  gap: 10px;
-  display: flex;
-  justify-content: center;
-}
-
-.button-container {
-  display: flex;
-  align-items: center;
-  width: 100%;
-  margin-top: 20px;
-}
-
-.spacer {
-  flex: 1; /* Takes space to balance the right button */
-}
-
-.center-buttons {
-  display: flex;
-  justify-content: center;
-  gap: 15px;
-  flex: 2; /* Allows it to take up enough space for true centering */
-}
-
-.center-buttons button {
-  width: 180px; /* Equal width for both buttons */
-}
-
-.right-button {
-  flex: 1; /* Keeps it aligned to the right */
-  display: flex;
-  justify-content: flex-end;
 }
