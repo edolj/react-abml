@@ -77,6 +77,18 @@ function ArgumentView() {
   const [selectedFilters, setSelectedFilters] = useState<Argument[]>([]);
   const [boxplots, setBoxplots] = useState<Record<string, number[]>>({});
   const [attrTypes, setAttributeTypes] = useState<Record<string, string>>({});
+  const [expertAttr, setExpertAttr] = useState([]);
+
+  useEffect(() => {
+    apiClient
+      .get("/expert-attributes/")
+      .then((response) => {
+        setExpertAttr(response.data);
+      })
+      .catch((error) => {
+        console.error("Failed to fetch expert attributes:", error);
+      });
+  }, []);
 
   useEffect(() => {
     apiClient
@@ -442,6 +454,7 @@ function ArgumentView() {
               boxplots={boxplots}
               attrTypes={attrTypes}
               selectedFilters={selectedFilters}
+              expertAttr={expertAttr}
               onHighClick={(key) => addBubble({ key, operator: ">=" })}
               onLowClick={(key) => addBubble({ key, operator: "<=" })}
               onCategoryAddClick={(key) => addBubble({ key })}

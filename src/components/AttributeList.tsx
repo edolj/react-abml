@@ -6,7 +6,7 @@ import BoxPlot from "./BoxPlot";
 import Checkbox from "@mui/material/Checkbox";
 import Divider from "@mui/material/Divider";
 import Tooltip from "@mui/material/Tooltip";
-import { FaChevronUp, FaChevronDown } from "react-icons/fa";
+import { FaChevronUp, FaChevronDown, FaStar } from "react-icons/fa";
 import { IconButton } from "@mui/material";
 import { Argument } from "./ArgumentView";
 import { attributesDisplayNames } from "./BoniteteAttributes";
@@ -26,6 +26,7 @@ type Props = {
   boxplots?: Record<string, number[]>;
   attrTypes?: Record<string, string>;
   selectedFilters?: Argument[];
+  expertAttr: string[];
   onHighClick?: (key: string) => void;
   onLowClick?: (key: string) => void;
   onCategoryAddClick?: (key: string) => void;
@@ -38,6 +39,7 @@ const AttributeList: React.FC<Props> = ({
   boxplots,
   attrTypes,
   selectedFilters,
+  expertAttr,
   onHighClick,
   onLowClick,
   onCategoryAddClick,
@@ -116,7 +118,10 @@ const AttributeList: React.FC<Props> = ({
               <Grid item md={hasCounterExamples ? 8 : 12}>
                 <Box display="flex" alignItems="center" height="100%">
                   {/* Label */}
-                  <Box flex={1}>
+                  <Box flex={1} display="flex" alignItems="center" gap={1}>
+                    {expertAttr.includes(attr.key) && (
+                      <FaStar color="#f5c518" size={14} />
+                    )}
                     <Tooltip
                       title={tooltipDescriptions?.[attr.key] || ""}
                       arrow
