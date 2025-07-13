@@ -1,17 +1,17 @@
 import { useState, useEffect } from "react";
-import { Button, ListGroup, Container, Modal } from "react-bootstrap";
-import { Row, Col, Card, Spinner, Form } from "react-bootstrap";
-import { FaUpload, FaTimes } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import { ToastContainer, toast } from "react-toastify";
-import Alert from "./Alert";
+import { Button, ListGroup, Container } from "react-bootstrap";
+import { Card, Spinner, Form, Modal } from "react-bootstrap";
+import { FaUpload, FaTimes, FaEdit, FaPlay } from "react-icons/fa";
 import apiClient from "../api/apiClient";
+import Alert from "./Alert";
 
-type Domain = {
+export type Domain = {
   id: number;
   name: string;
   attributes: string[];
   expert_attributes: string[];
+  display_names: Record<string, string>;
 };
 
 const DomainView = () => {
@@ -24,20 +24,20 @@ const DomainView = () => {
   const [domainToDelete, setDomainToDelete] = useState<number | null>(null);
   const [domainName, setDomainName] = useState("");
   const [file, setFile] = useState<File | null>(null);
-  const [inactiveAttributes, setInactiveAttributes] = useState<string[]>([]);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   // Fetch domains
   useEffect(() => {
     apiClient
       .get("/domains/")
-      .then((res) => setDomains(res.data))
+      .then((res) => {
+        setDomains(res.data);
+      })
       .catch((err) => console.error(err));
   }, []);
 
   const handleSelectDomain = (domain: Domain) => {
     setSelectedDomain(domain);
-    setInactiveAttributes(domain.expert_attributes || []);
   };
 
   const handleStartFlow = (mode: string) => {
@@ -73,6 +73,12 @@ const DomainView = () => {
       .finally(() => setLoading(false));
   };
 
+  const handleEditDomain = (domain: Domain) => {
+    navigate(`/edit-domain/${domain.id}`, {
+      state: { domain },
+    });
+  };
+
   const handleDeleteDomain = (id: number) => {
     setDomainToDelete(id);
     setShowDeleteModal(true);
@@ -90,7 +96,6 @@ const DomainView = () => {
 
         if (selectedDomain?.id === domainToDelete) {
           setSelectedDomain(null);
-          setInactiveAttributes([]);
         }
       })
       .catch((err) => {
@@ -102,156 +107,83 @@ const DomainView = () => {
       });
   };
 
-  const handleSaveInactiveAttributes = () => {
-    if (!selectedDomain) return;
-
-    apiClient
-      .put(`/domains/${selectedDomain.id}/update/`, {
-        expert_attributes: inactiveAttributes,
-      })
-      .then(() => {
-        toast.success("Expert attributes saved successfully!");
-        // Update domain in local state
-        setDomains((prev) =>
-          prev.map((d) =>
-            d.id === selectedDomain.id
-              ? { ...d, expert_attributes: inactiveAttributes }
-              : d
-          )
-        );
-        // Also update selectedDomain to keep UI consistent
-        setSelectedDomain((prev) =>
-          prev ? { ...prev, expert_attributes: inactiveAttributes } : prev
-        );
-      })
-      .catch((err) => {
-        setErrorMsg(
-          "Failed to save: " + err.response?.data?.error || "Unknown error."
-        );
-      });
-  };
-
   return (
     <>
       {errorMsg && <Alert onClose={() => setErrorMsg(null)}>{errorMsg}</Alert>}
 
-      <ToastContainer position="top-right" autoClose={3000} />
       <Container className="my-4">
-        <Row>
-          {/* Left Panel: Domain Selection */}
-          <Col md={6}>
-            <Card className="box-with-border card-view">
-              <Card.Header style={{ backgroundColor: "transparent" }}>
-                <h4 className="mb-0">Select Domain</h4>
-              </Card.Header>
-              <Card.Body>
-                <div className="scrollable">
-                  <ListGroup variant="flush">
-                    {domains.map((domain: any) => (
-                      <ListGroup.Item
-                        key={domain.id}
-                        action
-                        onClick={() => handleSelectDomain(domain)}
-                        className={
-                          domain.id === selectedDomain?.id
-                            ? "selected-item"
-                            : ""
-                        }
-                      >
-                        <div className="d-flex align-items-center justify-content-between">
-                          <span>{domain.name}</span>
-                          <Button
-                            variant="secondary"
-                            size="sm"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleDeleteDomain(domain.id);
-                            }}
-                          >
-                            <FaTimes size={14} />
-                          </Button>
-                        </div>
-                      </ListGroup.Item>
-                    ))}
-                  </ListGroup>
-                </div>
-
-                <div className="d-flex justify-content-center mt-5">
-                  <Button
-                    variant="primary"
-                    onClick={() => setShowUploadModal(true)}
-                    disabled={loading}
+        <Card className="box-with-border card-view">
+          <Card.Header style={{ backgroundColor: "transparent" }}>
+            <h3 className="mb-1 text-center">Select Domain</h3>
+          </Card.Header>
+          <Card.Body>
+            <div className="scrollable">
+              <ListGroup variant="flush">
+                {domains.map((domain: any) => (
+                  <ListGroup.Item
+                    key={domain.id}
+                    as="div"
+                    onClick={() => handleSelectDomain(domain)}
+                    className={`d-flex justify-content-between align-items-center ${
+                      domain.id === selectedDomain?.id ? "selected-item" : ""
+                    }`}
                   >
-                    {loading ? (
-                      <Spinner animation="border" size="sm" />
-                    ) : (
-                      <>
-                        <FaUpload className="me-2" />
-                        Add Domain
-                      </>
-                    )}
-                  </Button>
-                </div>
-              </Card.Body>
-            </Card>
-          </Col>
-
-          {/* Right Panel: Attribute Selection */}
-          <Col md={6}>
-            {selectedDomain && (
-              <>
-                <Card className="box-with-border">
-                  <Card.Header style={{ backgroundColor: "transparent" }}>
-                    <h4 className="mb-0">Attributes - {selectedDomain.name}</h4>
-                  </Card.Header>
-                  <Card.Body>
-                    <div>
-                      {selectedDomain.attributes?.map((attr: string) => (
-                        <Form.Check
-                          key={attr}
-                          type="checkbox"
-                          id={`check-${attr}`}
-                          className="custom-checkbox"
-                          label={attr}
-                          checked={inactiveAttributes.includes(attr)}
-                          onChange={() => {
-                            setInactiveAttributes((prev) =>
-                              prev.includes(attr)
-                                ? prev.filter((a) => a !== attr)
-                                : [...prev, attr]
-                            );
-                          }}
-                        />
-                      ))}
-                      {selectedDomain.attributes?.length === 0 && (
-                        <div className="text-muted">
-                          No attributes found for this domain.
-                        </div>
-                      )}
+                    <span>{domain.name}</span>
+                    <div className="d-flex gap-2">
+                      <Button
+                        size="sm"
+                        variant="outline-secondary"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleEditDomain(domain);
+                        }}
+                      >
+                        <FaEdit className="me-1" />
+                        Edit
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline-danger"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeleteDomain(domain.id);
+                        }}
+                      >
+                        <FaTimes size={14} />
+                      </Button>
                     </div>
-                  </Card.Body>
+                  </ListGroup.Item>
+                ))}
+              </ListGroup>
+            </div>
 
-                  <div className="d-flex gap-2 justify-content-center mt-2">
-                    <Button
-                      variant="success"
-                      onClick={handleSaveInactiveAttributes}
-                      disabled={!selectedDomain}
-                    >
-                      Save
-                    </Button>
-                    <Button
-                      variant="success"
-                      onClick={() => handleStartFlow("new")}
-                      disabled={!selectedDomain}
-                    >
-                      Start
-                    </Button>
-                  </div>
-                </Card>
-              </>
-            )}
-          </Col>
-        </Row>
+            <div className="d-flex justify-content-between mt-5">
+              <Button
+                variant="primary"
+                onClick={() => setShowUploadModal(true)}
+                disabled={loading}
+              >
+                {loading ? (
+                  <Spinner animation="border" size="sm" />
+                ) : (
+                  <>
+                    <FaUpload className="me-2" />
+                    Add Domain
+                  </>
+                )}
+              </Button>
+              <Button
+                variant="success"
+                onClick={() => handleStartFlow("new")}
+                disabled={!selectedDomain}
+                style={{ width: "120px" }}
+              >
+                <FaPlay className="me-2" />
+                Start
+              </Button>
+            </div>
+          </Card.Body>
+        </Card>
       </Container>
 
       {/* Upload Modal */}

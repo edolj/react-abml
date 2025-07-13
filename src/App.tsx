@@ -7,6 +7,7 @@ import LoginForm from "./components/LoginForm";
 import RegistrationForm from "./components/RegistrationForm";
 import PrivateRoute from "./context/PrivateRoute";
 import DomainView from "./components/DomainView";
+import EditDomainView from "./components/EditDomainView";
 import Header from "./components/Header";
 import Users from "./components/Users";
 import HomePage from "./components/HomePage";
@@ -31,6 +32,14 @@ function App() {
           element={
             <PrivateRoute>
               <DomainView />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/edit-domain/:id"
+          element={
+            <PrivateRoute>
+              <EditDomainView />
             </PrivateRoute>
           }
         />

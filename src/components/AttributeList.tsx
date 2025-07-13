@@ -9,8 +9,6 @@ import Tooltip from "@mui/material/Tooltip";
 import { FaChevronUp, FaChevronDown, FaStar } from "react-icons/fa";
 import { IconButton } from "@mui/material";
 import { Argument } from "./ArgumentView";
-import { attributesDisplayNames } from "./BoniteteAttributes";
-import { tooltipDescriptions } from "./BoniteteAttributes";
 import { eurAttr, ratioAttr } from "./BoniteteAttributes";
 
 type AttributeItem = {
@@ -27,6 +25,8 @@ type Props = {
   attrTypes?: Record<string, string>;
   selectedFilters?: Argument[];
   expertAttr: string[];
+  displayNames?: Record<string, string>;
+  tooltipDescriptions?: Record<string, string>;
   onHighClick?: (key: string) => void;
   onLowClick?: (key: string) => void;
   onCategoryAddClick?: (key: string) => void;
@@ -40,6 +40,8 @@ const AttributeList: React.FC<Props> = ({
   attrTypes,
   selectedFilters,
   expertAttr,
+  displayNames,
+  tooltipDescriptions,
   onHighClick,
   onLowClick,
   onCategoryAddClick,
@@ -127,7 +129,7 @@ const AttributeList: React.FC<Props> = ({
                       arrow
                     >
                       <Typography variant="subtitle1">
-                        {attributesDisplayNames[attr.key] ?? attr.key}
+                        {displayNames?.[attr.key] ?? attr.key}
                       </Typography>
                     </Tooltip>
                   </Box>

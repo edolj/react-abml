@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import { Button } from "react-bootstrap";
 import { FaArrowRight, FaLightbulb } from "react-icons/fa";
+import { getObject } from "../api/apiHomePage";
 // import { MultiValue, ActionMeta, StylesConfig, GroupBase } from "react-select";
 // import { Tabs, Tab } from "react-bootstrap";
 import apiClient from "../api/apiClient";
@@ -77,18 +78,33 @@ function ArgumentView() {
   const [selectedFilters, setSelectedFilters] = useState<Argument[]>([]);
   const [boxplots, setBoxplots] = useState<Record<string, number[]>>({});
   const [attrTypes, setAttributeTypes] = useState<Record<string, string>>({});
-  const [expertAttr, setExpertAttr] = useState([]);
+  const [expertAttr, setExpertAttr] = useState<string[]>([]);
+  const [display_names, setDisplayNames] = useState<Record<string, string>>({});
+  const [tooltipDescs, setTooltipDescs] = useState<Record<string, string>>({});
 
   useEffect(() => {
-    apiClient
-      .get("/expert-attributes/")
-      .then((response) => {
-        setExpertAttr(response.data);
+    getObject()
+      .then((data) => {
+        console.log(data);
+        setExpertAttr(data?.expert_attributes || []);
+        setDisplayNames(data?.display_names || {});
+        setTooltipDescs(data?.attr_tooltips || {});
       })
-      .catch((error) => {
-        console.error("Failed to fetch expert attributes:", error);
+      .catch((err) => {
+        console.error("Error fetching learning object:", err);
       });
   }, []);
+
+  // useEffect(() => {
+  //   apiClient
+  //     .get("/expert-attributes/")
+  //     .then((response) => {
+  //       setExpertAttr(response.data);
+  //     })
+  //     .catch((error) => {
+  //       console.error("Failed to fetch expert attributes:", error);
+  //     });
+  // }, []);
 
   useEffect(() => {
     apiClient
@@ -116,6 +132,17 @@ function ArgumentView() {
         console.error("Failed to load visual representation data", err);
       });
   }, []);
+
+  // useEffect(() => {
+  //   apiClient
+  //     .get("/display-names/")
+  //     .then((response) => {
+  //       setDisplayNames(response.data);
+  //     })
+  //     .catch((error) => {
+  //       console.error("Failed to fetch display names:", error);
+  //     });
+  // }, []);
 
   const addBubble = (newBubble: Argument) => {
     setSelectedFilters((prev) => {
@@ -455,6 +482,8 @@ function ArgumentView() {
               attrTypes={attrTypes}
               selectedFilters={selectedFilters}
               expertAttr={expertAttr}
+              displayNames={display_names}
+              tooltipDescriptions={tooltipDescs}
               onHighClick={(key) => addBubble({ key, operator: ">=" })}
               onLowClick={(key) => addBubble({ key, operator: "<=" })}
               onCategoryAddClick={(key) => addBubble({ key })}
