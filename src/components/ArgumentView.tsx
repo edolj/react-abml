@@ -4,25 +4,23 @@ import { ToastContainer, toast } from "react-toastify";
 import { Button } from "react-bootstrap";
 import { FaArrowRight, FaLightbulb } from "react-icons/fa";
 import { getObject } from "../api/apiHomePage";
-// import { MultiValue, ActionMeta, StylesConfig, GroupBase } from "react-select";
-// import { Tabs, Tab } from "react-bootstrap";
 import apiClient from "../api/apiClient";
 import "react-toastify/dist/ReactToastify.css";
 import "../css/PrimaryButton.css";
 import "../css/Corners.css";
 import Alert from "./Alert";
-// import ExpertAttributesModal from "./ExpertAttributesModal";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import ProgressBar from "react-bootstrap/ProgressBar";
-// import Select from "react-select";
 import PrimaryButton from "./PrimaryButton";
 import Bubbles from "./Bubbles";
 import AttributeList from "./AttributeList";
+import ExpertAttributesModal from "./ExpertAttributesModal";
 
 export type Argument = {
   key: string;
   operator?: string;
+  displayName?: string;
 };
 
 type AttributeInfo = {
@@ -80,14 +78,15 @@ function ArgumentView() {
   const [attrTypes, setAttributeTypes] = useState<Record<string, string>>({});
   const [expertAttr, setExpertAttr] = useState<string[]>([]);
   const [display_names, setDisplayNames] = useState<Record<string, string>>({});
+  const [attrDesc, setAttrDescs] = useState<Record<string, string>>({});
   const [tooltipDescs, setTooltipDescs] = useState<Record<string, string>>({});
 
   useEffect(() => {
     getObject()
       .then((data) => {
-        console.log(data);
         setExpertAttr(data?.expert_attributes || []);
         setDisplayNames(data?.display_names || {});
+        setAttrDescs(data?.attr_descriptions || {});
         setTooltipDescs(data?.attr_tooltips || {});
       })
       .catch((err) => {
@@ -457,8 +456,13 @@ function ArgumentView() {
               marginBottom: 24,
               display: "flex",
               justifyContent: "center",
+              gap: 16,
             }}
           >
+            <ExpertAttributesModal
+              displayNames={display_names}
+              descriptions={attrDesc}
+            />
             <Button
               variant="success"
               onClick={showCriticalExample}
@@ -484,9 +488,23 @@ function ArgumentView() {
               expertAttr={expertAttr}
               displayNames={display_names}
               tooltipDescriptions={tooltipDescs}
-              onHighClick={(key) => addBubble({ key, operator: ">=" })}
-              onLowClick={(key) => addBubble({ key, operator: "<=" })}
-              onCategoryAddClick={(key) => addBubble({ key })}
+              onHighClick={(key) =>
+                addBubble({
+                  key,
+                  operator: ">=",
+                  displayName: display_names[key] + " is high",
+                })
+              }
+              onLowClick={(key) =>
+                addBubble({
+                  key,
+                  operator: "<=",
+                  displayName: display_names[key] + " is low",
+                })
+              }
+              onCategoryAddClick={(key) =>
+                addBubble({ key, displayName: display_names[key] })
+              }
               onCategoryDeleteClick={(key) => removeBubble(key)}
             />
           </div>

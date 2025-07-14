@@ -1,12 +1,12 @@
-import Grid from "@mui/material/Grid";
-import Paper from "@mui/material/Paper";
-import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import BoxPlot from "./BoxPlot";
 import Checkbox from "@mui/material/Checkbox";
 import Divider from "@mui/material/Divider";
+import Grid from "@mui/material/Grid";
+import Paper from "@mui/material/Paper";
+import Typography from "@mui/material/Typography";
 import Tooltip from "@mui/material/Tooltip";
-import { FaChevronUp, FaChevronDown, FaStar } from "react-icons/fa";
+import { FaChevronUp, FaChevronDown, FaExclamation } from "react-icons/fa";
 import { IconButton } from "@mui/material";
 import { Argument } from "./ArgumentView";
 import { eurAttr, ratioAttr } from "./BoniteteAttributes";
@@ -107,7 +107,7 @@ const AttributeList: React.FC<Props> = ({
           <Paper
             elevation={0}
             style={{
-              padding: "0.5rem",
+              padding: "0 0.5rem 0 1rem",
               backgroundColor:
                 attrTypes?.[attr.key] === "target"
                   ? "#d1e7dd"
@@ -122,7 +122,7 @@ const AttributeList: React.FC<Props> = ({
                   {/* Label */}
                   <Box flex={1} display="flex" alignItems="center" gap={1}>
                     {expertAttr.includes(attr.key) && (
-                      <FaStar color="#f5c518" size={14} />
+                      <FaExclamation color="#d9534f" size={14} />
                     )}
                     <Tooltip
                       title={tooltipDescriptions?.[attr.key] || ""}
@@ -199,7 +199,9 @@ const AttributeList: React.FC<Props> = ({
                             },
                           }}
                         />
-                      ) : null}
+                      ) : (
+                        <Checkbox disabled sx={{ opacity: 0 }} />
+                      )}
                     </Box>
                   </Grid>
 

@@ -12,7 +12,7 @@ const BoxPlot: React.FC<BoxPlotProps> = ({
   data,
   value,
   width = 200,
-  height = 80,
+  height = 60,
 }) => {
   const ref = useRef<SVGSVGElement>(null);
 

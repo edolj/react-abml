@@ -1,3 +1,4 @@
+import { Chip } from "@mui/material";
 import { Argument } from "./ArgumentView";
 
 interface BubblesProps {
@@ -7,40 +8,21 @@ interface BubblesProps {
 
 const Bubbles = ({ bubbles, onRemove }: BubblesProps) => {
   return (
-    <div style={{ marginBottom: 10 }}>
+    <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
       {bubbles.map((b) => (
-        <div
+        <Chip
           key={b.key}
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
+          label={b.displayName ?? b.key}
+          onDelete={() => onRemove(b.key)}
+          sx={{
             backgroundColor: "#607ad1",
             color: "white",
-            padding: "4px 10px",
-            borderRadius: 12,
-            marginRight: 6,
-            fontSize: 14,
-            userSelect: "none",
-          }}
-        >
-          <span>{b.operator ? `${b.key} ${b.operator}` : b.key}</span>
-          <button
-            onClick={() => onRemove(b.key)}
-            style={{
-              marginLeft: 8,
-              background: "transparent",
-              border: "none",
+            "& .MuiChip-deleteIcon": {
               color: "white",
               fontWeight: "bold",
-              cursor: "pointer",
-              fontSize: 16,
-              lineHeight: 1,
-            }}
-            aria-label={`Remove ${b.key}`}
-          >
-            ×
-          </button>
-        </div>
+            },
+          }}
+        />
       ))}
     </div>
   );
