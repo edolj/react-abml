@@ -10,6 +10,7 @@ import { FaChevronUp, FaChevronDown, FaExclamation } from "react-icons/fa";
 import { IconButton } from "@mui/material";
 import { Argument } from "./ArgumentView";
 import { eurAttr, ratioAttr } from "./BoniteteAttributes";
+import { Tab, Tabs } from "react-bootstrap";
 
 type AttributeItem = {
   key: string;
@@ -67,9 +68,8 @@ const AttributeList: React.FC<Props> = ({
     return value;
   };
 
-  return (
-    <Grid container>
-      {/* Header row */}
+  const renderAttributes = (attrList: AttributeItem[]) => (
+    <>
       {hasCounterExamples && (
         <Grid container item md={12}>
           <Grid item md={8} />
@@ -102,7 +102,7 @@ const AttributeList: React.FC<Props> = ({
         </Grid>
       )}
 
-      {attributes.map((attr, index) => (
+      {attrList.map((attr, index) => (
         <Grid item md={12} key={attr.key}>
           <Paper
             elevation={0}
@@ -121,9 +121,6 @@ const AttributeList: React.FC<Props> = ({
                 <Box display="flex" alignItems="center" height="100%">
                   {/* Label */}
                   <Box flex={1} display="flex" alignItems="center" gap={1}>
-                    {expertAttr.includes(attr.key) && (
-                      <FaExclamation color="#d9534f" size={14} />
-                    )}
                     <Tooltip
                       title={tooltipDescriptions?.[attr.key] || ""}
                       arrow
@@ -200,7 +197,11 @@ const AttributeList: React.FC<Props> = ({
                           }}
                         />
                       ) : (
-                        <Checkbox disabled sx={{ opacity: 0 }} />
+                        <Checkbox
+                          disabled
+                          checked={false}
+                          sx={{ opacity: 0 }}
+                        />
                       )}
                     </Box>
                   </Grid>
@@ -233,7 +234,43 @@ const AttributeList: React.FC<Props> = ({
           </Paper>
         </Grid>
       ))}
-    </Grid>
+    </>
+  );
+
+  return (
+    <Tabs defaultActiveKey="expert" className="mb-3 custom-tabs">
+      <Tab
+        eventKey="expert"
+        title={
+          <span style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+            <span
+              style={{ color: "red", display: "flex", alignItems: "center" }}
+            >
+              <FaExclamation />
+            </span>
+            Expert Attributes
+          </span>
+        }
+      >
+        <Grid container>
+          {renderAttributes(
+            attributes.filter(
+              (attr) =>
+                expertAttr.includes(attr.key) ||
+                attrTypes?.[attr.key] === "target"
+            )
+          )}
+        </Grid>
+      </Tab>
+
+      <Tab eventKey="others" title="Other Attributes">
+        <Grid container>
+          {renderAttributes(
+            attributes.filter((attr) => !expertAttr.includes(attr.key))
+          )}
+        </Grid>
+      </Tab>
+    </Tabs>
   );
 };
 

@@ -45,3 +45,15 @@ body {
 .custom-checkbox .form-check-input:focus {
   box-shadow: 0 0 0 0.2rem rgba(96, 122, 209, 0.25);
 }
+
+/* Selected tab */
+.custom-tabs .nav-link.active {
+  color: #607ad1 !important;
+  background-color: #e9f3ff !important;
+  font-weight: bold;
+}
+
+/* Unselected tab */
+.custom-tabs .nav-link {
+  color: #607ad1 !important;
+}
