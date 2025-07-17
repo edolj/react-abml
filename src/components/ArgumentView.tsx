@@ -366,7 +366,7 @@ function ArgumentView() {
               Class: <b style={{ color: "green" }}>{targetClass}</b>
             </span>
           </div>
-          {argumentsSent && (
+          {argumentsSent && !hasCounterExamples && (
             <Button variant="link" onClick={doneWithArgumentation}>
               Next Example
               <FaArrowRight

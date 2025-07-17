@@ -55,5 +55,19 @@ body {
 
 /* Unselected tab */
 .custom-tabs .nav-link {
-  color: #607ad1 !important;
+  border: 1px solid #ccc !important;
+  border-bottom: none !important;
+  border-radius: 6px 6px 0 0 !important;
+  background-color: #f8f8f8 !important;
+  color: #607ad1;
+}
+
+.tab-content {
+  border-bottom: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.progress-bar {
+  background-color: #607ad1 !important;
+  color: white;
 }

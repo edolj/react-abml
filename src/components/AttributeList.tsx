@@ -70,44 +70,65 @@ const AttributeList: React.FC<Props> = ({
 
   const renderAttributes = (attrList: AttributeItem[]) => (
     <>
-      {hasCounterExamples && (
-        <Grid container item md={12}>
-          <Grid item md={8} />
-          <Grid item md={4}>
-            <Paper
-              elevation={0}
-              style={{
-                padding: "1rem 1rem",
-                backgroundColor: "#f8d7da",
-              }}
-            >
-              <Box display="flex" justifyContent="space-around">
-                <Typography
-                  variant="body1"
-                  fontWeight="bold"
-                  style={{ flexGrow: 1, textAlign: "right" }}
-                >
-                  Counter Value 1
-                </Typography>
-                <Typography
-                  variant="body1"
-                  fontWeight="bold"
-                  style={{ flexGrow: 1, textAlign: "right" }}
-                >
-                  Counter Value 2
-                </Typography>
-              </Box>
-            </Paper>
-          </Grid>
-        </Grid>
-      )}
+      <Grid container item md={12}>
+        <Grid item md={6}></Grid>
+
+        {hasCounterExamples && (
+          <>
+            <Grid item md={2}>
+              <Typography
+                variant="body1"
+                fontWeight="bold"
+                align="right"
+                sx={{
+                  backgroundColor: "#f8d7da",
+                  padding: "0.5rem 0rem",
+                  width: "100%",
+                }}
+              >
+                Counter Value 1
+              </Typography>
+            </Grid>
+
+            <Grid item md={2}>
+              <Typography
+                variant="body1"
+                fontWeight="bold"
+                align="right"
+                sx={{
+                  backgroundColor: "#f8d7da",
+                  padding: "0.5rem 0.4rem",
+                  width: "100%",
+                }}
+              >
+                Counter Value 2
+              </Typography>
+            </Grid>
+
+            <Grid item md={2}>
+              <Typography
+                variant="body1"
+                fontWeight="bold"
+                align="center"
+                sx={{
+                  backgroundColor: "#f8d7da",
+                  padding: "0.5rem 1rem",
+                  width: "100%",
+                }}
+              >
+                Action
+              </Typography>
+            </Grid>
+          </>
+        )}
+      </Grid>
 
       {attrList.map((attr, index) => (
         <Grid item md={12} key={attr.key}>
           <Paper
             elevation={0}
             style={{
-              padding: "0 0.5rem 0 1rem",
+              padding: "0 0 0 1rem",
               backgroundColor:
                 attrTypes?.[attr.key] === "target"
                   ? "#d1e7dd"
@@ -117,7 +138,7 @@ const AttributeList: React.FC<Props> = ({
             }}
           >
             <Grid container alignItems="center">
-              <Grid item md={hasCounterExamples ? 8 : 12}>
+              <Grid item md={12}>
                 <Box display="flex" alignItems="center" height="100%">
                   {/* Label */}
                   <Box flex={1} display="flex" alignItems="center" gap={1}>
@@ -148,6 +169,32 @@ const AttributeList: React.FC<Props> = ({
                     )}
                   </Box>
 
+                  {/*Counter example */}
+                  {hasCounterExamples && (
+                    <>
+                      <Grid item md={2}>
+                        <Typography
+                          variant="body2"
+                          align="right"
+                          fontWeight="bold"
+                          sx={{ pr: 1 }}
+                        >
+                          {formatValue(attr.key, attr.counterValue1 ?? "-")}
+                        </Typography>
+                      </Grid>
+                      <Grid item md={2}>
+                        <Typography
+                          variant="body2"
+                          align="right"
+                          fontWeight="bold"
+                          sx={{ pr: 1 }}
+                        >
+                          {formatValue(attr.key, attr.counterValue2 ?? "-")}
+                        </Typography>
+                      </Grid>
+                    </>
+                  )}
+
                   {/* Divider */}
                   <Divider
                     orientation="vertical"
@@ -155,6 +202,7 @@ const AttributeList: React.FC<Props> = ({
                     sx={{ borderColor: "black" }}
                   />
 
+                  {/*Action */}
                   <Grid item md={2}>
                     <Box
                       display="flex"
@@ -205,31 +253,8 @@ const AttributeList: React.FC<Props> = ({
                       )}
                     </Box>
                   </Grid>
-
-                  {hasCounterExamples && (
-                    <Divider
-                      orientation="vertical"
-                      flexItem
-                      sx={{ borderColor: "black" }}
-                    />
-                  )}
                 </Box>
               </Grid>
-
-              {hasCounterExamples && (
-                <>
-                  <Grid item md={2}>
-                    <Typography variant="body2" align="right" fontWeight="bold">
-                      {formatValue(attr.key, attr.counterValue1 ?? "-")}
-                    </Typography>
-                  </Grid>
-                  <Grid item md={2}>
-                    <Typography variant="body2" align="right" fontWeight="bold">
-                      {formatValue(attr.key, attr.counterValue2 ?? "-")}
-                    </Typography>
-                  </Grid>
-                </>
-              )}
             </Grid>
           </Paper>
         </Grid>
@@ -238,7 +263,7 @@ const AttributeList: React.FC<Props> = ({
   );
 
   return (
-    <Tabs defaultActiveKey="expert" className="mb-3 custom-tabs">
+    <Tabs defaultActiveKey="expert" className="custom-tabs">
       <Tab
         eventKey="expert"
         title={

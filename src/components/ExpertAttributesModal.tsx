@@ -26,8 +26,8 @@ function ExpertAttributesModal({
             marginBottom: "2px",
             color: "white",
           }}
-        />{" "}
-        Info
+        />
+        Attributes
       </PrimaryButton>
 
       <Modal show={show} onHide={handleClose} size="lg" scrollable>
