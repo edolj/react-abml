@@ -1,20 +1,57 @@
-import React from "react";
+import React, { useState } from "react";
+import { MdOutlineExpandLess, MdOutlineExpandMore } from "react-icons/md";
+import { eurAttr, ratioAttr } from "./BoniteteAttributes";
 
 interface Props {
   columns: any;
   data: any;
   onRowClick: (rowIndex: number) => void;
+  expandData: [string, any][][];
+  dNames: Record<string, string>;
 }
 
-function MainTable({ columns, data, onRowClick }: Props) {
+function MainTable({ columns, data, onRowClick, expandData, dNames }: Props) {
+  const [expandedRows, setExpandedRows] = useState<Set<number>>(new Set());
+
+  const toggleRow = (rowIndex: number) => {
+    const newSet = new Set(expandedRows);
+    newSet.has(rowIndex) ? newSet.delete(rowIndex) : newSet.add(rowIndex);
+    setExpandedRows(newSet);
+  };
+
   const handleRowClick = (rowIndex: any) => {
     onRowClick(rowIndex);
+  };
+
+  const formatValue = (key: string, value: string | number) => {
+    if (value === "" || value === undefined || value === null) return "-";
+
+    if (eurAttr.includes(key)) {
+      return (
+        Number(value).toLocaleString("sl-SI", {
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 0,
+        }) + " €"
+      );
+    }
+
+    if (ratioAttr.includes(key)) {
+      return (
+        Number(value).toLocaleString("sl-SI", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        }) + " %"
+      );
+    }
+
+    return value;
   };
 
   return (
     <table className="rounded-table">
       <thead>
         <tr>
+          <th></th>
           {columns.map((column: any, columnIndex: number) => (
             <th
               key={columnIndex}
@@ -29,9 +66,36 @@ function MainTable({ columns, data, onRowClick }: Props) {
         {data.map((row: any, rowIndex: number) => (
           <React.Fragment key={rowIndex}>
             <tr onClick={() => handleRowClick(rowIndex)}>
+              <td>
+                <button
+                  style={{
+                    cursor: "pointer",
+                    border: "none",
+                    background: "transparent",
+                    padding: 0,
+                    display: "flex",
+                    alignItems: "center",
+                  }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleRow(rowIndex);
+                  }}
+                  aria-label={
+                    expandedRows.has(rowIndex) ? "Collapse row" : "Expand row"
+                  }
+                >
+                  {expandedRows.has(rowIndex) ? (
+                    <MdOutlineExpandLess size="30" color="#1976d2" />
+                  ) : (
+                    <MdOutlineExpandMore size="30" color="#1976d2" />
+                  )}
+                </button>
+              </td>
+
               {columns.map((column: any, columnIndex: number) => (
                 <td
                   key={columnIndex}
+                  style={{ cursor: "pointer" }}
                   className={
                     columnIndex >= columns.length - 2 ? "center-text" : ""
                   }
@@ -40,6 +104,22 @@ function MainTable({ columns, data, onRowClick }: Props) {
                 </td>
               ))}
             </tr>
+
+            {expandedRows.has(rowIndex) && (
+              <tr className="expanded-row">
+                <td colSpan={columns.length + 1}>
+                  <div>
+                    <ul style={{ columnCount: 2, margin: "5px 0" }}>
+                      {expandData[rowIndex]?.map(([key, value], i) => (
+                        <li key={i}>
+                          {dNames[key] || key}: {formatValue(key, value)}
+                        </li>
+                      )) || null}
+                    </ul>
+                  </div>
+                </td>
+              </tr>
+            )}
           </React.Fragment>
         ))}
       </tbody>

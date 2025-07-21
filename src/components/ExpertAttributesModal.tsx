@@ -31,15 +31,27 @@ function ExpertAttributesModal({
       </PrimaryButton>
 
       <Modal show={show} onHide={handleClose} size="lg" scrollable>
-        <Modal.Header closeButton>
-          <Modal.Title>Attribute Info</Modal.Title>
+        <Modal.Header closeButton style={{ backgroundColor: "#f8f8f8" }}>
+          <Modal.Title className="text-center w-100">
+            Attribute Info
+          </Modal.Title>
         </Modal.Header>
-        <Modal.Body>
+        <Modal.Body style={{ backgroundColor: "#f9f9f9", padding: "20px" }}>
           {Object.keys(displayNames).map((key) => (
-            <div key={key} className="mb-4">
+            <div
+              key={key}
+              style={{
+                background: "#fff",
+                border: "1px solid #e0e0e0",
+                borderRadius: "8px",
+                padding: "15px",
+                marginBottom: "16px",
+                boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
+              }}
+            >
               <h5>{displayNames[key]}</h5>
-              <p>{descriptions?.[key] ?? <em>No description provided.</em>}</p>
               <hr />
+              <p>{descriptions?.[key] || <em>No description provided.</em>}</p>
             </div>
           ))}
         </Modal.Body>

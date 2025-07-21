@@ -7,7 +7,6 @@ import { getObject } from "../api/apiHomePage";
 import apiClient from "../api/apiClient";
 import "react-toastify/dist/ReactToastify.css";
 import "../css/PrimaryButton.css";
-import "../css/Corners.css";
 import Alert from "./Alert";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -23,7 +22,7 @@ export type Argument = {
   displayName?: string;
 };
 
-type AttributeInfo = {
+export type AttributeInfo = {
   name: string;
   type: "continuous" | "discrete" | "meta" | "target" | "unknown";
 };
@@ -35,11 +34,7 @@ function ArgumentView() {
   const detailData = location.state?.detailData || [];
   const idName = location.state?.id || "N/A";
   const targetClass = location.state.targetClass;
-
-  const [columns, setColumns] = useState([
-    { Header: "Attribute", accessor: "key" },
-    { Header: "Value", accessor: "value" },
-  ]);
+  const targetClassName = location.state.targetClassName;
 
   const [formattedData, setFormattedData] = useState(
     detailData.map((detail: any) => ({
@@ -94,17 +89,6 @@ function ArgumentView() {
       });
   }, []);
 
-  // useEffect(() => {
-  //   apiClient
-  //     .get("/expert-attributes/")
-  //     .then((response) => {
-  //       setExpertAttr(response.data);
-  //     })
-  //     .catch((error) => {
-  //       console.error("Failed to fetch expert attributes:", error);
-  //     });
-  // }, []);
-
   useEffect(() => {
     apiClient
       .get("/attributes/")
@@ -131,17 +115,6 @@ function ArgumentView() {
         console.error("Failed to load visual representation data", err);
       });
   }, []);
-
-  // useEffect(() => {
-  //   apiClient
-  //     .get("/display-names/")
-  //     .then((response) => {
-  //       setDisplayNames(response.data);
-  //     })
-  //     .catch((error) => {
-  //       console.error("Failed to fetch display names:", error);
-  //     });
-  // }, []);
 
   const addBubble = (newBubble: Argument) => {
     setSelectedFilters((prev) => {
@@ -207,22 +180,6 @@ function ArgumentView() {
           setHasCounterExamples(false);
         }
 
-        // Add new columns for each counter value
-        const newColumns = limitedCounterExamples.map(
-          (_: any, idx: number) => ({
-            Header: `Counter Value ${idx + 1}`,
-            accessor: `counterValue${idx + 1}`,
-          })
-        );
-
-        setColumns((prevColumns) => [
-          ...prevColumns,
-          ...newColumns.filter(
-            (newColumn: any) =>
-              !prevColumns.some((col) => col.accessor === newColumn.accessor)
-          ),
-        ]);
-
         // Merge counter values into formatted data
         const newFormattedData = formattedData.map(
           (item: any, index: number) => {
@@ -278,7 +235,40 @@ function ArgumentView() {
   };
 
   const processRule = (rule: string) => {
-    return rule.replace(/([<>=!]+)\s*(-?[\d.]+)/g, "$1 ");
+    const [ifPart, thenPart] = rule.split(" THEN ");
+    const conditionStr = ifPart.replace(/^IF\s*/i, "");
+
+    const conditions = conditionStr.split(" AND ").map((cond) => {
+      const match = cond.match(/^(.+?)([<>=!]=|==)(.+)$/);
+      if (!match) return cond;
+
+      const [, rawAttr, op, value] = match;
+      const attr = rawAttr.trim();
+      const type = attrTypes[attr] || "continuous";
+      const displayName = display_names[attr] || attr;
+
+      let opText = "";
+      if (op === ">=") opText = "is high";
+      else if (op === "<=") opText = "is low";
+      else if (op === "==") opText = "equals";
+      else opText = op;
+
+      if (type === "discrete") {
+        return `${displayName} ${opText} ${value.trim()}`;
+      } else {
+        return `${displayName} ${opText}`;
+      }
+    });
+
+    let transformedThen = thenPart.trim();
+    const thenMatch = transformedThen.match(/^(.+?)(==|=|[<>!]=)(.+)$/);
+    if (thenMatch) {
+      const [, thenAttr, thenOp, thenValue] = thenMatch;
+      const thenDisplayName = display_names[thenAttr.trim()] || thenAttr.trim();
+      transformedThen = `${thenDisplayName} ${thenOp} ${thenValue.trim()}`;
+    }
+
+    return `IF ${conditions.join(" AND ")} THEN ${transformedThen}`;
   };
 
   // useEffect(() => {
@@ -363,7 +353,7 @@ function ArgumentView() {
           <div style={{ display: "flex", flexDirection: "column" }}>
             <h4>Details about: {idName}</h4>
             <span>
-              Class: <b style={{ color: "green" }}>{targetClass}</b>
+              {targetClassName}: <b style={{ color: "green" }}>{targetClass}</b>
             </span>
           </div>
           {argumentsSent && !hasCounterExamples && (
@@ -509,89 +499,6 @@ function ArgumentView() {
             />
           </div>
         </div>
-
-        {/* <div className="box-with-border card-view">
-          <Tabs
-            defaultActiveKey={Object.keys(attributeGroups)[0]}
-            id="attribute-groups-tabs"
-            className="mb-3"
-          >
-            {Object.entries(attributeGroups).map(([groupName, attributes]) => {
-              const groupRows = formattedData.filter((item: any) =>
-                attributes.includes(item.key)
-              );
-
-              if (groupRows.length === 0) return null;
-
-              return (
-                <Tab eventKey={groupName} title={groupName} key={groupName}>
-                  <div style={{ overflowX: "auto" }}>
-                    <table className="rounded-table">
-                      <thead>
-                        <tr>
-                          {columns.map((column, columnIndex) => (
-                            <th key={columnIndex}>{column.Header}</th>
-                          ))}
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {groupRows.map((row: any, rowIndex: number) => {
-                          return (
-                            <tr key={rowIndex}>
-                              {columns.map((column, colIndex) => {
-                                const cellValue =
-                                  column.accessor === "key"
-                                    ? attributesDisplayNames[row.key] || row.key
-                                    : row[column.accessor] || "-";
-
-                                const formattedValue =
-                                  column.accessor !== "key" && cellValue !== "-"
-                                    ? eurAttr.includes(row.key)
-                                      ? `${Number(cellValue).toLocaleString(
-                                          "sl-SI",
-                                          {
-                                            minimumFractionDigits: 0,
-                                            maximumFractionDigits: 0,
-                                          }
-                                        )} €`
-                                      : ratioAttr.includes(row.key)
-                                      ? Number(cellValue).toLocaleString(
-                                          "sl-SI",
-                                          {
-                                            minimumFractionDigits: 2,
-                                            maximumFractionDigits: 2,
-                                          }
-                                        )
-                                      : cellValue
-                                    : cellValue;
-
-                                const tooltipText =
-                                  tooltipDescriptions[row.key] || "";
-                                return (
-                                  <td
-                                    key={colIndex}
-                                    style={{
-                                      textAlign:
-                                        colIndex > 0 ? "right" : "left",
-                                    }}
-                                  >
-                                    <Tooltip title={tooltipText} arrow>
-                                      {formattedValue}
-                                    </Tooltip>
-                                  </td>
-                                );
-                              })}
-                            </tr>
-                          );
-                        })}
-                      </tbody>
-                    </table>
-                  </div>
-                </Tab>
-              );
-            })}
-          </Tabs>
-        </div>*/}
 
         {/* Loading Indicator */}
         {isLoading && (

@@ -7,9 +7,9 @@ import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import Tooltip from "@mui/material/Tooltip";
 import { FaChevronUp, FaChevronDown, FaExclamation } from "react-icons/fa";
+import { eurAttr, ratioAttr } from "./BoniteteAttributes";
 import { IconButton } from "@mui/material";
 import { Argument } from "./ArgumentView";
-import { eurAttr, ratioAttr } from "./BoniteteAttributes";
 import { Tab, Tabs } from "react-bootstrap";
 
 type AttributeItem = {
@@ -52,17 +52,21 @@ const AttributeList: React.FC<Props> = ({
     if (value === "" || value === undefined || value === null) return "-";
 
     if (eurAttr.includes(key)) {
-      return `${Number(value).toLocaleString("sl-SI", {
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0,
-      })} €`;
+      return (
+        Number(value).toLocaleString("sl-SI", {
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 0,
+        }) + " €"
+      );
     }
 
     if (ratioAttr.includes(key)) {
-      return Number(value).toLocaleString("sl-SI", {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      });
+      return (
+        Number(value).toLocaleString("sl-SI", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        }) + " %"
+      );
     }
 
     return value;
@@ -215,15 +219,15 @@ const AttributeList: React.FC<Props> = ({
                         <>
                           <IconButton
                             size="small"
-                            onClick={() => onHighClick?.(attr.key)}
-                          >
-                            <FaChevronUp />
-                          </IconButton>
-                          <IconButton
-                            size="small"
                             onClick={() => onLowClick?.(attr.key)}
                           >
                             <FaChevronDown />
+                          </IconButton>
+                          <IconButton
+                            size="small"
+                            onClick={() => onHighClick?.(attr.key)}
+                          >
+                            <FaChevronUp />
                           </IconButton>
                         </>
                       ) : attrTypes?.[attr.key] === "discrete" ? (
