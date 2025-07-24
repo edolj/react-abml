@@ -35,6 +35,7 @@ function ArgumentView() {
   const idName = location.state?.id || "N/A";
   const targetClass = location.state.targetClass;
   const targetClassName = location.state.targetClassName;
+  const iterationNumber = location.state.iterationNumber;
 
   const [formattedData, setFormattedData] = useState(
     detailData.map((detail: any) => ({
@@ -75,6 +76,7 @@ function ArgumentView() {
   const [display_names, setDisplayNames] = useState<Record<string, string>>({});
   const [attrDesc, setAttrDescs] = useState<Record<string, string>>({});
   const [tooltipDescs, setTooltipDescs] = useState<Record<string, string>>({});
+  const [chosenArguments, setSentArguments] = useState<string[]>([]);
 
   useEffect(() => {
     getObject()
@@ -204,6 +206,11 @@ function ArgumentView() {
 
         setIsLoading(false);
         setArgumentsSent(true);
+
+        const argumentsArray = selectedFilters.map((item) =>
+          item.operator ? `${item.key}${item.operator}` : item.key
+        );
+        setSentArguments(argumentsArray);
       })
       .catch((error) => {
         console.error("Argument view POST method error:", error);
@@ -216,22 +223,28 @@ function ArgumentView() {
       });
   };
 
-  const doneWithArgumentation = () => {
+  const doneWithArgumentation = async () => {
     if (!argumentsSent) {
       setAlertError("The argument field cannot be empty!");
       return;
     }
 
-    apiClient
-      .put("/update-iteration/")
-      .then((response) => {
-        console.log("Iteration updated successfully.", response);
-        navigate(-1);
-      })
-      .catch((error) => {
-        console.error("Error updating iteration:", error);
-        setAlertError("Failed to update iteration number. Please try again.");
+    try {
+      await apiClient.post("/post-data-iterations/", {
+        iteration_number: iterationNumber,
+        chosen_arguments: chosenArguments,
+        mScore: mScore,
       });
+      console.log("Success with saving argumentation data.");
+
+      await apiClient.put("/update-iteration/");
+      console.log("Iteration updated successfully.");
+
+      navigate(-1);
+    } catch (error) {
+      console.error("Error during argumentation submission:", error);
+      setAlertError("Failed to submit data. Please try again.");
+    }
   };
 
   const processRule = (rule: string) => {
@@ -356,7 +369,7 @@ function ArgumentView() {
               {targetClassName}: <b style={{ color: "green" }}>{targetClass}</b>
             </span>
           </div>
-          {argumentsSent && !hasCounterExamples && (
+          {argumentsSent && (
             <Button variant="link" onClick={doneWithArgumentation}>
               Next Example
               <FaArrowRight

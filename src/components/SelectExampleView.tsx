@@ -50,6 +50,7 @@ function SelectExampleView() {
           id: idName,
           targetClassName: targetClassName,
           targetClass: targetClass,
+          iterationNumber: iterationNumber,
         },
       });
     }

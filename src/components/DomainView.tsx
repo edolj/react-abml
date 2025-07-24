@@ -118,7 +118,7 @@ const DomainView = () => {
           </Card.Header>
           <Card.Body>
             <div className="scrollable">
-              <ListGroup variant="flush">
+              <ListGroup>
                 {domains.map((domain: any) => (
                   <ListGroup.Item
                     key={domain.id}

@@ -66,23 +66,13 @@ function MainTable({ columns, data, onRowClick, expandData, dNames }: Props) {
         {data.map((row: any, rowIndex: number) => (
           <React.Fragment key={rowIndex}>
             <tr onClick={() => handleRowClick(rowIndex)}>
-              <td>
+              <td style={{ width: "60px" }}>
                 <button
-                  style={{
-                    cursor: "pointer",
-                    border: "none",
-                    background: "transparent",
-                    padding: 0,
-                    display: "flex",
-                    alignItems: "center",
-                  }}
+                  className="expand-toggle-button"
                   onClick={(e) => {
                     e.stopPropagation();
                     toggleRow(rowIndex);
                   }}
-                  aria-label={
-                    expandedRows.has(rowIndex) ? "Collapse row" : "Expand row"
-                  }
                 >
                   {expandedRows.has(rowIndex) ? (
                     <MdOutlineExpandLess size="30" color="#1976d2" />

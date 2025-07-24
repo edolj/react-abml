@@ -1,77 +1,87 @@
-import { useState, useEffect } from "react";
-import { DataGrid, GridColDef, GridToolbar } from "@mui/x-data-grid";
+import { useEffect, useState } from "react";
+import { Container, Card } from "react-bootstrap";
+import apiClient from "../api/apiClient";
+import Alert from "./Alert";
 
-interface User {
-  id: number;
+interface Iteration {
+  iteration_number: number;
+  chosen_arguments: string[];
+  mScore: number;
+  timestamp: string;
+}
+
+interface UserIterations {
+  domain_name: string;
   username: string;
-  first_name: string;
-  last_name: string;
-  email: string;
+  iterations: Iteration[];
 }
 
 const Users = () => {
-  const [users, setUsers] = useState<User[]>([]);
-  const [paginationModel, setPaginationModel] = useState({
-    pageSize: 5,
-    page: 0,
-  });
+  const [data, setData] = useState<UserIterations[]>([]);
+  const [alertError, setAlertError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch("http://localhost:8000/api/users/", {
-      method: "GET",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        return response.json();
-      })
-      .then((data) => setUsers(data))
-      .catch((error) => console.error("Error fetching users:", error));
+    apiClient
+      .get("/get-data-iterations/")
+      .then((response) => setData(response.data))
+      .catch((error) => {
+        console.error("Error fetching iterations:", error);
+        setAlertError("Failed to load iteration data.");
+      });
   }, []);
 
-  const columns: GridColDef[] = [
-    { field: "username", headerName: "Username", width: 300 },
-    { field: "first_name", headerName: "First Name", width: 300 },
-    { field: "last_name", headerName: "Last Name", width: 300 },
-    { field: "email", headerName: "Email", width: 300 },
-  ];
-
-  const rows = users.map((user) => ({
-    id: user.id,
-    username: user.username,
-    first_name: user.first_name,
-    last_name: user.last_name,
-    email: user.email,
-  }));
-
   return (
-    <div style={{ padding: "40px" }}>
-      <DataGrid
-        rows={users}
-        columns={columns}
-        pageSizeOptions={[5, 10, 15, 20]}
-        initialState={{
-          pagination: {
-            paginationModel,
-          },
-        }}
-        onPaginationModelChange={(newPaginationModel) =>
-          setPaginationModel(newPaginationModel)
-        }
-        slots={{ toolbar: GridToolbar }}
-        slotProps={{
-          toolbar: {
-            showQuickFilter: true,
-          },
-        }}
-        sx={{ background: "white" }}
-      />
-    </div>
+    <Container className="my-5">
+      <h2 className="mb-4">All Users History</h2>
+
+      {alertError && (
+        <Alert onClose={() => setAlertError(null)}>{alertError}</Alert>
+      )}
+
+      {data.length === 0 && !alertError && (
+        <p className="text-muted">No user iteration data available.</p>
+      )}
+
+      {data.map((userData) => (
+        <Card
+          key={userData.username}
+          className="box-with-border card-view mb-4"
+        >
+          <Card.Body>
+            <Card.Title>
+              <div>{userData.username}</div>
+              <div className="text-muted" style={{ fontSize: "0.9rem" }}>
+                Domain: <strong>{userData.domain_name}</strong>
+              </div>
+            </Card.Title>
+
+            {userData.iterations.length === 0 ? (
+              <p className="text-muted fst-italic">No iterations yet.</p>
+            ) : (
+              <ul className="ps-3 mb-0">
+                {userData.iterations.map((iter, idx) => (
+                  <li key={idx} className="mb-2">
+                    <div className="d-flex justify-content-between align-items-start">
+                      <div>
+                        <strong>Iteration {iter.iteration_number}:</strong>{" "}
+                        {iter.chosen_arguments.join(", ")}
+                        <br />
+                        <small className="text-muted">
+                          {new Date(iter.timestamp).toLocaleString("sl-SI")}
+                        </small>
+                      </div>
+                      <div style={{ textAlign: "center", fontWeight: "bold" }}>
+                        {(iter.mScore / 100).toFixed(3)}
+                      </div>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </Card.Body>
+        </Card>
+      ))}
+    </Container>
   );
 };
 
