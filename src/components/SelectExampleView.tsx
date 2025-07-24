@@ -88,6 +88,30 @@ function SelectExampleView() {
     if (classAttr) setTargetClassName(displayNames[classAttr] || "Class");
   }, [attrTypes]);
 
+  const fetchAttributeData = () => {
+    getObject()
+      .then((data) => {
+        setExpertAttr(data?.expert_attributes || []);
+        setDisplayNames(data?.display_names || {});
+      })
+      .catch((err) => {
+        console.error("Error fetching learning object:", err);
+      });
+
+    apiClient
+      .get("/attributes/")
+      .then((response) => {
+        const mapping: Record<string, string> = {};
+        response.data.forEach((attr: AttributeInfo) => {
+          mapping[attr.name] = attr.type;
+        });
+        setAttributeTypes(mapping);
+      })
+      .catch((error) => {
+        console.error("Failed to fetch attribute types:", error);
+      });
+  };
+
   useEffect(() => {
     if (!selectedDomain) return;
     const isNewSession = localStorage.getItem("mode") === "new";
@@ -106,29 +130,6 @@ function SelectExampleView() {
         });
     }
 
-    getObject()
-      .then((data) => {
-        setExpertAttr(data?.expert_attributes || []);
-        setDisplayNames(data?.display_names || {});
-      })
-      .catch((err) => {
-        console.error("Error fetching learning object:", err);
-      });
-
-    apiClient
-      .get("/attributes/")
-      .then((response) => {
-        const mapping: Record<string, string> = {};
-        response.data.forEach((attr: AttributeInfo) => {
-          mapping[attr.name] = attr.type;
-        });
-
-        setAttributeTypes(mapping);
-      })
-      .catch((error) => {
-        console.error("Failed to fetch attribute types:", error);
-      });
-
     apiClient
       .post("/critical-instances/", {
         domain: selectedDomain,
@@ -141,6 +142,8 @@ function SelectExampleView() {
         setAlertError(null);
 
         localStorage.setItem("mode", "continue");
+
+        fetchAttributeData();
       })
       .catch((error) => {
         console.error("Error fetching critical instances:", error);

@@ -231,6 +231,7 @@ function ArgumentView() {
 
     try {
       await apiClient.post("/post-data-iterations/", {
+        selectedExampleId: idName,
         iteration_number: iterationNumber,
         chosen_arguments: chosenArguments,
         mScore: mScore,

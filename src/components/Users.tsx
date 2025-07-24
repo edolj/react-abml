@@ -4,6 +4,7 @@ import apiClient from "../api/apiClient";
 import Alert from "./Alert";
 
 interface Iteration {
+  selectedExampleId: string;
   iteration_number: number;
   chosen_arguments: string[];
   mScore: number;
@@ -67,11 +68,15 @@ const Users = () => {
                         {iter.chosen_arguments.join(", ")}
                         <br />
                         <small className="text-muted">
+                          Example: {iter.selectedExampleId}
+                        </small>
+                        <br />
+                        <small className="text-muted">
                           {new Date(iter.timestamp).toLocaleString("sl-SI")}
                         </small>
                       </div>
                       <div style={{ textAlign: "center", fontWeight: "bold" }}>
-                        {(iter.mScore / 100).toFixed(3)}
+                        {(iter.mScore / 100).toFixed(2)}
                       </div>
                     </div>
                   </li>
