@@ -5,13 +5,16 @@ import React, {
   ReactNode,
   useEffect,
 } from "react";
-import axios from "axios";
+import apiClient from "../api/apiClient";
 
 interface AuthContextType {
   isLoggedIn: boolean;
   setIsLoggedIn: (value: boolean) => void;
   username: string | null;
   setAuthUsername: (value: string | null) => void;
+  isSuperuser: boolean;
+  setIsSuperuser: (value: boolean) => void;
+  checkSession: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -21,31 +24,46 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
 }) => {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [username, setAuthUsername] = useState<string | null>(null);
+  const [isSuperuser, setIsSuperuser] = useState<boolean>(false);
 
-  useEffect(() => {
-    // Check if the session is still valid by calling an endpoint
-    axios
-      .get("http://localhost:8000/api/check-session/", {
-        withCredentials: true,
-      })
+  const logout = () => {
+    setIsLoggedIn(false);
+    setAuthUsername(null);
+    setIsSuperuser(false);
+  };
+
+  const checkSession = () => {
+    return apiClient
+      .get("/check-session/")
       .then((response) => {
-        if (response.data.is_authenticated) {
+        if (response.data.authenticated) {
           setIsLoggedIn(true);
           setAuthUsername(response.data.username);
+          setIsSuperuser(response.data.is_superuser);
         } else {
-          setIsLoggedIn(false);
-          setAuthUsername(null);
+          logout();
         }
       })
       .catch(() => {
-        setIsLoggedIn(false);
-        setAuthUsername(null);
+        logout();
       });
+  };
+
+  useEffect(() => {
+    checkSession();
   }, []);
 
   return (
     <AuthContext.Provider
-      value={{ isLoggedIn, setIsLoggedIn, username, setAuthUsername }}
+      value={{
+        isLoggedIn,
+        setIsLoggedIn,
+        username,
+        setAuthUsername,
+        isSuperuser,
+        setIsSuperuser,
+        checkSession,
+      }}
     >
       {children}
     </AuthContext.Provider>

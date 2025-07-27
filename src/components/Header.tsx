@@ -6,7 +6,7 @@ import "../css/Header.css";
 
 const Header = () => {
   const navigate = useNavigate();
-  const { isLoggedIn, setIsLoggedIn, username } = useAuth();
+  const { isLoggedIn, setIsLoggedIn, username, isSuperuser } = useAuth();
 
   const handleLogout = () => {
     apiClient
@@ -28,7 +28,9 @@ const Header = () => {
           <div className="menu">
             <button onClick={() => navigate("/home")}>HOME</button>
             <button onClick={() => navigate("/selectDomain")}>DOMAIN</button>
-            <button onClick={() => navigate("/users")}>USERS</button>
+            {isSuperuser && (
+              <button onClick={() => navigate("/users")}>USERS</button>
+            )}
           </div>
         )}
       </div>

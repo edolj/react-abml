@@ -7,7 +7,7 @@ import "../css/LoginForm.css";
 const LoginForm = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const { setIsLoggedIn, setAuthUsername } = useAuth();
+  const { checkSession } = useAuth();
   const navigate = useNavigate();
 
   const [alertError, setAlertError] = useState<string | null>(null);
@@ -16,9 +16,8 @@ const LoginForm = () => {
     event.preventDefault();
 
     try {
-      const data = await login({ username, password });
-      setAuthUsername(data.user.username);
-      setIsLoggedIn(true);
+      await login({ username, password });
+      await checkSession();
       setAlertError(null);
       navigate("/home");
     } catch (error) {
