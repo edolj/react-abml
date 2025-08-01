@@ -2,7 +2,8 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button, ListGroup, Container } from "react-bootstrap";
 import { Card, Spinner, Form, Modal } from "react-bootstrap";
-import { FaUpload, FaTimes, FaEdit, FaPlay } from "react-icons/fa";
+import { FaUpload, FaTimes, FaEdit, FaArrowRight } from "react-icons/fa";
+import { useAuth } from "../context/AuthContext";
 import apiClient from "../api/apiClient";
 import Alert from "./Alert";
 
@@ -16,6 +17,8 @@ export type Domain = {
 
 const DomainView = () => {
   const navigate = useNavigate();
+  const { isSuperuser } = useAuth();
+
   const [loading, setLoading] = useState(false);
   const [domains, setDomains] = useState<Domain[]>([]);
   const [selectedDomain, setSelectedDomain] = useState<Domain | null>(null);
@@ -129,58 +132,66 @@ const DomainView = () => {
                     }`}
                   >
                     <span>{domain.name}</span>
-                    <div className="d-flex gap-2">
-                      <Button
-                        size="sm"
-                        variant="outline-secondary"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleEditDomain(domain);
-                        }}
-                      >
-                        <FaEdit className="me-1" />
-                        Edit
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="outline-danger"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleDeleteDomain(domain.id);
-                        }}
-                      >
-                        <FaTimes size={14} />
-                      </Button>
-                    </div>
+                    {isSuperuser && (
+                      <div className="d-flex gap-2">
+                        <Button
+                          size="sm"
+                          variant="outline-secondary"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleEditDomain(domain);
+                          }}
+                        >
+                          <FaEdit className="me-1" />
+                          Edit
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline-danger"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeleteDomain(domain.id);
+                          }}
+                        >
+                          <FaTimes size={14} />
+                        </Button>
+                      </div>
+                    )}
                   </ListGroup.Item>
                 ))}
               </ListGroup>
             </div>
 
-            <div className="d-flex justify-content-between mt-5">
-              <Button
-                variant="primary"
-                onClick={() => setShowUploadModal(true)}
-                disabled={loading}
-              >
-                {loading ? (
-                  <Spinner animation="border" size="sm" />
-                ) : (
-                  <>
-                    <FaUpload className="me-2" />
-                    Add Domain
-                  </>
-                )}
-              </Button>
-              <Button
-                variant="success"
-                onClick={() => handleStartFlow("new")}
-                disabled={!selectedDomain}
-                style={{ width: "120px" }}
-              >
-                <FaPlay className="me-2" />
-                Start
-              </Button>
+            <div className="d-flex mt-5">
+              {isSuperuser && (
+                <Button
+                  variant="primary"
+                  onClick={() => setShowUploadModal(true)}
+                  disabled={loading}
+                >
+                  {loading ? (
+                    <Spinner animation="border" size="sm" />
+                  ) : (
+                    <>
+                      <FaUpload className="me-2" />
+                      Add Domain
+                    </>
+                  )}
+                </Button>
+              )}
+              <div className="ms-auto">
+                <Button
+                  variant="success"
+                  onClick={() => handleStartFlow("new")}
+                  disabled={!selectedDomain}
+                  style={{ width: "120px" }}
+                >
+                  Start
+                  <FaArrowRight
+                    style={{ marginLeft: "8px", marginBottom: "2px" }}
+                  />
+                </Button>
+              </div>
             </div>
           </Card.Body>
         </Card>

@@ -8,6 +8,7 @@ import apiClient from "../api/apiClient";
 import "react-toastify/dist/ReactToastify.css";
 import "../css/PrimaryButton.css";
 import Alert from "./Alert";
+import Tooltip from "@mui/material/Tooltip";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import ProgressBar from "react-bootstrap/ProgressBar";
@@ -66,6 +67,7 @@ function ArgumentView() {
   const [hintScore, setHintMScore] = useState(0.0);
   const [hintBestRule, setBestRule] = useState("");
   const [hasCounterExamples, setHasCounterExamples] = useState(false);
+  const [counterExampleIds, setCounterExampleIds] = useState<string[]>([]);
   const [alertError, setAlertError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [argumentsSent, setArgumentsSent] = useState(false);
@@ -149,7 +151,7 @@ function ArgumentView() {
 
   const showCriticalExample = () => {
     if (selectedFilters.length === 0) {
-      setAlertError("The argument field cannot be empty!");
+      setAlertError("No arguments selected. Choose from the list below.");
       return;
     }
 
@@ -176,11 +178,8 @@ function ArgumentView() {
 
         // Limit to 2 counter examples to show in table
         const limitedCounterExamples = data.counterExamples.slice(0, 2);
-        if (limitedCounterExamples.length > 0) {
-          setHasCounterExamples(true);
-        } else {
-          setHasCounterExamples(false);
-        }
+        setCounterExampleIds(limitedCounterExamples.map((c: any) => c.id));
+        setHasCounterExamples(limitedCounterExamples.length > 0);
 
         // Merge counter values into formatted data
         const newFormattedData = formattedData.map(
@@ -189,7 +188,7 @@ function ArgumentView() {
             limitedCounterExamples.forEach(
               (counterExample: any, counterIndex: number) => {
                 newItem[`counterValue${counterIndex + 1}`] =
-                  counterExample[index] || "-";
+                  counterExample.values[index] || "-";
               }
             );
             return newItem;
@@ -225,7 +224,7 @@ function ArgumentView() {
 
   const doneWithArgumentation = async () => {
     if (!argumentsSent) {
-      setAlertError("The argument field cannot be empty!");
+      setAlertError("No arguments selected. Choose from the list below.");
       return;
     }
 
@@ -284,6 +283,14 @@ function ArgumentView() {
 
     return `IF ${conditions.join(" AND ")} THEN ${transformedThen}`;
   };
+
+  const filteredDisplayNames = Object.fromEntries(
+    Object.entries(display_names).filter(([key]) => expertAttr.includes(key))
+  );
+
+  const filteredAttrDescs = Object.fromEntries(
+    Object.entries(attrDesc).filter(([key]) => expertAttr.includes(key))
+  );
 
   // useEffect(() => {
   //   apiClient
@@ -370,8 +377,8 @@ function ArgumentView() {
               {targetClassName}: <b style={{ color: "green" }}>{targetClass}</b>
             </span>
           </div>
-          {argumentsSent && (
-            <Button variant="link" onClick={doneWithArgumentation}>
+          {argumentsSent && !hasCounterExamples && (
+            <Button variant="outline-success" onClick={doneWithArgumentation}>
               Next Example
               <FaArrowRight
                 style={{ marginLeft: "8px", marginBottom: "2px" }}
@@ -419,17 +426,27 @@ function ArgumentView() {
               </PrimaryButton>
             </div>
             <ProgressBar>
-              <ProgressBar now={mScore} label={mScore} variant="primary" />
-              <ProgressBar
-                now={hintScore - mScore}
-                label={hintScore - mScore}
-                variant="success"
-              />
+              <ProgressBar now={mScore} label={mScore} />
+              <Tooltip title="How much can argument be improved" arrow>
+                <ProgressBar
+                  now={hintScore - mScore}
+                  label={hintScore - mScore}
+                  variant="success"
+                />
+              </Tooltip>
             </ProgressBar>
           </div>
         )}
 
         <div className="box-with-border card-view">
+          <h6
+            style={{
+              width: "80%",
+              margin: "0 auto 4px auto",
+            }}
+          >
+            Select arguments from list
+          </h6>
           <div
             style={{
               border: "1px solid #ccc",
@@ -439,15 +456,10 @@ function ArgumentView() {
               background: "white",
               width: "80%",
               margin: "0 auto",
+              minHeight: "48px",
             }}
           >
-            {selectedFilters.length === 0 ? (
-              <div style={{ color: "#888", fontStyle: "italic" }}>
-                Select arguments from list
-              </div>
-            ) : (
-              <Bubbles bubbles={selectedFilters} onRemove={removeBubble} />
-            )}
+            <Bubbles bubbles={selectedFilters} onRemove={removeBubble} />
           </div>
           <div style={{ width: "80%", margin: "0 auto", paddingTop: "10px" }}>
             {alertError && (
@@ -464,8 +476,8 @@ function ArgumentView() {
             }}
           >
             <ExpertAttributesModal
-              displayNames={display_names}
-              descriptions={attrDesc}
+              displayNames={filteredDisplayNames}
+              descriptions={filteredAttrDescs}
             />
             <Button
               variant="success"
@@ -474,6 +486,14 @@ function ArgumentView() {
             >
               Send arguments
             </Button>
+            {argumentsSent && !hasCounterExamples && (
+              <Button variant="outline-success" onClick={doneWithArgumentation}>
+                Next Example
+                <FaArrowRight
+                  style={{ marginLeft: "8px", marginBottom: "2px" }}
+                />
+              </Button>
+            )}
           </div>
 
           <div
@@ -486,6 +506,7 @@ function ArgumentView() {
             <AttributeList
               attributes={formattedData}
               hasCounterExamples={hasCounterExamples}
+              counterExampleIds={counterExampleIds}
               boxplots={boxplots}
               attrTypes={attrTypes}
               selectedFilters={selectedFilters}

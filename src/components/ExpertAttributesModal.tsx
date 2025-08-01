@@ -20,13 +20,7 @@ function ExpertAttributesModal({
   return (
     <>
       <PrimaryButton onClick={handleShow}>
-        <FaInfoCircle
-          style={{
-            marginRight: "8px",
-            marginBottom: "2px",
-            color: "white",
-          }}
-        />
+        <FaInfoCircle style={{ marginBottom: "2px", marginRight: "8px" }} />
         Attributes
       </PrimaryButton>
 

@@ -22,6 +22,7 @@ type AttributeItem = {
 type Props = {
   attributes: AttributeItem[];
   hasCounterExamples: boolean;
+  counterExampleIds?: string[];
   boxplots?: Record<string, number[]>;
   attrTypes?: Record<string, string>;
   selectedFilters?: Argument[];
@@ -37,6 +38,7 @@ type Props = {
 const AttributeList: React.FC<Props> = ({
   attributes,
   hasCounterExamples,
+  counterExampleIds,
   boxplots,
   attrTypes,
   selectedFilters,
@@ -74,65 +76,170 @@ const AttributeList: React.FC<Props> = ({
 
   const renderAttributes = (attrList: AttributeItem[]) => (
     <>
-      <Grid container item md={12}>
-        <Grid item md={6}></Grid>
+      <Grid item md={12}>
+        <Paper
+          elevation={0}
+          style={{
+            backgroundColor: "#343a40",
+          }}
+        >
+          <Grid container alignItems="center">
+            <Grid item md={12}>
+              <Box display="flex" alignItems="center" height="100%">
+                <Grid item md={hasCounterExamples ? 2 : 3}>
+                  <Typography fontWeight="bold" sx={{ color: "white", pl: 1 }}>
+                    Attribute
+                  </Typography>
+                </Grid>
 
-        {hasCounterExamples && (
-          <>
-            <Grid item md={2}>
-              <Typography
-                variant="body1"
-                fontWeight="bold"
-                align="right"
-                sx={{
-                  backgroundColor: "#f8d7da",
-                  padding: "0.5rem 0rem",
-                  width: "100%",
-                }}
-              >
-                Counter Value 1
-              </Typography>
-            </Grid>
+                <Grid item md={hasCounterExamples ? 2 : 3}>
+                  <Typography
+                    fontWeight="bold"
+                    align="right"
+                    sx={{ color: "white" }}
+                  >
+                    Value
+                  </Typography>
+                </Grid>
 
-            <Grid item md={2}>
-              <Typography
-                variant="body1"
-                fontWeight="bold"
-                align="right"
-                sx={{
-                  backgroundColor: "#f8d7da",
-                  padding: "0.5rem 0.4rem",
-                  width: "100%",
-                }}
-              >
-                Counter Value 2
-              </Typography>
-            </Grid>
+                <Grid item md={hasCounterExamples ? 2 : 4}></Grid>
 
-            <Grid item md={2}>
-              <Typography
-                variant="body1"
-                fontWeight="bold"
-                align="center"
-                sx={{
-                  backgroundColor: "#f8d7da",
-                  padding: "0.5rem 1rem",
-                  width: "100%",
-                }}
-              >
-                Action
-              </Typography>
+                {hasCounterExamples && (
+                  <>
+                    <Divider
+                      orientation="vertical"
+                      flexItem
+                      sx={{ borderColor: "lightgray" }}
+                    />
+                    <Grid item md={2}>
+                      <Typography
+                        variant="body1"
+                        fontWeight="bold"
+                        align="center"
+                        sx={{
+                          background: "red",
+                          color: "white",
+                          padding: "0.5rem 0rem",
+                        }}
+                      >
+                        Counter Value 1
+                      </Typography>
+                    </Grid>
+
+                    <Divider
+                      orientation="vertical"
+                      flexItem
+                      sx={{ borderColor: "lightgray" }}
+                    />
+
+                    <Grid item md={2}>
+                      <Typography
+                        variant="body1"
+                        fontWeight="bold"
+                        align="center"
+                        sx={{
+                          background: "red",
+                          color: "white",
+                          padding: "0.5rem 0rem",
+                        }}
+                      >
+                        Counter Value 2
+                      </Typography>
+                    </Grid>
+                  </>
+                )}
+
+                <Divider
+                  orientation="vertical"
+                  flexItem
+                  sx={{ borderColor: "lightgray" }}
+                />
+
+                <Grid item md={2}>
+                  <Typography
+                    variant="body1"
+                    fontWeight="bold"
+                    align="center"
+                    sx={{
+                      color: "white",
+                      padding: "0.5rem 0rem",
+                    }}
+                  >
+                    Select
+                  </Typography>
+                </Grid>
+              </Box>
             </Grid>
-          </>
-        )}
+          </Grid>
+        </Paper>
       </Grid>
+
+      {hasCounterExamples && (
+        <Grid item md={12}>
+          <Paper elevation={0}>
+            <Grid container alignItems="center">
+              <Grid item md={12}>
+                <Box display="flex" alignItems="center" height="100%">
+                  <Grid item md={2}>
+                    <Typography variant="subtitle1" sx={{ pl: 1 }}>
+                      Name
+                    </Typography>
+                  </Grid>
+                  <Grid item md={4}></Grid>
+                  <Divider
+                    orientation="vertical"
+                    flexItem
+                    sx={{ borderColor: "black" }}
+                  />
+                  <Grid item md={2}>
+                    <Typography
+                      variant="body1"
+                      align="center"
+                      sx={{
+                        padding: "0.5rem 0",
+                      }}
+                    >
+                      {counterExampleIds?.[0] ?? "-"}
+                    </Typography>
+                  </Grid>
+
+                  <Divider
+                    orientation="vertical"
+                    flexItem
+                    sx={{ borderColor: "black" }}
+                  />
+
+                  <Grid item md={2}>
+                    <Typography
+                      variant="body1"
+                      align="center"
+                      sx={{
+                        padding: "0.5rem 0",
+                      }}
+                    >
+                      {counterExampleIds?.[1] ?? "-"}
+                    </Typography>
+                  </Grid>
+
+                  <Divider
+                    orientation="vertical"
+                    flexItem
+                    sx={{ borderColor: "black" }}
+                  />
+
+                  <Grid item md={2}></Grid>
+                </Box>
+              </Grid>
+            </Grid>
+          </Paper>
+        </Grid>
+      )}
 
       {attrList.map((attr, index) => (
         <Grid item md={12} key={attr.key}>
           <Paper
             elevation={0}
             style={{
-              padding: "0 0 0 1rem",
               backgroundColor:
                 attrTypes?.[attr.key] === "target"
                   ? "#d1e7dd"
@@ -145,37 +252,49 @@ const AttributeList: React.FC<Props> = ({
               <Grid item md={12}>
                 <Box display="flex" alignItems="center" height="100%">
                   {/* Label */}
-                  <Box flex={1} display="flex" alignItems="center" gap={1}>
+                  <Grid item md={hasCounterExamples ? 2 : 3}>
                     <Tooltip
                       title={tooltipDescriptions?.[attr.key] || ""}
                       arrow
                     >
-                      <Typography variant="subtitle1">
+                      <Typography variant="subtitle1" sx={{ pl: 1 }}>
                         {displayNames?.[attr.key] ?? attr.key}
                       </Typography>
                     </Tooltip>
-                  </Box>
+                  </Grid>
 
                   {/* Value */}
-                  <Box flex={1} display="flex" justifyContent="flex-end">
-                    <Typography variant="body2" fontWeight="bold">
+                  <Grid item md={hasCounterExamples ? 2 : 3}>
+                    <Typography
+                      variant="body2"
+                      align="right"
+                      fontWeight="bold"
+                      sx={{ pl: 1 }}
+                    >
                       {formatValue(attr.key, attr.value)}
                     </Typography>
-                  </Box>
+                  </Grid>
 
                   {/* Boxplot */}
-                  <Box flex={1}>
+                  <Grid item md={hasCounterExamples ? 2 : 4}>
                     {boxplots?.[attr.key] && (
-                      <BoxPlot
-                        data={boxplots[attr.key]}
-                        value={Number(attr.value)}
-                      />
+                      <Box display="flex" justifyContent="center">
+                        <BoxPlot
+                          data={boxplots[attr.key]}
+                          value={Number(attr.value)}
+                        />
+                      </Box>
                     )}
-                  </Box>
+                  </Grid>
 
                   {/*Counter example */}
                   {hasCounterExamples && (
                     <>
+                      <Divider
+                        orientation="vertical"
+                        flexItem
+                        sx={{ borderColor: "black" }}
+                      />
                       <Grid item md={2}>
                         <Typography
                           variant="body2"
@@ -186,6 +305,11 @@ const AttributeList: React.FC<Props> = ({
                           {formatValue(attr.key, attr.counterValue1 ?? "-")}
                         </Typography>
                       </Grid>
+                      <Divider
+                        orientation="vertical"
+                        flexItem
+                        sx={{ borderColor: "black" }}
+                      />
                       <Grid item md={2}>
                         <Typography
                           variant="body2"
@@ -277,27 +401,31 @@ const AttributeList: React.FC<Props> = ({
             >
               <FaExclamation />
             </span>
-            Expert Attributes
+            Expert
           </span>
         }
       >
-        <Grid container>
-          {renderAttributes(
-            attributes.filter(
-              (attr) =>
-                expertAttr.includes(attr.key) ||
-                attrTypes?.[attr.key] === "target"
-            )
-          )}
-        </Grid>
+        <div className="pt-3">
+          <Grid container>
+            {renderAttributes(
+              attributes.filter(
+                (attr) =>
+                  expertAttr.includes(attr.key) ||
+                  attrTypes?.[attr.key] === "target"
+              )
+            )}
+          </Grid>
+        </div>
       </Tab>
 
-      <Tab eventKey="others" title="Other Attributes">
-        <Grid container>
-          {renderAttributes(
-            attributes.filter((attr) => !expertAttr.includes(attr.key))
-          )}
-        </Grid>
+      <Tab eventKey="others" title="Other">
+        <div className="pt-3">
+          <Grid container>
+            {renderAttributes(
+              attributes.filter((attr) => !expertAttr.includes(attr.key))
+            )}
+          </Grid>
+        </div>
       </Tab>
     </Tabs>
   );

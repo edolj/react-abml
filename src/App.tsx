@@ -11,6 +11,7 @@ import Header from "./components/Header";
 import Users from "./components/Users";
 import HomePage from "./components/HomePage";
 import RootRedirect from "./context/RootRedirect";
+import Instructions from "./components/Instructions";
 
 function App() {
   return (
@@ -56,6 +57,14 @@ function App() {
           element={
             <PrivateRoute>
               <ArgumentView />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/instructions"
+          element={
+            <PrivateRoute>
+              <Instructions />
             </PrivateRoute>
           }
         />
