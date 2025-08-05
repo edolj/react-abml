@@ -81,7 +81,9 @@ const EditDomainView = () => {
                       onChange={() => handleCheckboxToggle(attr)}
                       className="me-4"
                     />
-                    <Form.Text className="mb-1">{attr}</Form.Text>
+                    <Form.Text className="mb-1">
+                      <b>{attr}</b>
+                    </Form.Text>
                     <Form.Control
                       type="input"
                       placeholder="Enter display name"

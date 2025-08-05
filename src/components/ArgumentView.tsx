@@ -46,10 +46,29 @@ function ArgumentView() {
   );
 
   const showToast = (score: string, rule: string) => {
+    const lines = rule.split("\n");
+    const listItems = lines.filter((line) => line.startsWith("- "));
+    const normalLines = lines.filter((line) => !line.startsWith("- "));
+
     toast.info(
       <>
         {score && <div>{score}</div>}
-        <div>{rule}</div>
+        {normalLines.map((line, idx) => (
+          <div key={`normal-${idx}`}>{line}</div>
+        ))}
+
+        {listItems.length > 0 && (
+          <ul>
+            {listItems.map((line, idx) => {
+              const attrName = line.slice(2).trim();
+              return (
+                <li key={`list-${idx}`}>
+                  <strong>{attrName}</strong>
+                </li>
+              );
+            })}
+          </ul>
+        )}
       </>,
       {
         position: "top-right",
@@ -144,9 +163,32 @@ function ArgumentView() {
       return;
     }
 
+    const cleanedChosenArguments = chosenArguments.map((arg) => {
+      const match = arg.match(/^([a-zA-Z0-9_./]+)\s*(==|<=|>=|<|>|!=)?/);
+      return match ? match[1] : arg;
+    });
+
+    const attributeRegex = /\b([a-zA-Z0-9_./]+)\s*(==|<=|>=|<|>|!=)/g;
+    const attributes = new Set<string>();
+
+    const [ifPart] = hintBestRule.split(" THEN ");
+
+    let match;
+    while ((match = attributeRegex.exec(ifPart)) !== null) {
+      attributes.add(match[1]);
+    }
+
+    const missingAttributes = Array.from(attributes).filter(
+      (attr) => !cleanedChosenArguments.includes(attr)
+    );
+
+    const attrList = missingAttributes.map(
+      (attr) => `- ${display_names[attr] || attr}`
+    );
+
+    const message = `Argument can be improved with:\n${attrList.join("\n")}`;
     const score = "m: " + hintScore / 100;
-    const rule = processRule(hintBestRule);
-    showToast(score, rule);
+    showToast(score, message);
   };
 
   const showCriticalExample = () => {
@@ -228,13 +270,17 @@ function ArgumentView() {
       return;
     }
 
+    // Data to be sent in the request body
+    const requestData = {
+      selectedExampleId: idName,
+      iteration_number: iterationNumber,
+      chosen_arguments: chosenArguments,
+      mScore: mScore,
+      index: criticalIndex,
+    };
+
     try {
-      await apiClient.post("/post-data-iterations/", {
-        selectedExampleId: idName,
-        iteration_number: iterationNumber,
-        chosen_arguments: chosenArguments,
-        mScore: mScore,
-      });
+      await apiClient.post("/post-data-iterations/", requestData);
       console.log("Success with saving argumentation data.");
 
       await apiClient.put("/update-iteration/");
@@ -247,43 +293,6 @@ function ArgumentView() {
     }
   };
 
-  const processRule = (rule: string) => {
-    const [ifPart, thenPart] = rule.split(" THEN ");
-    const conditionStr = ifPart.replace(/^IF\s*/i, "");
-
-    const conditions = conditionStr.split(" AND ").map((cond) => {
-      const match = cond.match(/^(.+?)([<>=!]=|==)(.+)$/);
-      if (!match) return cond;
-
-      const [, rawAttr, op, value] = match;
-      const attr = rawAttr.trim();
-      const type = attrTypes[attr] || "continuous";
-      const displayName = display_names[attr] || attr;
-
-      let opText = "";
-      if (op === ">=") opText = "is high";
-      else if (op === "<=") opText = "is low";
-      else if (op === "==") opText = "equals";
-      else opText = op;
-
-      if (type === "discrete") {
-        return `${displayName} ${opText} ${value.trim()}`;
-      } else {
-        return `${displayName} ${opText}`;
-      }
-    });
-
-    let transformedThen = thenPart.trim();
-    const thenMatch = transformedThen.match(/^(.+?)(==|=|[<>!]=)(.+)$/);
-    if (thenMatch) {
-      const [, thenAttr, thenOp, thenValue] = thenMatch;
-      const thenDisplayName = display_names[thenAttr.trim()] || thenAttr.trim();
-      transformedThen = `${thenDisplayName} ${thenOp} ${thenValue.trim()}`;
-    }
-
-    return `IF ${conditions.join(" AND ")} THEN ${transformedThen}`;
-  };
-
   const filteredDisplayNames = Object.fromEntries(
     Object.entries(display_names).filter(([key]) => expertAttr.includes(key))
   );
@@ -291,6 +300,43 @@ function ArgumentView() {
   const filteredAttrDescs = Object.fromEntries(
     Object.entries(attrDesc).filter(([key]) => expertAttr.includes(key))
   );
+
+  // const processRule = (rule: string) => {
+  //   const [ifPart, thenPart] = rule.split(" THEN ");
+  //   const conditionStr = ifPart.replace(/^IF\s*/i, "");
+
+  //   const conditions = conditionStr.split(" AND ").map((cond) => {
+  //     const match = cond.match(/^(.+?)([<>=!]=|==)(.+)$/);
+  //     if (!match) return cond;
+
+  //     const [, rawAttr, op, value] = match;
+  //     const attr = rawAttr.trim();
+  //     const type = attrTypes[attr] || "continuous";
+  //     const displayName = display_names[attr] || attr;
+
+  //     let opText = "";
+  //     if (op === ">=") opText = "is high";
+  //     else if (op === "<=") opText = "is low";
+  //     else if (op === "==") opText = "equals";
+  //     else opText = op;
+
+  //     if (type === "discrete") {
+  //       return `${displayName} ${opText} ${value.trim()}`;
+  //     } else {
+  //       return `${displayName} ${opText}`;
+  //     }
+  //   });
+
+  //   let transformedThen = thenPart.trim();
+  //   const thenMatch = transformedThen.match(/^(.+?)(==|=|[<>!]=)(.+)$/);
+  //   if (thenMatch) {
+  //     const [, thenAttr, thenOp, thenValue] = thenMatch;
+  //     const thenDisplayName = display_names[thenAttr.trim()] || thenAttr.trim();
+  //     transformedThen = `${thenDisplayName} ${thenOp} ${thenValue.trim()}`;
+  //   }
+
+  //   return `IF ${conditions.join(" AND ")} THEN ${transformedThen}`;
+  // };
 
   // useEffect(() => {
   //   apiClient
@@ -407,7 +453,7 @@ function ArgumentView() {
           <div className="box-with-border card-view">
             <div
               style={{
-                marginBottom: "20px",
+                marginBottom: "30px",
                 display: "flex",
                 justifyContent: "space-between",
                 alignItems: "center",
@@ -425,13 +471,13 @@ function ArgumentView() {
                 Hint
               </PrimaryButton>
             </div>
-            <ProgressBar>
-              <ProgressBar now={mScore} label={mScore} />
+            <ProgressBar style={{ height: "20px" }}>
+              <ProgressBar now={mScore} label={mScore} variant="success" />
               <Tooltip title="How much can argument be improved" arrow>
                 <ProgressBar
                   now={hintScore - mScore}
                   label={hintScore - mScore}
-                  variant="success"
+                  variant="warning"
                 />
               </Tooltip>
             </ProgressBar>

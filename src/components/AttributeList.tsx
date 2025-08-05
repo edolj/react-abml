@@ -77,12 +77,7 @@ const AttributeList: React.FC<Props> = ({
   const renderAttributes = (attrList: AttributeItem[]) => (
     <>
       <Grid item md={12}>
-        <Paper
-          elevation={0}
-          style={{
-            backgroundColor: "#343a40",
-          }}
-        >
+        <Paper elevation={0} style={{ backgroundColor: "black" }}>
           <Grid container alignItems="center">
             <Grid item md={12}>
               <Box display="flex" alignItems="center" height="100%">
@@ -196,7 +191,7 @@ const AttributeList: React.FC<Props> = ({
                       variant="body1"
                       align="center"
                       sx={{
-                        padding: "0.5rem 0",
+                        padding: "0.5rem",
                       }}
                     >
                       {counterExampleIds?.[0] ?? "-"}
@@ -214,7 +209,7 @@ const AttributeList: React.FC<Props> = ({
                       variant="body1"
                       align="center"
                       sx={{
-                        padding: "0.5rem 0",
+                        padding: "0.5rem",
                       }}
                     >
                       {counterExampleIds?.[1] ?? "-"}
@@ -300,7 +295,13 @@ const AttributeList: React.FC<Props> = ({
                           variant="body2"
                           align="right"
                           fontWeight="bold"
-                          sx={{ pr: 1 }}
+                          sx={{
+                            pr: 1,
+                            color:
+                              attrTypes?.[attr.key] === "target"
+                                ? "red"
+                                : "inherit",
+                          }}
                         >
                           {formatValue(attr.key, attr.counterValue1 ?? "-")}
                         </Typography>
@@ -315,7 +316,13 @@ const AttributeList: React.FC<Props> = ({
                           variant="body2"
                           align="right"
                           fontWeight="bold"
-                          sx={{ pr: 1 }}
+                          sx={{
+                            pr: 1,
+                            color:
+                              attrTypes?.[attr.key] === "target"
+                                ? "red"
+                                : "inherit",
+                          }}
                         >
                           {formatValue(attr.key, attr.counterValue2 ?? "-")}
                         </Typography>
