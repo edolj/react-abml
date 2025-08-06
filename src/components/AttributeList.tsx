@@ -77,7 +77,7 @@ const AttributeList: React.FC<Props> = ({
   const renderAttributes = (attrList: AttributeItem[]) => (
     <>
       <Grid item md={12}>
-        <Paper elevation={0} style={{ backgroundColor: "black" }}>
+        <Paper elevation={0} style={{ backgroundColor: "#4e66c1" }}>
           <Grid container alignItems="center">
             <Grid item md={12}>
               <Box display="flex" alignItems="center" height="100%">
@@ -112,7 +112,7 @@ const AttributeList: React.FC<Props> = ({
                         fontWeight="bold"
                         align="center"
                         sx={{
-                          background: "red",
+                          background: "#b33a3a",
                           color: "white",
                           padding: "0.5rem 0rem",
                         }}
@@ -133,7 +133,7 @@ const AttributeList: React.FC<Props> = ({
                         fontWeight="bold"
                         align="center"
                         sx={{
-                          background: "red",
+                          background: "#b33a3a",
                           color: "white",
                           padding: "0.5rem 0rem",
                         }}
@@ -177,7 +177,7 @@ const AttributeList: React.FC<Props> = ({
                 <Box display="flex" alignItems="center" height="100%">
                   <Grid item md={2}>
                     <Typography variant="subtitle1" sx={{ pl: 1 }}>
-                      Name
+                      ID
                     </Typography>
                   </Grid>
                   <Grid item md={4}></Grid>

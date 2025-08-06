@@ -34,7 +34,7 @@ function SelectExampleView() {
   const tableData = formatCriticalInstances(criticalInstances);
 
   const tableColumns = [
-    { Header: "Name", accessor: "column1" },
+    { Header: "ID", accessor: "column1" },
     { Header: "Critical", accessor: "column2" },
     { Header: targetClassName, accessor: "column3" },
   ];
