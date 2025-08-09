@@ -45,7 +45,17 @@ const HomePage = () => {
             suggestions, select important features and guide the learning
             process in a structured way.
           </p>
-
+          <p className="text-muted">
+            Before getting started, you can review the{" "}
+            <Button
+              variant="link"
+              className="p-0 align-baseline"
+              onClick={() => navigate("/instructions")}
+            >
+              Instructions
+            </Button>{" "}
+            to understand how everything works.
+          </p>
           {loading ? (
             <Spinner animation="border" />
           ) : (
