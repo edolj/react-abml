@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button, ListGroup, Container } from "react-bootstrap";
+import { Button, Col, Row, Container } from "react-bootstrap";
 import { Card, Spinner, Form, Modal } from "react-bootstrap";
-import { FaUpload, FaTimes, FaEdit, FaArrowRight } from "react-icons/fa";
+import { FaUpload, FaTimes, FaEdit } from "react-icons/fa";
+import { FaCheck, FaArrowRight } from "react-icons/fa";
 import { useAuth } from "../context/AuthContext";
 import apiClient from "../api/apiClient";
 import Alert from "./Alert";
@@ -121,45 +122,58 @@ const DomainView = () => {
           </Card.Header>
           <Card.Body>
             <div className="scrollable">
-              <ListGroup>
-                {domains.map((domain: any) => (
-                  <ListGroup.Item
-                    key={domain.id}
-                    as="div"
-                    onClick={() => handleSelectDomain(domain)}
-                    className={`d-flex justify-content-between align-items-center ${
-                      domain.id === selectedDomain?.id ? "selected-item" : ""
-                    }`}
-                  >
-                    <span>{domain.name}</span>
-                    {isSuperuser && (
-                      <div className="d-flex gap-2">
-                        <Button
-                          size="sm"
-                          variant="outline-secondary"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleEditDomain(domain);
-                          }}
-                        >
-                          <FaEdit className="me-1" />
-                          Edit
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="outline-danger"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleDeleteDomain(domain.id);
-                          }}
-                        >
-                          <FaTimes size={14} />
-                        </Button>
+              <Row xs={1} sm={2} md={3} lg={4} className="g-4 p-2">
+                {domains.map((domain: Domain) => (
+                  <Col key={domain.id}>
+                    <Card
+                      className={`h-100 domain-card ${
+                        domain.id === selectedDomain?.id ? "selected-card" : ""
+                      }`}
+                      onClick={() => handleSelectDomain(domain)}
+                      style={{ cursor: "pointer" }}
+                    >
+                      {domain.id === selectedDomain?.id && (
+                        <FaCheck className="selected-badge" />
+                      )}
+                      <div className="card-color-bar">
+                        <Card.Title className="m-0 text-white">
+                          {domain.name}
+                        </Card.Title>
                       </div>
-                    )}
-                  </ListGroup.Item>
+                      <Card.Body className="d-flex flex-column justify-content-between">
+                        <div className="pt-2 text-muted">
+                          {domain.attributes.length} attributes
+                        </div>
+                        {isSuperuser && (
+                          <div className="mt-3 d-flex justify-content-between">
+                            <Button
+                              size="sm"
+                              variant="outline-secondary"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleEditDomain(domain);
+                              }}
+                            >
+                              <FaEdit className="me-1" />
+                              Edit
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline-danger"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDeleteDomain(domain.id);
+                              }}
+                            >
+                              <FaTimes size={14} />
+                            </Button>
+                          </div>
+                        )}
+                      </Card.Body>
+                    </Card>
+                  </Col>
                 ))}
-              </ListGroup>
+              </Row>
             </div>
 
             <div className="d-flex mt-5">
