@@ -16,15 +16,24 @@ interface CriticalInstance {
   id: string;
 }
 
+const loadingMessages = [
+  "Learning rules...",
+  "Searching for critical examples...",
+  "Double-checking everything...",
+  "Still working... hang tight!",
+];
+
 function SelectExampleView() {
   const navigate = useNavigate();
   const location = useLocation();
   const selectedDomain = location.state?.selectedDomain;
 
+  const [isLoading, setIsLoading] = useState(true);
+  const [loadingMessage, setLoadingMessage] = useState(loadingMessages[0]);
+  const [alertError, setAlertError] = useState<string | null>(null);
+
   const [criticalInstances, setCriticalIns] = useState<CriticalInstance[]>([]);
   const [detailData, setDetailData] = useState<[string, any][][]>([]);
-  const [isLoading, setIsLoading] = useState(true); // Add loading state
-  const [alertError, setAlertError] = useState<string | null>(null);
   const [iterationNumber, setIterationNumber] = useState<number | null>(null);
   const [expertAttr, setExpertAttr] = useState<string[]>([]);
   const [displayNames, setDisplayNames] = useState<Record<string, string>>({});
@@ -154,6 +163,23 @@ function SelectExampleView() {
       });
   }, []);
 
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+
+    if (isLoading) {
+      let index = 0;
+      interval = setInterval(() => {
+        index = (index + 1) % loadingMessages.length;
+        setLoadingMessage(loadingMessages[index]);
+      }, 2000);
+    } else {
+      // reset message
+      setLoadingMessage(loadingMessages[0]);
+    }
+
+    return () => clearInterval(interval);
+  }, [isLoading]);
+
   return (
     <>
       <div className="container">
@@ -177,10 +203,17 @@ function SelectExampleView() {
         </div>
         {isLoading ? (
           <Backdrop
-            sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+            sx={{
+              color: "#fff",
+              zIndex: (theme) => theme.zIndex.drawer + 1,
+              flexDirection: "column",
+            }}
             open
           >
             <CircularProgress color="inherit" />
+            <div style={{ marginTop: 16, fontSize: "1.2rem" }}>
+              {loadingMessage}
+            </div>
           </Backdrop>
         ) : (
           <MainTable

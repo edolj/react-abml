@@ -230,170 +230,186 @@ const AttributeList: React.FC<Props> = ({
         </Grid>
       )}
 
-      {attrList.map((attr, index) => (
-        <Grid item md={12} key={attr.key}>
-          <Paper
-            elevation={0}
-            style={{
-              backgroundColor:
-                attrTypes?.[attr.key] === "target"
-                  ? "#d1e7dd"
-                  : index % 2 === 0
-                  ? "#ececec"
-                  : "#ffffff",
-            }}
-          >
-            <Grid container alignItems="center">
-              <Grid item md={12}>
-                <Box display="flex" alignItems="center" height="100%">
-                  {/* Label */}
-                  <Grid item md={hasCounterExamples ? 2 : 3}>
-                    <Tooltip
-                      title={tooltipDescriptions?.[attr.key] || ""}
-                      arrow
-                    >
-                      <Typography variant="subtitle1" sx={{ pl: 1 }}>
-                        {displayNames?.[attr.key] ?? attr.key}
+      {attrList.map((attr, index) => {
+        const isLowActive = selectedFilters?.some(
+          (f) => f.key === attr.key && f.operator === "<="
+        );
+
+        const isHighActive = selectedFilters?.some(
+          (f) => f.key === attr.key && f.operator === ">="
+        );
+
+        return (
+          <Grid item md={12} key={attr.key}>
+            <Paper
+              elevation={0}
+              style={{
+                backgroundColor:
+                  attrTypes?.[attr.key] === "target"
+                    ? "#d1e7dd"
+                    : index % 2 === 0
+                    ? "#ececec"
+                    : "#ffffff",
+              }}
+            >
+              <Grid container alignItems="center">
+                <Grid item md={12}>
+                  <Box display="flex" alignItems="center" height="100%">
+                    {/* Label */}
+                    <Grid item md={hasCounterExamples ? 2 : 3}>
+                      <Tooltip
+                        title={tooltipDescriptions?.[attr.key] || ""}
+                        arrow
+                      >
+                        <Typography variant="subtitle1" sx={{ pl: 1 }}>
+                          {displayNames?.[attr.key] ?? attr.key}
+                        </Typography>
+                      </Tooltip>
+                    </Grid>
+
+                    {/* Value */}
+                    <Grid item md={hasCounterExamples ? 2 : 3}>
+                      <Typography
+                        variant="body2"
+                        align="right"
+                        fontWeight="bold"
+                        sx={{ pl: 1 }}
+                      >
+                        {formatValue(attr.key, attr.value)}
                       </Typography>
-                    </Tooltip>
-                  </Grid>
+                    </Grid>
 
-                  {/* Value */}
-                  <Grid item md={hasCounterExamples ? 2 : 3}>
-                    <Typography
-                      variant="body2"
-                      align="right"
-                      fontWeight="bold"
-                      sx={{ pl: 1 }}
-                    >
-                      {formatValue(attr.key, attr.value)}
-                    </Typography>
-                  </Grid>
-
-                  {/* Boxplot */}
-                  <Grid item md={hasCounterExamples ? 2 : 4}>
-                    {boxplots?.[attr.key] && (
-                      <Box display="flex" justifyContent="center">
-                        <BoxPlot
-                          data={boxplots[attr.key]}
-                          value={Number(attr.value)}
-                        />
-                      </Box>
-                    )}
-                  </Grid>
-
-                  {/*Counter example */}
-                  {hasCounterExamples && (
-                    <>
-                      <Divider
-                        orientation="vertical"
-                        flexItem
-                        sx={{ borderColor: "black" }}
-                      />
-                      <Grid item md={2}>
-                        <Typography
-                          variant="body2"
-                          align="right"
-                          fontWeight="bold"
-                          sx={{
-                            pr: 1,
-                            color:
-                              attrTypes?.[attr.key] === "target"
-                                ? "red"
-                                : "inherit",
-                          }}
-                        >
-                          {formatValue(attr.key, attr.counterValue1 ?? "-")}
-                        </Typography>
-                      </Grid>
-                      <Divider
-                        orientation="vertical"
-                        flexItem
-                        sx={{ borderColor: "black" }}
-                      />
-                      <Grid item md={2}>
-                        <Typography
-                          variant="body2"
-                          align="right"
-                          fontWeight="bold"
-                          sx={{
-                            pr: 1,
-                            color:
-                              attrTypes?.[attr.key] === "target"
-                                ? "red"
-                                : "inherit",
-                          }}
-                        >
-                          {formatValue(attr.key, attr.counterValue2 ?? "-")}
-                        </Typography>
-                      </Grid>
-                    </>
-                  )}
-
-                  {/* Divider */}
-                  <Divider
-                    orientation="vertical"
-                    flexItem
-                    sx={{ borderColor: "black" }}
-                  />
-
-                  {/*Action */}
-                  <Grid item md={2}>
-                    <Box
-                      display="flex"
-                      alignItems="center"
-                      justifyContent="center"
-                      gap={1}
-                      height="100%"
-                    >
-                      {attrTypes?.[attr.key] === "continuous" ? (
-                        <>
-                          <IconButton
-                            size="small"
-                            onClick={() => onLowClick?.(attr.key)}
-                          >
-                            <FaChevronDown />
-                          </IconButton>
-                          <IconButton
-                            size="small"
-                            onClick={() => onHighClick?.(attr.key)}
-                          >
-                            <FaChevronUp />
-                          </IconButton>
-                        </>
-                      ) : attrTypes?.[attr.key] === "discrete" ? (
-                        <Checkbox
-                          checked={selectedFilters?.some(
-                            (f) => f.key === attr.key
-                          )}
-                          onChange={(e) => {
-                            if (e.target.checked) {
-                              onCategoryAddClick?.(attr.key);
-                            } else {
-                              onCategoryDeleteClick?.(attr.key);
-                            }
-                          }}
-                          sx={{
-                            "&.Mui-checked": {
-                              color: "#607ad1",
-                            },
-                          }}
-                        />
-                      ) : (
-                        <Checkbox
-                          disabled
-                          checked={false}
-                          sx={{ opacity: 0 }}
-                        />
+                    {/* Boxplot */}
+                    <Grid item md={hasCounterExamples ? 2 : 4}>
+                      {boxplots?.[attr.key] && (
+                        <Box display="flex" justifyContent="center">
+                          <BoxPlot
+                            data={boxplots[attr.key]}
+                            value={Number(attr.value)}
+                          />
+                        </Box>
                       )}
-                    </Box>
-                  </Grid>
-                </Box>
+                    </Grid>
+
+                    {/*Counter example */}
+                    {hasCounterExamples && (
+                      <>
+                        <Divider
+                          orientation="vertical"
+                          flexItem
+                          sx={{ borderColor: "black" }}
+                        />
+                        <Grid item md={2}>
+                          <Typography
+                            variant="body2"
+                            align="right"
+                            fontWeight="bold"
+                            sx={{
+                              pr: 1,
+                              color:
+                                attrTypes?.[attr.key] === "target"
+                                  ? "red"
+                                  : "inherit",
+                            }}
+                          >
+                            {formatValue(attr.key, attr.counterValue1 ?? "-")}
+                          </Typography>
+                        </Grid>
+                        <Divider
+                          orientation="vertical"
+                          flexItem
+                          sx={{ borderColor: "black" }}
+                        />
+                        <Grid item md={2}>
+                          <Typography
+                            variant="body2"
+                            align="right"
+                            fontWeight="bold"
+                            sx={{
+                              pr: 1,
+                              color:
+                                attrTypes?.[attr.key] === "target"
+                                  ? "red"
+                                  : "inherit",
+                            }}
+                          >
+                            {formatValue(attr.key, attr.counterValue2 ?? "-")}
+                          </Typography>
+                        </Grid>
+                      </>
+                    )}
+
+                    {/* Divider */}
+                    <Divider
+                      orientation="vertical"
+                      flexItem
+                      sx={{ borderColor: "black" }}
+                    />
+
+                    {/*Action */}
+                    <Grid item md={2}>
+                      <Box
+                        display="flex"
+                        alignItems="center"
+                        justifyContent="center"
+                        gap={1}
+                        height="100%"
+                      >
+                        {attrTypes?.[attr.key] === "continuous" ? (
+                          <>
+                            <IconButton
+                              size="small"
+                              onClick={() => onLowClick?.(attr.key)}
+                              sx={{
+                                color: isLowActive ? "#1976d2" : "inherit",
+                              }}
+                            >
+                              <FaChevronDown />
+                            </IconButton>
+                            <IconButton
+                              size="small"
+                              onClick={() => onHighClick?.(attr.key)}
+                              sx={{
+                                color: isHighActive ? "#1976d2" : "inherit",
+                              }}
+                            >
+                              <FaChevronUp />
+                            </IconButton>
+                          </>
+                        ) : attrTypes?.[attr.key] === "discrete" ? (
+                          <Checkbox
+                            checked={selectedFilters?.some(
+                              (f) => f.key === attr.key
+                            )}
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                onCategoryAddClick?.(attr.key);
+                              } else {
+                                onCategoryDeleteClick?.(attr.key);
+                              }
+                            }}
+                            sx={{
+                              "&.Mui-checked": {
+                                color: "#1976d2",
+                              },
+                            }}
+                          />
+                        ) : (
+                          <Checkbox
+                            disabled
+                            checked={false}
+                            sx={{ opacity: 0 }}
+                          />
+                        )}
+                      </Box>
+                    </Grid>
+                  </Box>
+                </Grid>
               </Grid>
-            </Grid>
-          </Paper>
-        </Grid>
-      ))}
+            </Paper>
+          </Grid>
+        );
+      })}
     </>
   );
 

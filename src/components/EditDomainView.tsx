@@ -67,6 +67,11 @@ const EditDomainView = () => {
             <h4 className="mb-0 text-center">Edit domain {domain.name}</h4>
           </Card.Header>
           <Card.Body>
+            <p className="text-muted mb-4 text-center">
+              Use the checkboxes to select expert attributes. You can also
+              provide a display name, a longer description, and an optional
+              tooltip for each attribute.
+            </p>
             {domain.attributes.map((attr) => (
               <div
                 key={attr}

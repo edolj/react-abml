@@ -28,6 +28,13 @@ export type AttributeInfo = {
   type: "continuous" | "discrete" | "meta" | "target" | "unknown";
 };
 
+const loadingMessages = [
+  "Processing arguments...",
+  "Searching for possible counter examples...",
+  "Double-checking everything...",
+  "Still working... hang tight!",
+];
+
 function ArgumentView() {
   const navigate = useNavigate();
   const { criticalIndex } = useParams();
@@ -82,13 +89,15 @@ function ArgumentView() {
     );
   };
 
+  const [alertError, setAlertError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [loadingMessage, setLoadingMessage] = useState(loadingMessages[0]);
+
   const [mScore, setMScore] = useState(0.0);
   const [hintScore, setHintMScore] = useState(0.0);
   const [hintBestRule, setBestRule] = useState("");
   const [hasCounterExamples, setHasCounterExamples] = useState(false);
   const [counterExampleIds, setCounterExampleIds] = useState<string[]>([]);
-  const [alertError, setAlertError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
   const [argumentsSent, setArgumentsSent] = useState(false);
   const [selectedFilters, setSelectedFilters] = useState<Argument[]>([]);
   const [boxplots, setBoxplots] = useState<Record<string, number[]>>({});
@@ -293,6 +302,22 @@ function ArgumentView() {
     }
   };
 
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+
+    if (isLoading) {
+      let index = 0;
+      interval = setInterval(() => {
+        index = (index + 1) % loadingMessages.length;
+        setLoadingMessage(loadingMessages[index]);
+      }, 2000);
+    } else {
+      setLoadingMessage(loadingMessages[0]);
+    }
+
+    return () => clearInterval(interval);
+  }, [isLoading]);
+
   const filteredDisplayNames = Object.fromEntries(
     Object.entries(display_names).filter(([key]) => expertAttr.includes(key))
   );
@@ -300,43 +325,6 @@ function ArgumentView() {
   const filteredAttrDescs = Object.fromEntries(
     Object.entries(attrDesc).filter(([key]) => expertAttr.includes(key))
   );
-
-  // const processRule = (rule: string) => {
-  //   const [ifPart, thenPart] = rule.split(" THEN ");
-  //   const conditionStr = ifPart.replace(/^IF\s*/i, "");
-
-  //   const conditions = conditionStr.split(" AND ").map((cond) => {
-  //     const match = cond.match(/^(.+?)([<>=!]=|==)(.+)$/);
-  //     if (!match) return cond;
-
-  //     const [, rawAttr, op, value] = match;
-  //     const attr = rawAttr.trim();
-  //     const type = attrTypes[attr] || "continuous";
-  //     const displayName = display_names[attr] || attr;
-
-  //     let opText = "";
-  //     if (op === ">=") opText = "is high";
-  //     else if (op === "<=") opText = "is low";
-  //     else if (op === "==") opText = "equals";
-  //     else opText = op;
-
-  //     if (type === "discrete") {
-  //       return `${displayName} ${opText} ${value.trim()}`;
-  //     } else {
-  //       return `${displayName} ${opText}`;
-  //     }
-  //   });
-
-  //   let transformedThen = thenPart.trim();
-  //   const thenMatch = transformedThen.match(/^(.+?)(==|=|[<>!]=)(.+)$/);
-  //   if (thenMatch) {
-  //     const [, thenAttr, thenOp, thenValue] = thenMatch;
-  //     const thenDisplayName = display_names[thenAttr.trim()] || thenAttr.trim();
-  //     transformedThen = `${thenDisplayName} ${thenOp} ${thenValue.trim()}`;
-  //   }
-
-  //   return `IF ${conditions.join(" AND ")} THEN ${transformedThen}`;
-  // };
 
   // useEffect(() => {
   //   apiClient
@@ -459,7 +447,7 @@ function ArgumentView() {
                 alignItems: "center",
               }}
             >
-              M-score for chosen arguments: {mScore / 100}
+              Quality of your selected arguments: {mScore / 100}
               <PrimaryButton onClick={showHintMessage}>
                 <FaLightbulb
                   style={{
@@ -584,10 +572,17 @@ function ArgumentView() {
         {/* Loading Indicator */}
         {isLoading && (
           <Backdrop
-            sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+            sx={{
+              color: "#fff",
+              zIndex: (theme) => theme.zIndex.drawer + 1,
+              flexDirection: "column",
+            }}
             open
           >
             <CircularProgress color="inherit" />
+            <div style={{ marginTop: 16, fontSize: "1.2rem" }}>
+              {loadingMessage}
+            </div>
           </Backdrop>
         )}
       </div>
