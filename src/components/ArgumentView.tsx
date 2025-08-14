@@ -28,6 +28,11 @@ export type AttributeInfo = {
   type: "continuous" | "discrete" | "meta" | "target" | "unknown";
 };
 
+type SkillType = {
+  attribute: string;
+  P_L: number;
+};
+
 const loadingMessages = [
   "Processing arguments...",
   "Searching for possible counter examples...",
@@ -107,6 +112,7 @@ function ArgumentView() {
   const [attrDesc, setAttrDescs] = useState<Record<string, string>>({});
   const [tooltipDescs, setTooltipDescs] = useState<Record<string, string>>({});
   const [chosenArguments, setSentArguments] = useState<string[]>([]);
+  const [skills, setSkills] = useState<Record<string, number>>({});
 
   useEffect(() => {
     getObject()
@@ -115,6 +121,7 @@ function ArgumentView() {
         setDisplayNames(data?.display_names || {});
         setAttrDescs(data?.attr_descriptions || {});
         setTooltipDescs(data?.attr_tooltips || {});
+        fetchSkills();
       })
       .catch((err) => {
         console.error("Error fetching learning object:", err);
@@ -196,7 +203,7 @@ function ArgumentView() {
     );
 
     const message = `Argument can be improved with:\n${attrList.join("\n")}`;
-    const score = "m: " + hintScore / 100;
+    const score = ""; // "Quality: " + hintScore / 100;
     showToast(score, message);
   };
 
@@ -261,6 +268,7 @@ function ArgumentView() {
           item.operator ? `${item.key}${item.operator}` : item.key
         );
         setSentArguments(argumentsArray);
+        fetchSkills();
       })
       .catch((error) => {
         console.error("Argument view POST method error:", error);
@@ -326,65 +334,20 @@ function ArgumentView() {
     Object.entries(attrDesc).filter(([key]) => expertAttr.includes(key))
   );
 
-  // useEffect(() => {
-  //   apiClient
-  //     .get("/attributes/")
-  //     .then((response) => {
-  //       const attributes = response.data;
-
-  //       let options: OptionType[] = [];
-  //       attributes.forEach((attr: { name: string; type: string }) => {
-  //         const displayName = attributesDisplayNames[attr.name] || attr.name;
-  //         if (attr.type === "continuous") {
-  //           options.push(
-  //             { value: `${attr.name}<=`, label: `${displayName} is low` },
-  //             { value: `${attr.name}>=`, label: `${displayName} is high` }
-  //           );
-  //         } else if (attr.type === "discrete") {
-  //           options.push({ value: attr.name, label: displayName });
-  //         }
-  //       });
-
-  //       setAttributeOptions(options);
-  //     })
-  //     .catch((error) => {
-  //       console.error("Error fetching attributes:", error);
-  //     });
-  // }, []);
-
-  // type OptionType = {
-  //   value: string;
-  //   label: string;
-  // };
-
-  // const customStyles: StylesConfig<OptionType, true, GroupBase<OptionType>> = {
-  //   multiValue: (base) => ({
-  //     ...base,
-  //     backgroundColor: "#607ad1",
-  //     color: "white",
-  //     borderRadius: "16px",
-  //     padding: "0 10px",
-  //   }),
-  //   multiValueLabel: (base) => ({
-  //     ...base,
-  //     color: "white",
-  //   }),
-  //   multiValueRemove: (base) => ({
-  //     ...base,
-  //     color: "white",
-  //     ":hover": { backgroundColor: "darkblue" },
-  //   }),
-  // };
-
-  // const [attributeOptions, setAttributeOptions] = useState<OptionType[]>([]);
-  // const [selectedFilters, setSelectedFilters] = useState<OptionType[]>([]);
-
-  // const handleChange = (
-  //   selectedOptions: MultiValue<OptionType>,
-  //   actionMeta: ActionMeta<OptionType>
-  // ) => {
-  //   setSelectedFilters([...selectedOptions]);
-  // };
+  const fetchSkills = () => {
+    apiClient
+      .get("/get-skills/")
+      .then((res) => {
+        const map: Record<string, number> = {};
+        res.data.forEach((skill: SkillType) => {
+          map[skill.attribute] = skill.P_L;
+        });
+        setSkills(map);
+      })
+      .catch((err) => {
+        console.error("Failed to fetch skills", err);
+      });
+  };
 
   return (
     <>
@@ -420,21 +383,6 @@ function ArgumentView() {
             </Button>
           )}
         </div>
-
-        {/* Argument Input Box */}
-        {/* <div className="box-with-border card-view">
-          <div style={{ marginBottom: "20px" }}>
-            <Form.Label>Input argument:</Form.Label>
-            <Select
-              options={attributeOptions}
-              isMulti
-              value={selectedFilters}
-              onChange={handleChange}
-              placeholder="Select"
-              styles={customStyles}
-            />
-          </div>
-        </div> */}
 
         {/* M-Score Box */}
         {argumentsSent && (
@@ -532,7 +480,7 @@ function ArgumentView() {
 
           <div
             style={{
-              width: hasCounterExamples ? "100%" : "80%",
+              width: "100%",
               margin: "0 auto",
               marginTop: "40px",
             }}
@@ -547,6 +495,7 @@ function ArgumentView() {
               expertAttr={expertAttr}
               displayNames={display_names}
               tooltipDescriptions={tooltipDescs}
+              skills={skills}
               onHighClick={(key) =>
                 addBubble({
                   key,

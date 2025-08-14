@@ -10,7 +10,8 @@ import { FaChevronUp, FaChevronDown, FaExclamation } from "react-icons/fa";
 import { eurAttr, ratioAttr } from "./BoniteteAttributes";
 import { IconButton } from "@mui/material";
 import { Argument } from "./ArgumentView";
-import { Tab, Tabs } from "react-bootstrap";
+import { ProgressBar, Tab, Tabs } from "react-bootstrap";
+import { useState } from "react";
 
 type AttributeItem = {
   key: string;
@@ -29,6 +30,7 @@ type Props = {
   expertAttr: string[];
   displayNames?: Record<string, string>;
   tooltipDescriptions?: Record<string, string>;
+  skills?: Record<string, number>;
   onHighClick?: (key: string) => void;
   onLowClick?: (key: string) => void;
   onCategoryAddClick?: (key: string) => void;
@@ -45,6 +47,7 @@ const AttributeList: React.FC<Props> = ({
   expertAttr,
   displayNames,
   tooltipDescriptions,
+  skills,
   onHighClick,
   onLowClick,
   onCategoryAddClick,
@@ -71,8 +74,17 @@ const AttributeList: React.FC<Props> = ({
       );
     }
 
+    if (attrTypes?.[key] == "continuous") {
+      return Number(value).toLocaleString("sl-SI", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      });
+    }
+
     return value;
   };
+
+  const [activeTab, setActiveTab] = useState("expert");
 
   const renderAttributes = (attrList: AttributeItem[]) => (
     <>
@@ -87,7 +99,17 @@ const AttributeList: React.FC<Props> = ({
                   </Typography>
                 </Grid>
 
-                <Grid item md={hasCounterExamples ? 2 : 3}>
+                <Grid item md={1}>
+                  {activeTab === "expert" && (
+                    <Tooltip title="Learning Progress" arrow>
+                      <Typography align="center" variant="subtitle1">
+                        🎯
+                      </Typography>
+                    </Tooltip>
+                  )}
+                </Grid>
+
+                <Grid item md={2}>
                   <Typography
                     fontWeight="bold"
                     align="right"
@@ -150,7 +172,7 @@ const AttributeList: React.FC<Props> = ({
                   sx={{ borderColor: "lightgray" }}
                 />
 
-                <Grid item md={2}>
+                <Grid item md={hasCounterExamples ? 1 : 2}>
                   <Typography
                     variant="body1"
                     fontWeight="bold"
@@ -180,7 +202,7 @@ const AttributeList: React.FC<Props> = ({
                       ID
                     </Typography>
                   </Grid>
-                  <Grid item md={4}></Grid>
+                  <Grid item md={5}></Grid>
                   <Divider
                     orientation="vertical"
                     flexItem
@@ -222,7 +244,7 @@ const AttributeList: React.FC<Props> = ({
                     sx={{ borderColor: "black" }}
                   />
 
-                  <Grid item md={2}></Grid>
+                  <Grid item md={1}></Grid>
                 </Box>
               </Grid>
             </Grid>
@@ -238,6 +260,8 @@ const AttributeList: React.FC<Props> = ({
         const isHighActive = selectedFilters?.some(
           (f) => f.key === attr.key && f.operator === ">="
         );
+
+        const progress = skills?.[attr.key] ?? null;
 
         return (
           <Grid item md={12} key={attr.key}>
@@ -267,8 +291,32 @@ const AttributeList: React.FC<Props> = ({
                       </Tooltip>
                     </Grid>
 
+                    {/* Skill mastery */}
+                    <Grid item md={1}>
+                      {progress !== null && (
+                        <ProgressBar
+                          now={progress * 100}
+                          label={`${(progress * 100).toFixed(0)}%`}
+                          variant={
+                            progress < 0.4
+                              ? "danger"
+                              : progress < 0.6
+                              ? "warning"
+                              : progress < 0.8
+                              ? "info"
+                              : "success"
+                          }
+                          striped
+                          style={{
+                            background: "lightgray",
+                            fontSize: "0.55rem",
+                          }}
+                        />
+                      )}
+                    </Grid>
+
                     {/* Value */}
-                    <Grid item md={hasCounterExamples ? 2 : 3}>
+                    <Grid item md={2}>
                       <Typography
                         variant="body2"
                         align="right"
@@ -291,7 +339,7 @@ const AttributeList: React.FC<Props> = ({
                       )}
                     </Grid>
 
-                    {/*Counter example */}
+                    {/* Counter example */}
                     {hasCounterExamples && (
                       <>
                         <Divider
@@ -347,7 +395,7 @@ const AttributeList: React.FC<Props> = ({
                     />
 
                     {/*Action */}
-                    <Grid item md={2}>
+                    <Grid item md={hasCounterExamples ? 1 : 2}>
                       <Box
                         display="flex"
                         alignItems="center"
@@ -414,7 +462,12 @@ const AttributeList: React.FC<Props> = ({
   );
 
   return (
-    <Tabs defaultActiveKey="expert" className="custom-tabs">
+    <Tabs
+      defaultActiveKey="expert"
+      className="custom-tabs"
+      activeKey={activeTab}
+      onSelect={(k) => k && setActiveTab(k)}
+    >
       <Tab
         eventKey="expert"
         title={
