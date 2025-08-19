@@ -26,7 +26,7 @@ const loadingMessages = [
 function SelectExampleView() {
   const navigate = useNavigate();
   const location = useLocation();
-  const selectedDomain = location.state?.selectedDomain;
+  const domainName = location.state?.selectedDomain;
 
   const [isLoading, setIsLoading] = useState(true);
   const [loadingMessage, setLoadingMessage] = useState(loadingMessages[0]);
@@ -60,6 +60,7 @@ function SelectExampleView() {
           targetClassName: targetClassName,
           targetClass: targetClass,
           iterationNumber: iterationNumber,
+          domainName: domainName,
         },
       });
     }
@@ -122,7 +123,7 @@ function SelectExampleView() {
   };
 
   useEffect(() => {
-    if (!selectedDomain) return;
+    if (!domainName) return;
     const isNewSession = localStorage.getItem("mode") === "new";
 
     setIsLoading(true);
@@ -141,7 +142,7 @@ function SelectExampleView() {
 
     apiClient
       .post("/critical-instances/", {
-        domain: selectedDomain,
+        domain: domainName,
         startNew: isNewSession,
       })
       .then((response) => {

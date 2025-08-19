@@ -98,14 +98,13 @@ function MainTable({ columns, data, onRowClick, expandData, dNames }: Props) {
             {expandedRows.has(rowIndex) && (
               <tr className="expanded-row">
                 <td colSpan={columns.length + 1}>
-                  <div>
-                    <ul style={{ columnCount: 2, margin: "5px 0" }}>
-                      {expandData[rowIndex]?.map(([key, value], i) => (
-                        <li key={i}>
-                          {dNames[key] || key}: {formatValue(key, value)}
-                        </li>
-                      )) || null}
-                    </ul>
+                  <div className="expand-grid">
+                    {expandData[rowIndex]?.map(([key, value], i) => (
+                      <div key={i} className="expand-grid-item">
+                        <strong>{dNames[key] || key}:</strong>{" "}
+                        {formatValue(key, value)}
+                      </div>
+                    ))}
                   </div>
                 </td>
               </tr>

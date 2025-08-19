@@ -126,9 +126,7 @@ const DomainView = () => {
                 {domains.map((domain: Domain) => (
                   <Col key={domain.id}>
                     <Card
-                      className={`h-100 domain-card ${
-                        domain.id === selectedDomain?.id ? "selected-card" : ""
-                      }`}
+                      className={"h-100 domain-card"}
                       onClick={() => handleSelectDomain(domain)}
                       style={{ cursor: "pointer" }}
                     >

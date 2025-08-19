@@ -1,7 +1,7 @@
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { ToastContainer, toast } from "react-toastify";
-import { Button } from "react-bootstrap";
+import { Button, Placeholder } from "react-bootstrap";
 import { FaArrowRight, FaLightbulb } from "react-icons/fa";
 import { getObject } from "../api/apiHomePage";
 import apiClient from "../api/apiClient";
@@ -49,6 +49,7 @@ function ArgumentView() {
   const targetClass = location.state.targetClass;
   const targetClassName = location.state.targetClassName;
   const iterationNumber = location.state.iterationNumber;
+  const domainName = location.state.domainName;
 
   const [formattedData, setFormattedData] = useState(
     detailData.map((detail: any) => ({
@@ -114,6 +115,9 @@ function ArgumentView() {
   const [chosenArguments, setSentArguments] = useState<string[]>([]);
   const [skills, setSkills] = useState<Record<string, number>>({});
 
+  const [summaryLoading, setSummaryLoading] = useState(false);
+  const [summaryText, setSummaryText] = useState<string | null>(null);
+
   useEffect(() => {
     getObject()
       .then((data) => {
@@ -175,7 +179,7 @@ function ArgumentView() {
       return;
     }
     if (hintBestRule === "No hints") {
-      showToast("", "No hints.");
+      showToast("", "👍 Good job! No hints needed.");
       return;
     }
 
@@ -269,6 +273,22 @@ function ArgumentView() {
         );
         setSentArguments(argumentsArray);
         fetchSkills();
+
+        if (limitedCounterExamples.length === 0) {
+          const summaryData = {
+            domainName: domainName,
+            details: detailData,
+            displayNames: display_names,
+            targetClass: targetClass,
+            iteration_number: iterationNumber,
+            user_arguments: chosenArguments,
+            argRule: data.argRule,
+            mScore: mScore,
+          };
+          getSummary(summaryData);
+        } else {
+          setSummaryText(null);
+        }
       })
       .catch((error) => {
         console.error("Argument view POST method error:", error);
@@ -349,6 +369,21 @@ function ArgumentView() {
       });
   };
 
+  const getSummary = (summaryData: any) => {
+    setSummaryLoading(true);
+    apiClient
+      .post("/get-summary/", summaryData)
+      .then((response) => {
+        setSummaryText(response.data.summary);
+      })
+      .catch((error) => {
+        console.log("Summary generation failed:", error);
+      })
+      .finally(() => {
+        setSummaryLoading(false);
+      });
+  };
+
   return (
     <>
       <ToastContainer />
@@ -417,6 +452,37 @@ function ArgumentView() {
                 />
               </Tooltip>
             </ProgressBar>
+          </div>
+        )}
+
+        {summaryLoading && (
+          <div className="box-with-border card-view custom-summary-bg">
+            <div className="card-header mb-2">
+              <strong>Key Takeaways</strong>
+            </div>
+            <div className="card-body">
+              <Placeholder as="p" animation="glow">
+                <Placeholder xs={12} className="mb-2" />
+                <Placeholder xs={12} className="mb-2" />
+                <Placeholder xs={8} />
+              </Placeholder>
+            </div>
+          </div>
+        )}
+
+        {summaryText && !summaryLoading && (
+          <div className="box-with-border card-view custom-summary-bg">
+            <div className="card-header d-flex justify-content-between align-items-center mb-2">
+              <strong>Key Takeaways</strong>
+              <button
+                className="btn-close"
+                onClick={() => setSummaryText(null)}
+                aria-label="Close"
+              />
+            </div>
+            <div className="card-body">
+              <p className="card-text">{summaryText}</p>
+            </div>
           </div>
         )}
 
