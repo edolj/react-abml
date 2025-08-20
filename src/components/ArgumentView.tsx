@@ -281,7 +281,7 @@ function ArgumentView() {
             displayNames: display_names,
             targetClass: targetClass,
             iteration_number: iterationNumber,
-            user_arguments: chosenArguments,
+            user_arguments: selectedFilters,
             argRule: data.argRule,
             mScore: mScore,
           };
