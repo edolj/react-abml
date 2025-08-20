@@ -1,3 +1,5 @@
+import { Button } from "react-bootstrap";
+
 interface Props {
   children: React.ReactNode;
   onClick?: () => void;
@@ -6,14 +8,14 @@ interface Props {
 
 const PrimaryButton = ({ children, onClick, style }: Props) => {
   return (
-    <button
-      type="button"
-      className="btn btn-primary custom-primary-button"
+    <Button
+      variant="primary"
+      className="btn-primary custom-primary-button"
       onClick={onClick}
       style={style}
     >
       {children}
-    </button>
+    </Button>
   );
 };
 

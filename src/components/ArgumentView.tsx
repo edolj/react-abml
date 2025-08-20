@@ -424,13 +424,13 @@ function ArgumentView() {
           <div className="box-with-border card-view">
             <div
               style={{
-                marginBottom: "30px",
                 display: "flex",
                 justifyContent: "space-between",
                 alignItems: "center",
+                marginBottom: "12px",
               }}
             >
-              Quality of your selected arguments: {mScore / 100}
+              <strong>Quality of selected arguments</strong>
               <PrimaryButton onClick={showHintMessage}>
                 <FaLightbulb
                   style={{
@@ -442,7 +442,7 @@ function ArgumentView() {
                 Hint
               </PrimaryButton>
             </div>
-            <ProgressBar style={{ height: "20px" }}>
+            <ProgressBar style={{ height: "18px" }}>
               <ProgressBar now={mScore} label={mScore} variant="success" />
               <Tooltip title="How much can argument be improved" arrow>
                 <ProgressBar
