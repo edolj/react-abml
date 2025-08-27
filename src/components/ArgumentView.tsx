@@ -179,7 +179,7 @@ function ArgumentView() {
       return;
     }
     if (hintBestRule === "No hints") {
-      showToast("", "👍 Good job! No hints needed.");
+      showToast("", "Good job! No hints needed. 👍");
       return;
     }
 
@@ -259,7 +259,7 @@ function ArgumentView() {
 
         setFormattedData(newFormattedData);
         setBestRule(data.bestRule);
-        if (data.arg_m_score > data.best_m_score) {
+        if (data.arg_m_score >= data.best_m_score) {
           setBestRule("No hints");
         }
         setMScore(Math.floor(data.arg_m_score * 100));

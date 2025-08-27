@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { FaSignOutAlt } from "react-icons/fa";
+import { FaSignOutAlt, FaUserCircle } from "react-icons/fa";
 import apiClient from "../api/apiClient";
 import "../css/Header.css";
 
@@ -38,23 +38,24 @@ const Header = () => {
         )}
       </div>
       {isLoggedIn && (
-        <>
-          <div
-            style={{ display: "inline-flex", alignItems: "center", gap: 20 }}
+        <div style={{ display: "inline-flex", alignItems: "center", gap: 10 }}>
+          <FaUserCircle size={24} className="text-white" />
+
+          <span style={{ color: "#fff", fontWeight: 500 }}>{username}</span>
+
+          <button
+            className="logout-button"
+            onClick={handleLogout}
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              marginLeft: "20px",
+            }}
           >
-            <span style={{ color: "#fff", fontWeight: 500, marginRight: 0 }}>
-              {username}
-            </span>
-            <button
-              className="logout-button"
-              onClick={handleLogout}
-              style={{ marginLeft: 0 }}
-            >
-              <FaSignOutAlt size={18} style={{ marginRight: "8px" }} />
-              Logout
-            </button>
-          </div>
-        </>
+            <FaSignOutAlt size={18} style={{ marginRight: "8px" }} />
+            Logout
+          </button>
+        </div>
       )}
     </div>
   );
