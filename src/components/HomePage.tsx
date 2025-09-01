@@ -67,7 +67,7 @@ const HomePage = () => {
                       variant="success"
                       onClick={() => handleStartFlow("continue")}
                     >
-                      Continue session
+                      Continue Session
                     </Button>
                   )}
                   {learningData?.name && (
