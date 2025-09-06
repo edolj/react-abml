@@ -1,3 +1,4 @@
+import React from "react";
 import Box from "@mui/material/Box";
 import BoxPlot from "./BoxPlot";
 import Checkbox from "@mui/material/Checkbox";
@@ -121,50 +122,30 @@ const AttributeList: React.FC<Props> = ({
 
                 <Grid item md={hasCounterExamples ? 2 : 4}></Grid>
 
-                {hasCounterExamples && (
-                  <>
-                    <Divider
-                      orientation="vertical"
-                      flexItem
-                      sx={{ borderColor: "lightgray" }}
-                    />
-                    <Grid item md={2}>
-                      <Typography
-                        variant="body1"
-                        fontWeight="bold"
-                        align="center"
-                        sx={{
-                          background: "#b33a3a",
-                          color: "white",
-                          padding: "0.5rem 0rem",
-                        }}
-                      >
-                        Counter Value 1
-                      </Typography>
-                    </Grid>
-
-                    <Divider
-                      orientation="vertical"
-                      flexItem
-                      sx={{ borderColor: "lightgray" }}
-                    />
-
-                    <Grid item md={2}>
-                      <Typography
-                        variant="body1"
-                        fontWeight="bold"
-                        align="center"
-                        sx={{
-                          background: "#b33a3a",
-                          color: "white",
-                          padding: "0.5rem 0rem",
-                        }}
-                      >
-                        Counter Value 2
-                      </Typography>
-                    </Grid>
-                  </>
-                )}
+                {hasCounterExamples &&
+                  counterExampleIds?.map((val, idx) => (
+                    <React.Fragment key={idx}>
+                      <Divider
+                        orientation="vertical"
+                        flexItem
+                        sx={{ borderColor: "lightgray" }}
+                      />
+                      <Grid item md={2}>
+                        <Typography
+                          variant="body1"
+                          fontWeight="bold"
+                          align="center"
+                          sx={{
+                            background: "#b33a3a",
+                            color: "white",
+                            padding: "0.5rem 0rem",
+                          }}
+                        >
+                          Counter Value {idx + 1}
+                        </Typography>
+                      </Grid>
+                    </React.Fragment>
+                  ))}
 
                 <Divider
                   orientation="vertical"
@@ -172,7 +153,15 @@ const AttributeList: React.FC<Props> = ({
                   sx={{ borderColor: "lightgray" }}
                 />
 
-                <Grid item md={hasCounterExamples ? 1 : 2}>
+                <Grid
+                  item
+                  md={
+                    hasCounterExamples
+                      ? 12 -
+                        (2 + 1 + 2 + 2 + (counterExampleIds?.length ?? 0) * 2)
+                      : 2
+                  }
+                >
                   <Typography
                     variant="body1"
                     fontWeight="bold"
@@ -203,22 +192,28 @@ const AttributeList: React.FC<Props> = ({
                     </Typography>
                   </Grid>
                   <Grid item md={5}></Grid>
-                  <Divider
-                    orientation="vertical"
-                    flexItem
-                    sx={{ borderColor: "black" }}
-                  />
-                  <Grid item md={2}>
-                    <Typography
-                      variant="body1"
-                      align="center"
-                      sx={{
-                        padding: "0.5rem",
-                      }}
-                    >
-                      {counterExampleIds?.[0] ?? "-"}
-                    </Typography>
-                  </Grid>
+
+                  {counterExampleIds &&
+                    counterExampleIds
+                      .filter((v) => v !== undefined)
+                      .map((val, idx) => (
+                        <React.Fragment key={idx}>
+                          <Divider
+                            orientation="vertical"
+                            flexItem
+                            sx={{ borderColor: "black" }}
+                          />
+                          <Grid item md={2}>
+                            <Typography
+                              variant="body1"
+                              align="center"
+                              sx={{ padding: "0.5rem" }}
+                            >
+                              {val}
+                            </Typography>
+                          </Grid>
+                        </React.Fragment>
+                      ))}
 
                   <Divider
                     orientation="vertical"
@@ -226,25 +221,12 @@ const AttributeList: React.FC<Props> = ({
                     sx={{ borderColor: "black" }}
                   />
 
-                  <Grid item md={2}>
-                    <Typography
-                      variant="body1"
-                      align="center"
-                      sx={{
-                        padding: "0.5rem",
-                      }}
-                    >
-                      {counterExampleIds?.[1] ?? "-"}
-                    </Typography>
-                  </Grid>
-
-                  <Divider
-                    orientation="vertical"
-                    flexItem
-                    sx={{ borderColor: "black" }}
-                  />
-
-                  <Grid item md={1}></Grid>
+                  {counterExampleIds && (
+                    <Grid
+                      item
+                      md={12 - (2 + 5 + counterExampleIds.length * 2)}
+                    ></Grid>
+                  )}
                 </Box>
               </Grid>
             </Grid>
@@ -262,6 +244,14 @@ const AttributeList: React.FC<Props> = ({
         );
 
         const progress = skills?.[attr.key] ?? null;
+
+        const counterValues = [attr.counterValue1, attr.counterValue2].filter(
+          (v) => v !== undefined
+        );
+        const counterCount = counterValues.length;
+        const selectMd = hasCounterExamples
+          ? 12 - (2 + 1 + 2 + 2 + counterCount * 2)
+          : 2;
 
         return (
           <Grid item md={12} key={attr.key}>
@@ -340,8 +330,8 @@ const AttributeList: React.FC<Props> = ({
                     </Grid>
 
                     {/* Counter example */}
-                    {hasCounterExamples && (
-                      <>
+                    {counterValues.map((val, idx) => (
+                      <React.Fragment key={idx}>
                         <Divider
                           orientation="vertical"
                           flexItem
@@ -360,32 +350,11 @@ const AttributeList: React.FC<Props> = ({
                                   : "inherit",
                             }}
                           >
-                            {formatValue(attr.key, attr.counterValue1 ?? "-")}
+                            {formatValue(attr.key, val)}
                           </Typography>
                         </Grid>
-                        <Divider
-                          orientation="vertical"
-                          flexItem
-                          sx={{ borderColor: "black" }}
-                        />
-                        <Grid item md={2}>
-                          <Typography
-                            variant="body2"
-                            align="right"
-                            fontWeight="bold"
-                            sx={{
-                              pr: 1,
-                              color:
-                                attrTypes?.[attr.key] === "target"
-                                  ? "red"
-                                  : "inherit",
-                            }}
-                          >
-                            {formatValue(attr.key, attr.counterValue2 ?? "-")}
-                          </Typography>
-                        </Grid>
-                      </>
-                    )}
+                      </React.Fragment>
+                    ))}
 
                     {/* Divider */}
                     <Divider
@@ -395,7 +364,7 @@ const AttributeList: React.FC<Props> = ({
                     />
 
                     {/*Action */}
-                    <Grid item md={hasCounterExamples ? 1 : 2}>
+                    <Grid item md={selectMd}>
                       <Box
                         display="flex"
                         alignItems="center"

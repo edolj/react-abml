@@ -247,6 +247,13 @@ function ArgumentView() {
         const newFormattedData = formattedData.map(
           (item: any, index: number) => {
             const newItem = { ...item };
+
+            Object.keys(newItem).forEach((key) => {
+              if (key.startsWith("counterValue")) {
+                delete newItem[key];
+              }
+            });
+
             limitedCounterExamples.forEach(
               (counterExample: any, counterIndex: number) => {
                 newItem[`counterValue${counterIndex + 1}`] =
