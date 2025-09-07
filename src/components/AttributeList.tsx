@@ -90,7 +90,7 @@ const AttributeList: React.FC<Props> = ({
   const renderAttributes = (attrList: AttributeItem[]) => (
     <>
       <Grid item md={12}>
-        <Paper elevation={0} style={{ backgroundColor: "#4e66c1" }}>
+        <Paper elevation={0} style={{ backgroundColor: "#7b8ce0" }}>
           <Grid container alignItems="center">
             <Grid item md={12}>
               <Box display="flex" alignItems="center" height="100%">
