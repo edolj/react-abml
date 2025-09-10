@@ -141,7 +141,7 @@ const AttributeList: React.FC<Props> = ({
                             padding: "0.5rem 0rem",
                           }}
                         >
-                          Counter Value {idx + 1}
+                          Counter Example {idx + 1}
                         </Typography>
                       </Grid>
                     </React.Fragment>

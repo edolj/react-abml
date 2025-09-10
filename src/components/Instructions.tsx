@@ -22,43 +22,51 @@ const Instructions = () => {
             </li>
             <li className="mb-3">
               <strong>Choose a critical example:</strong> You will be shown
-              instances from the dataset. Select the one you find most
-              interesting or relevant.
+              instances from the dataset. Select the one you find interesting or
+              challenging.
             </li>
             <li className="mb-3">
-              <strong>Provide arguments:</strong> Use the attribute list to
-              support your classification. For numerical attributes, click
-              "high" or "low." For categorical attributes, select the
-              appropriate label. Then click <strong>Send Arguments</strong> to
-              submit your reasoning. The system will analyze your input and
-              return an M-score.
-            </li>
-            <li className="mb-3">
-              <strong>Review M-score:</strong> The M-score reflects the quality
-              of your arguments.
+              <strong>Provide Arguments:</strong> Use the attribute list to
+              support your classification:
               <ul>
                 <li>
-                  The blue bar shows your current M-score. The green bar
-                  indicates how much it could be improved by refining your
-                  argument.
+                  Numerical attributes: Click the button representing{" "}
+                  <strong>High</strong> or <strong>Low</strong> to indicate your
+                  choice.
                 </li>
                 <li>
-                  Use the <strong>Hint</strong> button for suggestions on
-                  improving your reasoning.
+                  Categorical attributes: Select the appropriate label using the
+                  checkbox.
                 </li>
                 <li>
-                  Aim to maximize your M-score by choosing meaningful
-                  attributes.
+                  Click <strong>Send Arguments</strong> to submit your
+                  arguments. The system will analyze your input and return an{" "}
+                  <strong>M-score</strong>.
+                </li>
+              </ul>
+            </li>
+            <li className="mb-3">
+              <strong>Review Your Progress:</strong> The M-score reflects the
+              quality of your arguments.
+              <ul>
+                <li>Green bar: Shows your current M-score.</li>
+                <li>
+                  Yellow bar: Shows potential improvement if your argument is
+                  refined.
                 </li>
                 <li>
-                  If counterexamples appear, adjust your argument to eliminate
-                  them.
+                  Use the <strong>Hint</strong> button for suggestions to
+                  improve your argument.
+                </li>
+                <li>
+                  If counterexamples appear, compare your values with the
+                  counterexample values and adjust your arguments accordingly.
                 </li>
               </ul>
             </li>
             <li className="mb-3">
               <strong>Proceed to the next example:</strong> After submitting
-              valid arguments with no remaining counterexamples, click{" "}
+              arguments with no remaining counterexamples, click{" "}
               <strong>Next Example</strong> to continue.
             </li>
           </ol>

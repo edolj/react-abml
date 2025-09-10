@@ -35,7 +35,10 @@ const DomainView = () => {
     apiClient
       .get("/domains/")
       .then((res) => {
-        setDomains(res.data);
+        const sortedDomains = res.data.sort((a: any, b: any) =>
+          a.name.localeCompare(b.name)
+        );
+        setDomains(sortedDomains);
       })
       .catch((err) => console.error(err));
   }, []);
