@@ -286,20 +286,11 @@ const AttributeList: React.FC<Props> = ({
                       {progress !== null && (
                         <ProgressBar
                           now={progress * 100}
-                          label={`${(progress * 100).toFixed(0)}%`}
-                          variant={
-                            progress < 0.4
-                              ? "danger"
-                              : progress < 0.6
-                              ? "warning"
-                              : progress < 0.8
-                              ? "info"
-                              : "success"
-                          }
                           striped
                           style={{
                             background: "lightgray",
-                            fontSize: "0.55rem",
+                            color: "#607ad1",
+                            height: "8px",
                           }}
                         />
                       )}
