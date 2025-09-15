@@ -32,8 +32,8 @@ type Props = {
   displayNames?: Record<string, string>;
   tooltipDescriptions?: Record<string, string>;
   skills?: Record<string, number>;
-  onHighClick?: (key: string) => void;
-  onLowClick?: (key: string) => void;
+  onHighClick?: (key: string, value: number | string) => void;
+  onLowClick?: (key: string, value: number | string) => void;
   onCategoryAddClick?: (key: string) => void;
   onCategoryDeleteClick?: (key: string) => void;
 };
@@ -367,7 +367,7 @@ const AttributeList: React.FC<Props> = ({
                           <>
                             <IconButton
                               size="small"
-                              onClick={() => onLowClick?.(attr.key)}
+                              onClick={() => onLowClick?.(attr.key, attr.value)}
                               sx={{
                                 color: isLowActive ? "#1976d2" : "inherit",
                               }}
@@ -376,7 +376,9 @@ const AttributeList: React.FC<Props> = ({
                             </IconButton>
                             <IconButton
                               size="small"
-                              onClick={() => onHighClick?.(attr.key)}
+                              onClick={() =>
+                                onHighClick?.(attr.key, attr.value)
+                              }
                               sx={{
                                 color: isHighActive ? "#1976d2" : "inherit",
                               }}

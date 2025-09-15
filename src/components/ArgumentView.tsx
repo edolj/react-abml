@@ -19,6 +19,7 @@ import ExpertAttributesModal from "./ExpertAttributesModal";
 
 export type Argument = {
   key: string;
+  value?: number | string;
   operator?: string;
   displayName?: string;
 };
@@ -219,7 +220,9 @@ function ArgumentView() {
 
     // const userArgument = selectedFilters.map((item) => item.value).join(",");
     const userArgument = selectedFilters
-      .map((item) => (item.operator ? `${item.key}${item.operator}` : item.key))
+      .map((item) =>
+        item.operator ? `${item.key}${item.operator}${item.value}` : item.key
+      )
       .join(",");
 
     setAlertError(null);
@@ -276,7 +279,7 @@ function ArgumentView() {
         setArgumentsSent(true);
 
         const argumentsArray = selectedFilters.map((item) =>
-          item.operator ? `${item.key}${item.operator}` : item.key
+          item.operator ? `${item.key}${item.operator}${item.value}` : item.key
         );
         setSentArguments(argumentsArray);
         fetchSkills();
@@ -313,6 +316,8 @@ function ArgumentView() {
       setAlertError("No arguments selected. Choose from the list below.");
       return;
     }
+
+    setSelectedFilters([]);
 
     // Data to be sent in the request body
     const requestData = {
@@ -569,16 +574,18 @@ function ArgumentView() {
               displayNames={display_names}
               tooltipDescriptions={tooltipDescs}
               skills={skills}
-              onHighClick={(key) =>
+              onHighClick={(key, value) =>
                 addBubble({
                   key,
+                  value,
                   operator: ">=",
                   displayName: display_names[key] + " is high",
                 })
               }
-              onLowClick={(key) =>
+              onLowClick={(key, value) =>
                 addBubble({
                   key,
+                  value,
                   operator: "<=",
                   displayName: display_names[key] + " is low",
                 })
