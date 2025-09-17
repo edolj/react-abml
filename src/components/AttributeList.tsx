@@ -87,6 +87,9 @@ const AttributeList: React.FC<Props> = ({
 
   const [activeTab, setActiveTab] = useState("expert");
 
+  const tabAlign: "left" | "right" =
+    activeTab === "categorical" ? "left" : "right";
+
   const renderAttributes = (attrList: AttributeItem[]) => (
     <>
       <Grid item md={12}>
@@ -113,8 +116,12 @@ const AttributeList: React.FC<Props> = ({
                 <Grid item md={2}>
                   <Typography
                     fontWeight="bold"
-                    align="right"
-                    sx={{ color: "white" }}
+                    align={tabAlign}
+                    sx={{
+                      color: "white",
+                      pl: tabAlign === "left" ? 1 : 0,
+                      pr: tabAlign === "right" ? 1 : 0,
+                    }}
                   >
                     Value
                   </Typography>
@@ -284,15 +291,17 @@ const AttributeList: React.FC<Props> = ({
                     {/* Skill mastery */}
                     <Grid item md={1}>
                       {progress !== null && (
-                        <ProgressBar
-                          now={progress * 100}
-                          striped
-                          style={{
-                            background: "lightgray",
-                            color: "#607ad1",
-                            height: "8px",
-                          }}
-                        />
+                        <Tooltip title="Learning Progress" arrow>
+                          <ProgressBar
+                            now={progress * 100}
+                            striped
+                            style={{
+                              background: "lightgray",
+                              color: "#607ad1",
+                              height: "8px",
+                            }}
+                          />
+                        </Tooltip>
                       )}
                     </Grid>
 
@@ -300,9 +309,12 @@ const AttributeList: React.FC<Props> = ({
                     <Grid item md={2}>
                       <Typography
                         variant="body2"
-                        align="right"
+                        align={tabAlign}
                         fontWeight="bold"
-                        sx={{ pl: 1 }}
+                        sx={{
+                          pl: tabAlign === "left" ? 1 : 0,
+                          pr: tabAlign === "right" ? 1 : 0,
+                        }}
                       >
                         {formatValue(attr.key, attr.value)}
                       </Typography>
@@ -331,10 +343,11 @@ const AttributeList: React.FC<Props> = ({
                         <Grid item md={2}>
                           <Typography
                             variant="body2"
-                            align="right"
+                            align={tabAlign}
                             fontWeight="bold"
                             sx={{
-                              pr: 1,
+                              pl: tabAlign === "left" ? 1 : 0,
+                              pr: tabAlign === "right" ? 1 : 0,
                               color:
                                 attrTypes?.[attr.key] === "target"
                                   ? "red"
@@ -456,11 +469,35 @@ const AttributeList: React.FC<Props> = ({
         </div>
       </Tab>
 
-      <Tab eventKey="others" title="Other">
+      {/* Numeric Attributes */}
+      <Tab eventKey="numeric" title="Other 1">
         <div className="pt-3">
           <Grid container>
             {renderAttributes(
-              attributes.filter((attr) => !expertAttr.includes(attr.key))
+              attributes.filter(
+                (attr) =>
+                  ((attrTypes?.[attr.key] === "continuous" ||
+                    ratioAttr.includes(attr.key) ||
+                    eurAttr.includes(attr.key)) &&
+                    !expertAttr.includes(attr.key)) ||
+                  attrTypes?.[attr.key] === "target"
+              )
+            )}
+          </Grid>
+        </div>
+      </Tab>
+
+      {/* Categorical Attributes */}
+      <Tab eventKey="categorical" title="Other 2">
+        <div className="pt-3">
+          <Grid container>
+            {renderAttributes(
+              attributes.filter(
+                (attr) =>
+                  (attrTypes?.[attr.key] === "discrete" &&
+                    !expertAttr.includes(attr.key)) ||
+                  attrTypes?.[attr.key] === "target"
+              )
             )}
           </Grid>
         </div>

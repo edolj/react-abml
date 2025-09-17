@@ -17,87 +17,97 @@ const BoxPlot: React.FC<BoxPlotProps> = ({
   const ref = useRef<SVGSVGElement>(null);
 
   useEffect(() => {
-    // Compute boxplot stats
+    if (!data || data.length === 0) return;
+
     const sorted = data.slice().sort(d3.ascending);
     const q1 = d3.quantile(sorted, 0.25)!;
     const median = d3.quantile(sorted, 0.5)!;
     const q3 = d3.quantile(sorted, 0.75)!;
-    const min = d3.min(sorted)!;
-    const max = d3.max(sorted)!;
+    const iqr = q3 - q1;
 
-    // Clear previous drawing
+    const minVal = d3.min(sorted)!;
+    const maxVal = d3.max(sorted)!;
+
+    const whiskerMin = Math.max(minVal, q1 - 1.5 * iqr);
+    const whiskerMax = Math.min(maxVal, q3 + 1.5 * iqr);
+
     const svg = d3.select(ref.current);
     svg.selectAll("*").remove();
 
-    // Scales
     const x = d3
       .scaleLinear()
-      .domain([min, max])
-      .range([60, width - 10]);
+      .domain([whiskerMin, whiskerMax])
+      .range([40, width - 10]);
 
-    // Draw box
+    const boxY = height / 3;
+    const boxHeight = height / 3;
+
+    // Box
     svg
       .append("rect")
       .attr("x", x(q1))
-      .attr("y", height / 3)
+      .attr("y", boxY)
       .attr("width", x(q3) - x(q1))
-      .attr("height", height / 3)
+      .attr("height", boxHeight)
       .attr("fill", "#e3f2fd")
       .attr("stroke", "steelblue");
 
-    // Median line
+    // Median
     svg
       .append("line")
       .attr("x1", x(median))
       .attr("x2", x(median))
-      .attr("y1", height / 3)
-      .attr("y2", (height * 2) / 3)
+      .attr("y1", boxY)
+      .attr("y2", boxY + boxHeight)
       .attr("stroke", "green")
       .attr("stroke-width", 1);
 
     // Whiskers
     svg
       .append("line")
-      .attr("x1", x(min))
+      .attr("x1", x(whiskerMin))
       .attr("x2", x(q1))
-      .attr("y1", height / 2)
-      .attr("y2", height / 2)
+      .attr("y1", boxY + boxHeight / 2)
+      .attr("y2", boxY + boxHeight / 2)
       .attr("stroke", "steelblue");
 
     svg
       .append("line")
       .attr("x1", x(q3))
-      .attr("x2", x(max))
-      .attr("y1", height / 2)
-      .attr("y2", height / 2)
+      .attr("x2", x(whiskerMax))
+      .attr("y1", boxY + boxHeight / 2)
+      .attr("y2", boxY + boxHeight / 2)
       .attr("stroke", "steelblue");
 
-    // Min and max ticks
+    // Small whisker ticks
+    const tickHeight = boxHeight / 2;
     svg
       .append("line")
-      .attr("x1", x(min))
-      .attr("x2", x(min))
-      .attr("y1", height / 3 - 5)
-      .attr("y2", (height * 2) / 3 + 5)
-      .attr("stroke", "steelblue");
-
-    svg
-      .append("line")
-      .attr("x1", x(max))
-      .attr("x2", x(max))
-      .attr("y1", height / 3 - 5)
-      .attr("y2", (height * 2) / 3 + 5)
+      .attr("x1", x(whiskerMin))
+      .attr("x2", x(whiskerMin))
+      .attr("y1", boxY + boxHeight / 2 - tickHeight / 2)
+      .attr("y2", boxY + boxHeight / 2 + tickHeight / 2)
       .attr("stroke", "steelblue");
 
     svg
       .append("line")
-      .attr("x1", x(value))
-      .attr("x2", x(value))
-      .attr("y1", height / 3 - 5)
-      .attr("y2", (height * 2) / 3 + 5)
+      .attr("x1", x(whiskerMax))
+      .attr("x2", x(whiskerMax))
+      .attr("y1", boxY + boxHeight / 2 - tickHeight / 2)
+      .attr("y2", boxY + boxHeight / 2 + tickHeight / 2)
+      .attr("stroke", "steelblue");
+
+    // Red value line
+    const clampedValue = Math.max(whiskerMin, Math.min(whiskerMax, value));
+    svg
+      .append("line")
+      .attr("x1", x(clampedValue))
+      .attr("x2", x(clampedValue))
+      .attr("y1", boxY - 5) // 5px above box
+      .attr("y2", boxY + boxHeight + 5) // 5px below box
       .attr("stroke", "red")
       .attr("stroke-width", 1);
-  }, [data, width, height]);
+  }, [data, value, width, height]);
 
   return <svg ref={ref} width={width} height={height} />;
 };
