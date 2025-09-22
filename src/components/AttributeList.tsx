@@ -470,7 +470,7 @@ const AttributeList: React.FC<Props> = ({
       </Tab>
 
       {/* Numeric Attributes */}
-      <Tab eventKey="numeric" title="Other 1">
+      <Tab eventKey="numeric" title="General 1">
         <div className="pt-3">
           <Grid container>
             {renderAttributes(
@@ -488,7 +488,7 @@ const AttributeList: React.FC<Props> = ({
       </Tab>
 
       {/* Categorical Attributes */}
-      <Tab eventKey="categorical" title="Other 2">
+      <Tab eventKey="categorical" title="General 2">
         <div className="pt-3">
           <Grid container>
             {renderAttributes(

@@ -207,7 +207,9 @@ function ArgumentView() {
       (attr) => `- ${display_names[attr] || attr}`
     );
 
-    const message = `Argument can be improved with:\n${attrList.join("\n")}`;
+    const message = attrList.length
+      ? `Argument can be improved with:\n${attrList.join("\n")}`
+      : `Argument can be improved by removing one of selected.`;
     const score = ""; // "Quality: " + hintScore / 100;
     showToast(score, message);
   };
@@ -455,12 +457,17 @@ function ArgumentView() {
               </PrimaryButton>
             </div>
             <ProgressBar style={{ height: "18px" }}>
-              <ProgressBar now={mScore} label={mScore} variant="success" />
-              <Tooltip title="How much can argument be improved" arrow>
+              <ProgressBar
+                now={mScore}
+                label={`${mScore}%`}
+                variant="success"
+              />
+              <Tooltip title="How much the argument can be improved" arrow>
                 <ProgressBar
                   now={hintScore - mScore}
-                  label={hintScore - mScore}
+                  label={`${hintScore - mScore}%`}
                   variant="warning"
+                  striped
                 />
               </Tooltip>
             </ProgressBar>
