@@ -77,7 +77,7 @@ const HomePage = () => {
                   )}
                 </div>
               </Container>
-              {learningData && <Container>OR</Container>}
+              {learningData && <Container>-------- OR --------</Container>}
               <Container>
                 <div>
                   <Button

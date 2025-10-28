@@ -1,4 +1,5 @@
 import { useParams, useLocation, useNavigate } from "react-router-dom";
+import { Dialog, DialogContent, Stack, Typography } from "@mui/material";
 import { useState, useEffect } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import { Button, Placeholder } from "react-bootstrap";
@@ -115,9 +116,11 @@ function ArgumentView() {
   const [tooltipDescs, setTooltipDescs] = useState<Record<string, string>>({});
   const [chosenArguments, setSentArguments] = useState<string[]>([]);
   const [skills, setSkills] = useState<Record<string, number>>({});
-
+  const [bktCorrect, setBktCorrect] = useState(false);
+  const [summaryData, setSummaryData] = useState<any>(null);
   const [summaryLoading, setSummaryLoading] = useState(false);
   const [summaryText, setSummaryText] = useState<string | null>(null);
+  const [showTransition, setShowTransition] = useState(false);
 
   useEffect(() => {
     getObject()
@@ -162,11 +165,18 @@ function ArgumentView() {
 
   const addBubble = (newBubble: Argument) => {
     setSelectedFilters((prev) => {
-      return [
-        // Filter out previous entries with the same key
-        ...prev.filter((b) => b.key !== newBubble.key),
-        newBubble,
-      ];
+      // Filter out previous entries with the same key
+      const filtered = prev.filter((b) => b.key !== newBubble.key);
+
+      if (filtered.length >= 3) {
+        toast.warn("You can select up to 3 arguments only.", {
+          position: "top-right",
+          autoClose: 3000,
+        });
+        return filtered;
+      }
+
+      return [...filtered, newBubble];
     });
   };
 
@@ -222,9 +232,7 @@ function ArgumentView() {
 
     // const userArgument = selectedFilters.map((item) => item.value).join(",");
     const userArgument = selectedFilters
-      .map((item) =>
-        item.operator ? `${item.key}${item.operator}${item.value}` : item.key
-      )
+      .map((item) => (item.operator ? `${item.key}${item.operator}` : item.key))
       .join(",");
 
     setAlertError(null);
@@ -281,26 +289,23 @@ function ArgumentView() {
         setArgumentsSent(true);
 
         const argumentsArray = selectedFilters.map((item) =>
-          item.operator ? `${item.key}${item.operator}${item.value}` : item.key
+          item.operator ? `${item.key}${item.operator}` : item.key
         );
         setSentArguments(argumentsArray);
         fetchSkills();
+        setBktCorrect(data.bkt_correct);
 
-        if (limitedCounterExamples.length === 0) {
-          const summaryData = {
-            domainName: domainName,
-            details: detailData,
-            displayNames: display_names,
-            targetClass: targetClass,
-            iteration_number: iterationNumber,
-            user_arguments: selectedFilters,
-            argRule: data.argRule,
-            mScore: mScore,
-          };
-          getSummary(summaryData);
-        } else {
-          setSummaryText(null);
-        }
+        const summaryData = {
+          domainName: domainName,
+          details: detailData,
+          displayNames: display_names,
+          targetClass: targetClass,
+          iteration_number: iterationNumber,
+          user_arguments: selectedFilters,
+          argRule: data.argRule,
+          mScore: mScore,
+        };
+        setSummaryData(summaryData);
       })
       .catch((error) => {
         console.error("Argument view POST method error:", error);
@@ -313,14 +318,19 @@ function ArgumentView() {
       });
   };
 
-  const doneWithArgumentation = async () => {
+  const doneWithArgumentation = () => {
     if (!argumentsSent) {
       setAlertError("No arguments selected. Choose from the list below.");
       return;
     }
 
-    setSelectedFilters([]);
+    // setSelectedFilters([]);
 
+    setShowTransition(true);
+    getSummary(summaryData);
+  };
+
+  const endIteration = async () => {
     // Data to be sent in the request body
     const requestData = {
       selectedExampleId: idName,
@@ -328,6 +338,7 @@ function ArgumentView() {
       chosen_arguments: chosenArguments,
       mScore: mScore,
       index: criticalIndex,
+      bkt_correct: bktCorrect,
     };
 
     try {
@@ -423,14 +434,14 @@ function ArgumentView() {
               {targetClassName}: <b style={{ color: "green" }}>{targetClass}</b>
             </span>
           </div>
-          {argumentsSent && !hasCounterExamples && (
+          {/* {argumentsSent && (
             <Button variant="outline-success" onClick={doneWithArgumentation}>
               Next Example
               <FaArrowRight
                 style={{ marginLeft: "8px", marginBottom: "2px" }}
               />
             </Button>
-          )}
+          )} */}
         </div>
 
         {/* M-Score Box */}
@@ -444,7 +455,7 @@ function ArgumentView() {
                 marginBottom: "12px",
               }}
             >
-              <strong>Quality of selected arguments</strong>
+              <strong>Quality of arguments</strong>
               <PrimaryButton onClick={showHintMessage}>
                 <FaLightbulb
                   style={{
@@ -471,37 +482,6 @@ function ArgumentView() {
                 />
               </Tooltip>
             </ProgressBar>
-          </div>
-        )}
-
-        {summaryLoading && (
-          <div className="box-with-border card-view custom-summary-bg">
-            <div className="card-header mb-2">
-              <strong>Key Takeaways</strong>
-            </div>
-            <div className="card-body">
-              <Placeholder as="p" animation="glow">
-                <Placeholder xs={12} className="mb-2" />
-                <Placeholder xs={12} className="mb-2" />
-                <Placeholder xs={8} />
-              </Placeholder>
-            </div>
-          </div>
-        )}
-
-        {summaryText && !summaryLoading && (
-          <div className="box-with-border card-view custom-summary-bg">
-            <div className="card-header d-flex justify-content-between align-items-center mb-2">
-              <strong>Key Takeaways</strong>
-              <button
-                className="btn-close"
-                onClick={() => setSummaryText(null)}
-                aria-label="Close"
-              />
-            </div>
-            <div className="card-body">
-              <p className="card-text">{summaryText}</p>
-            </div>
           </div>
         )}
 
@@ -553,7 +533,7 @@ function ArgumentView() {
             >
               Send arguments
             </Button>
-            {argumentsSent && !hasCounterExamples && (
+            {argumentsSent && mScore >= 50 && (
               <Button variant="outline-success" onClick={doneWithArgumentation}>
                 Next Example
                 <FaArrowRight
@@ -621,6 +601,78 @@ function ArgumentView() {
             </div>
           </Backdrop>
         )}
+
+        <Dialog
+          open={showTransition}
+          onClose={() => setShowTransition(false)}
+          fullWidth
+          maxWidth="lg"
+          PaperProps={{
+            sx: {
+              borderRadius: 3,
+              textAlign: "center",
+              py: 3,
+              backgroundColor: "#f8f8f8",
+            },
+          }}
+          BackdropProps={{
+            sx: {
+              backgroundColor: "rgba(0, 0, 0, 0.4)",
+              backdropFilter: "blur(2px)",
+            },
+          }}
+        >
+          <DialogContent>
+            <Stack spacing={3} alignItems="center" textAlign="center">
+              <Typography variant="h6" sx={{ mb: 2 }}>
+                Tutor Feedback
+              </Typography>
+              {summaryLoading && (
+                <div
+                  className="box-with-border card-view custom-summary-bg"
+                  style={{
+                    width: "100%",
+                    textAlign: "left",
+                  }}
+                >
+                  <div className="card-header mb-2">
+                    <strong>Key Takeaways</strong>
+                  </div>
+                  <div className="card-body">
+                    <Placeholder as="p" animation="glow">
+                      <Placeholder xs={12} className="mb-2" />
+                      <Placeholder xs={12} className="mb-2" />
+                      <Placeholder xs={8} />
+                    </Placeholder>
+                  </div>
+                </div>
+              )}
+
+              {summaryText && !summaryLoading && (
+                <div className="box-with-border card-view custom-summary-bg">
+                  <div className="card-header d-flex justify-content-between align-items-center mb-2">
+                    <strong>Key Takeaways</strong>
+                    {/* <button
+                      className="btn-close"
+                      onClick={() => setSummaryText(null)}
+                      aria-label="Close"
+                    /> */}
+                  </div>
+                  <div className="card-body">
+                    <p className="card-text text-start">{summaryText}</p>
+                  </div>
+                </div>
+              )}
+              <Button
+                variant="success"
+                color="primary"
+                onClick={() => endIteration()}
+              >
+                Continue
+              </Button>
+            </Stack>
+          </DialogContent>
+        </Dialog>
       </div>
     </>
   );

@@ -60,7 +60,7 @@ const Users = () => {
               <li key={idx} className="mb-2">
                 <div className="d-flex justify-content-between align-items-start">
                   <div>
-                    <strong>Iteration {iter.iteration_number}:</strong>{" "}
+                    <strong>Iteration {iter.iteration_number + 1}:</strong>{" "}
                     {iter.chosen_arguments.join(", ")}
                     <br />
                     <small className="text-muted">

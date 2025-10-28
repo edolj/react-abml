@@ -143,8 +143,8 @@ const AttributeList: React.FC<Props> = ({
                           fontWeight="bold"
                           align="center"
                           sx={{
-                            background: "#b33a3a",
-                            color: "white",
+                            background: "#ffcc80",
+                            color: "#5f3c00",
                             padding: "0.5rem 0rem",
                           }}
                         >
@@ -350,7 +350,7 @@ const AttributeList: React.FC<Props> = ({
                               pr: tabAlign === "right" ? 1 : 0,
                               color:
                                 attrTypes?.[attr.key] === "target"
-                                  ? "red"
+                                  ? "#b26a00"
                                   : "inherit",
                             }}
                           >
