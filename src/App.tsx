@@ -76,6 +76,14 @@ function App() {
             </PrivateRoute>
           }
         />
+        <Route
+          path="/history"
+          element={
+            <PrivateRoute>
+              <Users />
+            </PrivateRoute>
+          }
+        />
       </Routes>
     </>
   );

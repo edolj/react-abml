@@ -27,13 +27,15 @@ const Header = () => {
         {isLoggedIn && (
           <div className="menu">
             <button onClick={() => navigate("/home")}>HOME</button>
+            <button onClick={() => navigate("/selectDomain")}>DOMAIN</button>
+            {isSuperuser ? (
+              <button onClick={() => navigate("/users")}>USERS</button>
+            ) : (
+              <button onClick={() => navigate("/history")}>HISTORY</button>
+            )}
             <button onClick={() => navigate("/instructions")}>
               INSTRUCTIONS
             </button>
-            <button onClick={() => navigate("/selectDomain")}>DOMAIN</button>
-            {isSuperuser && (
-              <button onClick={() => navigate("/users")}>USERS</button>
-            )}
           </div>
         )}
       </div>
