@@ -1,7 +1,5 @@
-To run project use command:
-npm run dev
+To run project:
+- npm run dev
 
 First time install:
-1. git clone
-2. move to cloned folder
-3. npm install
+- npm install
