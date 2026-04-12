@@ -518,28 +518,51 @@ function ArgumentView() {
               marginTop: 16,
               marginBottom: 24,
               display: "flex",
-              justifyContent: "center",
-              gap: 16,
+              flexDirection: "column",
+              alignItems: "center",
+              gap: 8,
             }}
           >
-            <ExpertAttributesModal
-              displayNames={filteredDisplayNames}
-              descriptions={filteredAttrDescs}
-            />
-            <Button
-              variant="success"
-              onClick={showCriticalExample}
-              className="custom-primary-button"
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                gap: 16,
+                flexWrap: "wrap",
+              }}
             >
-              Send arguments
-            </Button>
-            {argumentsSent && mScore >= 50 && (
-              <Button variant="outline-success" onClick={doneWithArgumentation}>
-                Next Example
-                <FaArrowRight
-                  style={{ marginLeft: "8px", marginBottom: "2px" }}
-                />
+              <ExpertAttributesModal
+                displayNames={filteredDisplayNames}
+                descriptions={filteredAttrDescs}
+              />
+
+              <Button
+                variant="success"
+                onClick={showCriticalExample}
+                className="custom-primary-button"
+              >
+                Send arguments
               </Button>
+
+              {argumentsSent && (
+                <Button variant="outline-success" onClick={doneWithArgumentation}>
+                  Next Example
+                  <FaArrowRight style={{ marginLeft: "8px", marginBottom: "2px" }} />
+                </Button>
+              )}
+            </div>
+
+            {argumentsSent && mScore < 50 && (
+              <p
+                style={{
+                  color: "#6c757d",
+                  textAlign: "center",
+                  margin: 0,
+                  fontSize: "0.95rem",
+                }}
+              >
+                Nice — try using a hint to make your argument even stronger.
+              </p>
             )}
           </div>
 
