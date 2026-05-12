@@ -27,6 +27,32 @@ body {
   border-color: #4e66c1 !important;
 }
 
+.btn-attributesInfo {
+  width: 30px;
+  height: 30px;
+  border-radius: 50% !important;
+  border: 2px solid #607ad1 !important;
+  background-color: transparent !important;
+  color: #607ad1 !important;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 !important;
+}
+
+.btn-attributesInfo:hover {
+  border-color: #4e66c1 !important;
+  background-color: rgba(96, 122, 209, 0.08) !important;
+  color: #4e66c1 !important;
+}
+
+.attributesInfoIcon {
+  color: inherit;
+  margin-bottom: 2px;
+  font-size: 18px;
+}
+
 .scrollable {
   max-height: 50vh;
   overflow-y: auto;

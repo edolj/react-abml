@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Modal } from "react-bootstrap";
+import { Button, Modal } from "react-bootstrap";
 import { FaInfoCircle } from "react-icons/fa";
 import PrimaryButton from "./PrimaryButton";
 
@@ -19,10 +19,9 @@ function ExpertAttributesModal({
 
   return (
     <>
-      <PrimaryButton onClick={handleShow}>
-        <FaInfoCircle style={{ marginBottom: "2px", marginRight: "8px" }} />
-        Attributes
-      </PrimaryButton>
+      <Button variant="outline-primary" className="btn-attributesInfo" onClick={handleShow}>
+        <FaInfoCircle className="attributesInfoIcon" />
+      </Button>
 
       <Modal show={show} onHide={handleClose} size="lg" scrollable>
         <Modal.Header closeButton style={{ backgroundColor: "#f8f8f8" }}>

@@ -486,29 +486,28 @@ function ArgumentView() {
         )}
 
         <div className="box-with-border card-view">
-          <h6
-            style={{
-              width: "80%",
-              margin: "0 auto 4px auto",
-            }}
-          >
-            Select arguments from list
-          </h6>
-          <div
-            style={{
-              border: "1px solid #ccc",
-              borderRadius: 4,
-              padding: "0.5rem",
-              marginBottom: 8,
-              background: "white",
-              width: "80%",
-              margin: "0 auto",
-              minHeight: "48px",
-            }}
-          >
-            <Bubbles bubbles={selectedFilters} onRemove={removeBubble} />
+          <h6> Select arguments from list </h6>
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <div
+              style={{
+                border: "1px solid #ccc",
+                borderRadius: 4,
+                padding: "0.5rem",
+                marginBottom: 8,
+                background: "white",
+                width: "100%",
+                margin: "0 auto",
+                minHeight: "48px",
+              }}
+            >
+              <Bubbles bubbles={selectedFilters} onRemove={removeBubble} />
+            </div>
+            <ExpertAttributesModal
+              displayNames={filteredDisplayNames}
+              descriptions={filteredAttrDescs}
+            />
           </div>
-          <div style={{ width: "80%", margin: "0 auto", paddingTop: "10px" }}>
+          <div style={{ paddingTop: "10px" }}>
             {alertError && (
               <Alert onClose={() => setAlertError(null)}>{alertError}</Alert>
             )}
@@ -526,16 +525,11 @@ function ArgumentView() {
             <div
               style={{
                 display: "flex",
+                flexWrap: "wrap",
                 justifyContent: "center",
                 gap: 16,
-                flexWrap: "wrap",
               }}
             >
-              <ExpertAttributesModal
-                displayNames={filteredDisplayNames}
-                descriptions={filteredAttrDescs}
-              />
-
               <Button
                 variant="success"
                 onClick={showCriticalExample}
