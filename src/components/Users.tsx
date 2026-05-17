@@ -168,42 +168,28 @@ const Users = () => {
       0
     );
 
-    // score intervals
-    const ranges = [
-      { label: "<50",    min: 0,  max: 50 },
-      { label: "50-59",  min: 50, max: 60 },
-      { label: "60-69",  min: 60, max: 70 },
-      { label: "70-79",  min: 70, max: 80 },
-      { label: "80-89",  min: 80, max: 90 },
-      { label: "90-100", min: 90, max: 101 },
-    ];
+    const argumentCounts: Record<string, number> = {};
+    domainData.forEach((user) => {
+      user.iterations.forEach((iter) => {
+        iter.chosen_arguments.forEach((arg) => {
+          const cleanArg = arg.replace(/(<=|>=|<|>|=)/g, "").trim();
 
-    // chart data
-    const chartData = ranges.map((range) => {
-      let count = 0;
-
-      domainData.forEach((user) => {
-        user.iterations.forEach((iter) => {
-          if (
-            iter.mScore >= range.min &&
-            iter.mScore < range.max
-          ) {
-            count++;
-          }
+          argumentCounts[cleanArg] =
+            (argumentCounts[cleanArg] || 0) + 1;
         });
       });
-
-      return {
-        range: range.label,
-        count,
-      };
     });
+    
+    const argumentChartData = Object.entries(argumentCounts)
+      .map(([argument, count]) => ({
+        argument,
+        count,
+      }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 10);
 
     return (
-      <Card
-        key={domainName}
-        className="box-with-border card-view mb-4"
-      >
+      <Card key={domainName} className="box-with-border card-view mb-4">
         <Card.Body>
           <Card.Title style={{ fontSize: "1.35rem", fontWeight: 600, marginBottom: "1rem" }}>
             {domainName}
@@ -231,15 +217,15 @@ const Users = () => {
             </div>
           </div>
 
-          <div style={{ height: 300, marginTop: "1rem"}}>
+          <div style={{ height: 350, marginTop: "1rem" }}>
             <ResponsiveContainer>
-              <BarChart data={chartData} margin={{ top: 30, right: 0, left: 0, bottom: 0 }}>
+              <BarChart data={argumentChartData} layout="vertical" margin={{ top: 10, right: 0, left: 30, bottom: 10 }}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="range" />
-                <YAxis />
-                <Tooltip />
-                <Bar dataKey="count" fill="#607ad1" radius={[4, 4, 0, 0]}>
-                  <LabelList dataKey="count" position="top" />
+                <XAxis type="number"/>
+                <YAxis type="category" dataKey="argument" width={120}/>
+                <Tooltip/>
+                <Bar dataKey="count" fill="#607ad1" radius={[0, 4, 4, 0]}>
+                  <LabelList dataKey="count" position="right" />
                 </Bar>
               </BarChart>
             </ResponsiveContainer>
