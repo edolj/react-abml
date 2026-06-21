@@ -37,6 +37,7 @@ const Users = () => {
   useEffect(() => {
     if (!isSuperuser && username) {
       setSelectedUser({ username } as User);
+      setViewMode("user");
     }
   }, [isSuperuser, username]);
 
@@ -291,6 +292,15 @@ const Users = () => {
               </Col>
             ))}
           </Row>
+        ) : filteredData.length === 0 ? (
+          <Card className="box-with-border card-view">
+            <Card.Body className="text-center">
+              <h5>No learning sessions yet</h5>
+              <p className="text-muted mb-0">
+                Start a new learning session to see your progress and argument history.
+              </p>
+            </Card.Body>
+          </Card>
         ) : (
           filteredData.map(renderUserCard)
         )}
