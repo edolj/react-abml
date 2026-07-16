@@ -13,61 +13,73 @@ const Instructions = () => {
 
           <ol>
             <li className="mb-3">
-              <strong>Home page:</strong> On the "Home" page, you can start a
-              new learning session or continue where you left off.
+              <strong>Home page:</strong> Start a new learning session or continue a
+              previously saved one.
             </li>
+
             <li className="mb-3">
-              <strong>Select a domain:</strong> On the "Select Domain" page,
-              choose the domain you want to work with.
+              <strong>Select a domain:</strong> Choose the domain you want to practice.
             </li>
+
             <li className="mb-3">
-              <strong>Choose a critical example:</strong> You will be shown
-              instances from the dataset. Select the one you find interesting or
-              challenging.
+              <strong>Choose a critical example:</strong> Select one example from the
+              dataset for argumentation.
             </li>
+
             <li className="mb-3">
-              <strong>Provide Arguments:</strong> Use the attribute list to
-              support your classification:
+              <strong>Create your argument:</strong>
               <ul>
                 <li>
-                  Numerical attributes: Click the button representing{" "}
-                  <strong>High</strong> or <strong>Low</strong> to indicate your
-                  choice.
+                  Numerical attributes: Click <strong>High</strong> or{" "}
+                  <strong>Low</strong> to add the attribute as an argument.
                 </li>
                 <li>
-                  Categorical attributes: Select the appropriate label using the
-                  checkbox.
+                  Optionally, click a selected numerical argument to specify a <strong>bound (k)</strong> for more precise reasoning.
                 </li>
                 <li>
-                  Click <strong>Send Arguments</strong> to submit your
-                  arguments. The system will analyze your input and return an{" "}
-                  <strong>M-score</strong>.
+                  Categorical attributes: Select the checkbox to add the attribute.
+                </li>
+                <li>
+                  You can select up to <strong>three arguments</strong>.
                 </li>
               </ul>
             </li>
+
             <li className="mb-3">
-              <strong>Review Your Progress:</strong> The M-score reflects the
-              quality of your arguments.
+              <strong>Submit your argument:</strong>
               <ul>
-                <li>Green bar: Shows your current M-score.</li>
                 <li>
-                  Yellow bar: Shows potential improvement if your argument is
-                  refined.
+                  Click <strong>Send Arguments</strong> to evaluate your argument.
                 </li>
                 <li>
-                  Use the <strong>Hint</strong> button for suggestions to
-                  improve your argument.
-                </li>
-                <li>
-                  If counterexamples appear, compare your values with the
-                  counterexample values and adjust your arguments accordingly.
+                  The tutor calculates an <strong>M-score</strong> and searches for
+                  counterexamples.
                 </li>
               </ul>
             </li>
+
             <li className="mb-3">
-              <strong>Proceed to the next example:</strong> After submitting
-              arguments with no remaining counterexamples, click{" "}
-              <strong>Next Example</strong> to continue.
+              <strong>Improve your argument:</strong>
+              <ul>
+                <li>
+                  The green bar represents the current quality of your argument.
+                </li>
+                <li>
+                  The yellow bar indicates the potential improvement.
+                </li>
+                <li>
+                  Use the <strong>Hint</strong> button if you need guidance.
+                </li>
+                <li>
+                  If counterexamples are displayed, compare them with the selected
+                  example and refine your argument.
+                </li>
+              </ul>
+            </li>
+
+            <li className="mb-3">
+              <strong>Continue learning:</strong> Once you are satisfied with your
+              argument, click <strong>Next Example</strong> to proceed.
             </li>
           </ol>
 

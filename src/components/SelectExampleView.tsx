@@ -165,7 +165,7 @@ function SelectExampleView() {
   }, []);
 
   useEffect(() => {
-    let interval: NodeJS.Timeout;
+    let interval: ReturnType<typeof setInterval>;
 
     if (isLoading) {
       let index = 0;

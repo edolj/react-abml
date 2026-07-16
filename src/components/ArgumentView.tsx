@@ -1,5 +1,6 @@
 import { useParams, useLocation, useNavigate } from "react-router-dom";
-import { Dialog, DialogContent, Stack, Typography } from "@mui/material";
+import { Dialog, DialogContent, Stack } from "@mui/material";
+import { Typography, Popover, TextField } from "@mui/material";
 import { useState, useEffect } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import { Button, Placeholder } from "react-bootstrap";
@@ -23,6 +24,7 @@ export type Argument = {
   value?: number | string;
   operator?: string;
   displayName?: string;
+  bound?: string;
 };
 
 export type AttributeInfo = {
@@ -122,6 +124,9 @@ function ArgumentView() {
   const [summaryText, setSummaryText] = useState<string | null>(null);
   const [showTransition, setShowTransition] = useState(false);
 
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  const [selectedBubble, setSelectedBubble] = useState<Argument | null>(null);
+
   useEffect(() => {
     getObject()
       .then((data) => {
@@ -184,6 +189,38 @@ function ArgumentView() {
     setSelectedFilters((prev) => prev.filter((b) => b.key !== keyToRemove));
   };
 
+  const handleBubbleClick = (
+    event: React.MouseEvent<HTMLElement>,
+    bubble: Argument
+  ) => {
+    if (!bubble.operator) { 
+      return;
+    }
+
+    setAnchorEl(event.currentTarget);
+    setSelectedBubble(bubble);
+  };
+
+  const handleClosePopover = () => {
+    setAnchorEl(null);
+  };
+
+  const handleBoundChange = (value: string) => {
+    if (!selectedBubble) return;
+
+    setSelectedFilters((prev) =>
+      prev.map((bubble) =>
+        bubble.key === selectedBubble.key
+          ? { ...bubble, bound: value }
+          : bubble
+      )
+    );
+
+    setSelectedBubble((prev) =>
+      prev ? { ...prev, bound: value } : null
+    );
+  };
+
   const showHintMessage = () => {
     if (hintBestRule === "") {
       showToast("", "First input your arguments.");
@@ -226,13 +263,52 @@ function ArgumentView() {
 
   const showCriticalExample = () => {
     if (selectedFilters.length === 0) {
-      setAlertError("No arguments selected. Choose from the list below.");
+      toast.warn("Please select at least one argument.");
       return;
     }
 
-    // const userArgument = selectedFilters.map((item) => item.value).join(",");
-    const userArgument = selectedFilters
-      .map((item) => (item.operator ? `${item.key}${item.operator}` : item.key))
+    for (const item of selectedFilters) {
+      if (item.bound && item.bound.trim() !== "") {
+        const normalized = item.bound.replace(",", ".");
+
+        if (Number.isNaN(Number(normalized))) {
+          toast.error(
+            `Bound for "${item.displayName}" must be a valid number.`
+          );
+          return;
+        }
+
+        const currentValue = Number(item.value);
+        const boundValue = Number(normalized);
+
+        if (item.operator === "<=" && boundValue < currentValue) {
+          toast.error(
+            `Bound for "${item.displayName}" must be greater than or equal to ${item.value}.`
+          );
+          return;
+        }
+
+        if (item.operator === ">=" && boundValue > currentValue) {
+          toast.error(
+            `Bound for "${item.displayName}" must be less than or equal to ${item.value}.`
+          );
+          return;
+        }
+      }
+    }
+
+    const userArgument = selectedFilters.map((item) => {
+        if (!item.operator) {
+          return item.key;
+        }
+
+        if (item.bound && item.bound.trim() !== "") {
+          const normalized = item.bound.replace(",", ".");
+          return `${item.key}${item.operator}${normalized}`;
+        }
+
+        return `${item.key}${item.operator}`;
+      })
       .join(",");
 
     setAlertError(null);
@@ -288,9 +364,19 @@ function ArgumentView() {
         setIsLoading(false);
         setArgumentsSent(true);
 
-        const argumentsArray = selectedFilters.map((item) =>
-          item.operator ? `${item.key}${item.operator}` : item.key
-        );
+        const argumentsArray = selectedFilters.map((item) => {
+          if (!item.operator) {
+            return item.key;
+          }
+
+          if (item.bound && item.bound.trim() !== "") {
+            const normalized = item.bound.replace(",", ".");
+            return `${item.key}${item.operator}${normalized}`;
+          }
+
+          return `${item.key}${item.operator}`;
+        });
+        
         setSentArguments(argumentsArray);
         fetchSkills();
         setBktCorrect(data.bkt_correct);
@@ -320,7 +406,7 @@ function ArgumentView() {
 
   const doneWithArgumentation = () => {
     if (!argumentsSent) {
-      setAlertError("No arguments selected. Choose from the list below.");
+      toast.warn("Please send your arguments first.");
       return;
     }
 
@@ -356,7 +442,7 @@ function ArgumentView() {
   };
 
   useEffect(() => {
-    let interval: NodeJS.Timeout;
+    let interval: ReturnType<typeof setInterval>;
 
     if (isLoading) {
       let index = 0;
@@ -500,7 +586,7 @@ function ArgumentView() {
                 minHeight: "48px",
               }}
             >
-              <Bubbles bubbles={selectedFilters} onRemove={removeBubble} />
+              <Bubbles bubbles={selectedFilters} onRemove={removeBubble} onBubbleClick={handleBubbleClick} />
             </div>
             <ExpertAttributesModal
               displayNames={filteredDisplayNames}
@@ -632,10 +718,12 @@ function ArgumentView() {
               backgroundColor: "#f8f8f8",
             },
           }}
-          BackdropProps={{
-            sx: {
-              backgroundColor: "rgba(0, 0, 0, 0.4)",
-              backdropFilter: "blur(2px)",
+          slotProps={{
+            backdrop: {
+              sx: {
+                backgroundColor: "rgba(0, 0, 0, 0.4)",
+                backdropFilter: "blur(2px)",
+              },
             },
           }}
         >
@@ -690,6 +778,27 @@ function ArgumentView() {
             </Stack>
           </DialogContent>
         </Dialog>
+
+        <Popover
+          open={Boolean(anchorEl)}
+          anchorEl={anchorEl}
+          onClose={handleClosePopover}
+          anchorOrigin={{
+            vertical: "bottom",
+            horizontal: "left",
+          }}
+        >
+          <div style={{ padding: 12 }}>
+            <TextField
+              size="small"
+              placeholder="Bound (optional)"
+              autoFocus
+              value={selectedBubble?.bound ?? ""}
+              onChange={(e) => handleBoundChange(e.target.value)}
+            />
+          </div>
+        </Popover>
+
       </div>
     </>
   );
