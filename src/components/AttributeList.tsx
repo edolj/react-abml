@@ -59,7 +59,7 @@ const AttributeList: React.FC<Props> = ({
 
     if (eurAttr.includes(key)) {
       return (
-        Number(value).toLocaleString("sl-SI", {
+        Number(value).toLocaleString("en-US", {
           minimumFractionDigits: 0,
           maximumFractionDigits: 0,
         }) + " €"
@@ -68,7 +68,7 @@ const AttributeList: React.FC<Props> = ({
 
     if (ratioAttr.includes(key)) {
       return (
-        Number(value).toLocaleString("sl-SI", {
+        Number(value).toLocaleString("en-US", {
           minimumFractionDigits: 2,
           maximumFractionDigits: 2,
         }) + " %"
@@ -76,7 +76,7 @@ const AttributeList: React.FC<Props> = ({
     }
 
     if (attrTypes?.[key] == "continuous") {
-      return Number(value).toLocaleString("sl-SI", {
+      return Number(value).toLocaleString("en-US", {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2,
       });

@@ -269,9 +269,9 @@ function ArgumentView() {
 
     for (const item of selectedFilters) {
       if (item.bound && item.bound.trim() !== "") {
-        const normalized = item.bound.replace(",", ".");
+        const boundValue = Number(item.bound);
 
-        if (Number.isNaN(Number(normalized))) {
+        if (Number.isNaN(boundValue)) {
           toast.error(
             `Bound for "${item.displayName}" must be a valid number.`
           );
@@ -279,7 +279,6 @@ function ArgumentView() {
         }
 
         const currentValue = Number(item.value);
-        const boundValue = Number(normalized);
 
         if (item.operator === "<=" && boundValue < currentValue) {
           toast.error(
@@ -303,8 +302,7 @@ function ArgumentView() {
         }
 
         if (item.bound && item.bound.trim() !== "") {
-          const normalized = item.bound.replace(",", ".");
-          return `${item.key}${item.operator}${normalized}`;
+          return `${item.key}${item.operator}${item.bound}`;
         }
 
         return `${item.key}${item.operator}`;
@@ -370,8 +368,7 @@ function ArgumentView() {
           }
 
           if (item.bound && item.bound.trim() !== "") {
-            const normalized = item.bound.replace(",", ".");
-            return `${item.key}${item.operator}${normalized}`;
+            return `${item.key}${item.operator}${item.bound}`;
           }
 
           return `${item.key}${item.operator}`;

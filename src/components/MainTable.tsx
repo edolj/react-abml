@@ -28,7 +28,7 @@ function MainTable({ columns, data, onRowClick, expandData, dNames }: Props) {
 
     if (eurAttr.includes(key)) {
       return (
-        Number(value).toLocaleString("sl-SI", {
+        Number(value).toLocaleString("en-US", {
           minimumFractionDigits: 0,
           maximumFractionDigits: 0,
         }) + " €"
@@ -37,7 +37,7 @@ function MainTable({ columns, data, onRowClick, expandData, dNames }: Props) {
 
     if (ratioAttr.includes(key)) {
       return (
-        Number(value).toLocaleString("sl-SI", {
+        Number(value).toLocaleString("en-US", {
           minimumFractionDigits: 2,
           maximumFractionDigits: 2,
         }) + " %"
