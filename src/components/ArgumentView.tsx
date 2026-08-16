@@ -236,15 +236,17 @@ function ArgumentView() {
       return match ? match[1] : arg;
     });
 
-    const attributeRegex = /\b([a-zA-Z0-9_./]+)\s*(==|<=|>=|<|>|!=)/g;
     const attributes = new Set<string>();
-
     const [ifPart] = hintBestRule.split(" THEN ");
+    const conditions = ifPart.replace(/^IF\s+/i, "").split(/\s+AND\s+/i);
 
-    let match;
-    while ((match = attributeRegex.exec(ifPart)) !== null) {
-      attributes.add(match[1]);
-    }
+    conditions.forEach((condition) => {
+      const match = condition.match(/^([a-zA-Z0-9_./]+)\s*(?:==|<=|>=|!=|<|>)/);
+
+      if (match) {
+        attributes.add(match[1]);
+      }
+    });
 
     const missingAttributes = Array.from(attributes).filter(
       (attr) => !cleanedChosenArguments.includes(attr)
