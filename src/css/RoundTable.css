@@ -1,41 +1,48 @@
 .rounded-table {
   width: 100%;
-  border: 1px solid gray;
+  border: 1px solid #dfe4ee;
   border-collapse: separate;
   border-spacing: 0;
-  border-radius: 10px;
-  background-color: white;
+  border-radius: 12px;
+  overflow: hidden;
+  background-color: #ffffff;
 }
 
 .rounded-table thead th {
   background-color: #607ad1;
-  color: white;
-  font-weight: bold;
-  padding: 10px;
-  border-right: 1px solid #ddd;
-}
-
-.rounded-table tbody td {
-  padding: 10px;
-  border: 1px solid #ddd;
-}
-
-.rounded-table thead th:first-child {
-  border-top-left-radius: 10px;
+  color: #ffffff;
+  font-weight: 600;
+  padding: 11px 12px;
+  border-right: 1px solid rgba(255, 255, 255, 0.2);
+  font-size: 14px;
 }
 
 .rounded-table thead th:last-child {
-  border-top-right-radius: 10px;
+  border-right: none;
 }
 
-.rounded-table tbody tr:last-child td:first-child {
-  border-bottom-left-radius: 10px;
+.rounded-table tbody td {
+  padding: 11px 12px;
+  border-right: 1px solid #edf0f4;
+  border-bottom: 1px solid #edf0f4;
+  color: #4f5665;
+  font-size: 14px;
 }
 
-.rounded-table tbody tr:last-child td:last-child {
-  border-bottom-right-radius: 10px;
+.rounded-table tbody td:last-child {
+  border-right: none;
 }
 
+.rounded-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Hover only for normal rows */
+.rounded-table tbody tr:not(.expanded-row):hover td {
+  background-color: #f4f7fd;
+}
+
+/* Column widths */
 .rounded-table th:nth-child(3),
 .rounded-table td:nth-child(3),
 .rounded-table th:nth-child(4),
@@ -47,25 +54,11 @@
   white-space: nowrap;
 }
 
-/* Hover Effects */
-.rounded-table tbody tr:hover td {
-  background-color: #e3f2fd;
-  color: #004085;
-}
-
-.rounded-table tbody td:hover {
-  background-color: #80cbc4;
-  color: white;
-}
-
-.rounded-table tbody tr:nth-child(even) {
-  background-color: #f9f9f9;
-}
-
 .center-text {
   text-align: center;
 }
 
+/* Expand button */
 .expand-toggle-button {
   cursor: pointer;
   border: none;
@@ -76,4 +69,40 @@
   justify-content: center;
   height: 100%;
   width: 100%;
+}
+
+/* Expanded section */
+.rounded-table tbody tr.expanded-row,
+.rounded-table tbody tr.expanded-row td {
+  background-color: #f5f8fd !important;
+}
+
+.rounded-table tbody tr.expanded-row:hover,
+.rounded-table tbody tr.expanded-row:hover td {
+  background-color: #f5f8fd !important;
+}
+
+.expand-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 55px;
+  row-gap: 0;
+  padding: 14px 20px 17px;
+  background-color: #f5f8fd !important;
+}
+
+.expand-grid-item {
+  padding: 7px 10px;
+  font-size: 14px;
+  line-height: 1.4;
+  border-bottom: 1px solid #edf0f5;
+}
+
+.expand-grid-item strong {
+  font-weight: 600;
+}
+
+/* Alternating background only for normal rows */
+.rounded-table tbody tr:nth-child(even):not(.expanded-row) {
+  background-color: #f9f9f9;
 }

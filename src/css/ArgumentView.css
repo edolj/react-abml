@@ -1,0 +1,139 @@
+.argument-details {
+  padding: 18px 20px 14px;
+}
+
+.argument-details h1 {
+  margin: 0 0 8px;
+  color: #242733;
+  font-size: 21px;
+  font-weight: 650;
+}
+
+.argument-details span {
+  color: #626a79;
+  font-size: 15px;
+}
+
+.argument-builder-card {
+  background: #ffffff !important;
+  border: 1px solid #e4e6ee !important;
+  border-radius: 16px !important;
+  box-shadow: 0 3px 14px rgba(25, 35, 60, 0.04);
+  padding: 20px;
+}
+
+.argument-builder-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 12px;
+}
+
+.argument-builder-header h6 {
+  margin: 0 0 4px;
+  color: #242733;
+  font-size: 16px;
+  font-weight: 650;
+}
+
+.argument-builder-header p {
+  margin: 0;
+  color: #7a8190;
+  font-size: 13px;
+}
+
+.argument-builder-info {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+
+.argument-input-wrapper {
+  width: 100%;
+  min-height: 48px;
+  padding: 6px 10px;
+  border: 1px solid #d9dee8;
+  border-radius: 10px;
+  background: #fafbfe;
+  display: flex;
+  align-items: center;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.argument-input-wrapper:focus-within {
+  border-color: #607ad1;
+  box-shadow: 0 0 0 3px rgba(96, 122, 209, 0.10);
+}
+
+.argument-alert {
+  margin-top: 10px;
+}
+
+.argument-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 18px;
+  margin-bottom: 28px;
+}
+
+.argument-action-buttons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+}
+
+.argument-hint-text {
+  color: #6c757d;
+  text-align: center;
+  margin: 10px 0 0;
+  font-size: 13px;
+}
+
+.argument-attributes {
+  width: 100%;
+  margin-top: 8px;
+}
+
+.argument-quality-header {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 14px;
+}
+
+.argument-quality-title h6 {
+  margin: 0 0 3px;
+  color: #242733;
+  font-size: 16px;
+  font-weight: 650;
+}
+
+.argument-quality-title p {
+  margin: 0;
+  color: #7a8190;
+  font-size: 13px;
+}
+
+.argument-quality-header .custom-primary-button {
+  margin-left: 20px;
+  white-space: nowrap;
+}
+
+.argument-quality-card {
+  background: #ffffff !important;
+}
+
+.attribute-grid-wrapper {
+  border: 1px solid #dfe4ee;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #ffffff;
+}
+
+.progress-bar.bg-warning {
+  color: #212529 !important;
+}

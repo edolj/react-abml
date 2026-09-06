@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import "./App.css";
 
 import SelectExampleView from "./components/SelectExampleView";
@@ -14,9 +14,16 @@ import RootRedirect from "./context/RootRedirect";
 import Instructions from "./components/Instructions";
 
 function App() {
+  const location = useLocation();
+
+  const isAuthPage =
+    location.pathname === "/" || location.pathname === "/register";
+
   return (
     <>
       <Header />
+
+      <main className={isAuthPage ? "" : "app-content"}>
       <Routes>
         <Route path="/" element={<RootRedirect />} />
         <Route path="/register" element={<RegistrationForm />} />
@@ -85,6 +92,7 @@ function App() {
           }
         />
       </Routes>
+      </main>
     </>
   );
 }

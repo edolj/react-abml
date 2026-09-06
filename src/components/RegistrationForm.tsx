@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { register } from "../api/apiRegister";
+import { FaBookOpen } from "react-icons/fa";
 import "../css/RegistrationForm.css";
 
 const RegistrationForm = () => {
@@ -32,54 +33,125 @@ const RegistrationForm = () => {
   };
 
   return (
-    <div className="registration-container">
-      <form onSubmit={handleSubmit} className="registration-form">
-        <h2>Register</h2>
-        <input
-          type="text"
-          placeholder="Username"
-          value={username}
-          onChange={(e) => {
-            setUsername(e.target.value);
-            setAlertError(null);
-          }}
-          className="registration-input"
-          required
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => {
-            setPassword(e.target.value);
-            setAlertError(null);
-          }}
-          className="registration-input"
-          required
-        />
-        <input
-          type="password"
-          placeholder="Confirm Password"
-          value={passwordConfirm}
-          onChange={(e) => {
-            setPasswordConfirm(e.target.value);
-            setAlertError(null);
-          }}
-          className="registration-input"
-          required
-        />
-        {alertError && <div className="error-text">{alertError}</div>}
-        <button type="submit" className="registration-button">
-          Register
-        </button>
-        <p style={{ marginTop: "20px" }}>
-          Already have an account?
-          <br />
-          <Link to="/" className="login-link">
-            Login here
-          </Link>
-        </p>
-      </form>
+    <div className="registration-page">
+      {/* LEFT SIDE */}
+      <div className="registration-left">
+        <div className="registration-brand">
+          <div className="registration-logo">
+            <FaBookOpen />
+          </div>
+          <span>ABML Tutor</span>
+        </div>
+
+        <div className="registration-intro">
+          <h1>
+            Start your
+            <br />
+            learning journey.
+          </h1>
+
+          <p>
+            Create an account and explore an interactive learning
+            experience built around argumentation.
+          </p>
+        </div>
+
+        {/* ABSTRACT ILLUSTRATION */}
+        <div className="registration-illustration">
+          <div className="registration-card registration-card-main">
+            <span className="registration-dot"></span>
+
+            <div className="registration-lines">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          </div>
+
+          <div className="registration-card registration-card-small">
+            <FaBookOpen />
+          </div>
+
+          <div className="registration-node registration-node-one"></div>
+          <div className="registration-node registration-node-two"></div>
+
+          <div className="registration-line registration-line-one"></div>
+          <div className="registration-line registration-line-two"></div>
+        </div>
+      </div>
+
+      {/* RIGHT SIDE */}
+      <div className="registration-right">
+        <form onSubmit={handleSubmit} className="registration-form">
+          <div className="registration-heading">
+            <h2>Create your account</h2>
+            <p>Join ABML Tutor and start learning.</p>
+          </div>
+
+          <div className="registration-field">
+            <label htmlFor="username">Username</label>
+            <input
+              id="username"
+              type="text"
+              placeholder="Choose a username"
+              value={username}
+              onChange={(e) => {
+                setUsername(e.target.value);
+                setAlertError(null);
+              }}
+              className="registration-input"
+              required
+            />
+          </div>
+
+          <div className="registration-field">
+            <label htmlFor="password">Password</label>
+            <input
+              id="password"
+              type="password"
+              placeholder="Create a password"
+              value={password}
+              onChange={(e) => {
+                setPassword(e.target.value);
+                setAlertError(null);
+              }}
+              className="registration-input"
+              required
+            />
+          </div>
+
+          <div className="registration-field">
+            <label htmlFor="passwordConfirm">Confirm password</label>
+            <input
+              id="passwordConfirm"
+              type="password"
+              placeholder="Repeat your password"
+              value={passwordConfirm}
+              onChange={(e) => {
+                setPasswordConfirm(e.target.value);
+                setAlertError(null);
+              }}
+              className="registration-input"
+              required
+            />
+          </div>
+
+          {alertError && (
+            <div className="registration-error">{alertError}</div>
+          )}
+
+          <button type="submit" className="registration-button">
+            Create account
+          </button>
+
+          <p className="registration-login-text">
+            Already have an account?{" "}
+            <Link to="/" className="login-link">
+              Login here
+            </Link>
+          </p>
+        </form>
+      </div>
     </div>
   );
 };

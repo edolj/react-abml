@@ -1,11 +1,13 @@
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { FaSignOutAlt, FaUserCircle } from "react-icons/fa";
+import { FaBookOpen, FaChartBar, FaHome, FaInfoCircle } from "react-icons/fa";
+import { FaSignOutAlt, FaUserCircle, FaPlus } from "react-icons/fa";
 import apiClient from "../api/apiClient";
 import "../css/Header.css";
 
 const Header = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { isLoggedIn, setIsLoggedIn, username, isSuperuser } = useAuth();
 
   const handleLogout = () => {
@@ -20,46 +22,87 @@ const Header = () => {
       });
   };
 
-  return (
-    <div className="header">
-      <div className="left-nav">
-        <div className="logo">ABML</div>
-        {isLoggedIn && (
-          <div className="menu">
-            <button onClick={() => navigate("/home")}>HOME</button>
-            <button onClick={() => navigate("/selectDomain")}>DOMAIN</button>
-            {isSuperuser ? (
-              <button onClick={() => navigate("/users")}>USERS</button>
-            ) : (
-              <button onClick={() => navigate("/history")}>HISTORY</button>
-            )}
-            <button onClick={() => navigate("/instructions")}>
-              INSTRUCTIONS
-            </button>
-          </div>
-        )}
-      </div>
-      {isLoggedIn && (
-        <div style={{ display: "inline-flex", alignItems: "center", gap: 10 }}>
-          <FaUserCircle size={24} className="text-white" />
+  if (!isLoggedIn) {
+    return null;
+  }
 
-          <span style={{ color: "#fff", fontWeight: 500 }}>{username}</span>
+  const isActive = (path: string) => location.pathname === path;
+
+  return (
+    <>
+      {/* Left sidebar */}
+      <aside className="app-sidebar">
+        <div className="sidebar-brand">
+          <div className="sidebar-logo">
+            <FaBookOpen />
+          </div>
+
+          <div className="sidebar-title">ABML Tutor</div>
+        </div>
+
+        <nav className="sidebar-navigation">
+          <div className="sidebar-section-label">MENU</div>
 
           <button
-            className="logout-button"
-            onClick={handleLogout}
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              marginLeft: "20px",
-            }}
+            className={`sidebar-link ${
+              isActive("/home") ? "active" : ""
+            }`}
+            onClick={() => navigate("/home")}
           >
-            <FaSignOutAlt size={18} style={{ marginRight: "8px" }} />
-            Logout
+            <FaHome />
+            <span>Dashboard</span>
+          </button>
+
+          <button
+            className={`sidebar-link ${
+              isActive("/selectDomain") ? "active" : ""
+            }`}
+            onClick={() => navigate("/selectDomain")}
+          >
+            <FaPlus />
+            <span>New Session</span>
+          </button>
+
+          <button
+            className={`sidebar-link ${
+              isActive("/history") || isActive("/users") ? "active" : ""
+            }`}
+            onClick={() =>
+              navigate(isSuperuser ? "/users" : "/history")
+            }
+          >
+            <FaChartBar />
+            <span>{isSuperuser ? "Users" : "History"}</span>
+          </button>
+
+          <button
+            className={`sidebar-link ${
+              isActive("/instructions") ? "active" : ""
+            }`}
+            onClick={() => navigate("/instructions")}
+          >
+            <FaInfoCircle />
+            <span>Instructions</span>
+          </button>
+        </nav>
+      </aside>
+
+      {/* Small top bar */}
+      <header className="app-topbar">
+        <div className="topbar-user">
+          <FaUserCircle className="topbar-user-icon" />
+          <span>{username}</span>
+
+          <button
+            className="topbar-logout"
+            onClick={handleLogout}
+          >
+            <FaSignOutAlt />
+            <span>Logout</span>
           </button>
         </div>
-      )}
-    </div>
+      </header>
+    </>
   );
 };
 

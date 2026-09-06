@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import { Container, Card, Button, Spinner } from "react-bootstrap";
+import { Container, Spinner } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { getObject, LearningObjectResponse } from "../api/apiHomePage";
+import "../css/HomePage.css";
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -21,12 +22,7 @@ const HomePage = () => {
       .finally(() => setLoading(false));
   }, []);
 
-  const handleStartFlow = (mode: "new" | "continue") => {
-    if (mode === "new") {
-      navigate("/selectDomain");
-      return;
-    }
-
+  const handleContinue = () => {
     if (learningData?.name) {
       navigate("/selectExample", {
         state: { selectedDomain: learningData.name },
@@ -34,65 +30,131 @@ const HomePage = () => {
     }
   };
 
+  const handleNewSession = () => {
+    navigate("/selectDomain");
+  };
+
   return (
-    <Container className="my-4">
-      <Card className="box-with-border card-view">
-        <Card.Body>
-          <h2 className="mb-3">Welcome to ABML Tutor</h2>
-          <p className="text-muted mb-4">
-            This application helps you explore attribute-based machine learning
-            by interacting with domain-specific data. You can review attribute
-            suggestions, select important features and guide the learning
-            process in a structured way.
-          </p>
-          <p className="text-muted">
-            Before getting started, you can review the{" "}
-            <Button
-              variant="link"
-              className="p-0 align-baseline"
-              onClick={() => navigate("/instructions")}
-            >
-              Instructions
-            </Button>{" "}
-            to understand how everything works.
-          </p>
-          {loading ? (
-            <Spinner animation="border" />
-          ) : (
-            <>
-              <Container>
-                <div className="d-flex gap-3 align-items-center">
-                  {learningData && (
-                    <Button
-                      variant="success"
-                      onClick={() => handleStartFlow("continue")}
-                    >
-                      Continue Session
-                    </Button>
-                  )}
-                  {learningData?.name && (
-                    <span className="text-muted">
-                      Last domain: <strong>{learningData.name}</strong>
-                    </span>
-                  )}
+    <div className="dashboard-page">
+      <Container fluid className="dashboard-container">
+
+        {/* Welcome */}
+        <section className="dashboard-welcome">
+          <div>
+            <p className="dashboard-eyebrow">ABML TUTOR</p>
+            <h1>Welcome back!</h1>
+            {/* <p>
+              Continue your learning journey or start a new ABML session.
+            </p> */}
+          </div>
+        </section>
+
+        {/* Main action */}
+        <section className="dashboard-main-card">
+          <div className="dashboard-main-content">
+            <div>
+              <span className="dashboard-card-label">
+                {learningData ? "CONTINUE LEARNING" : "GET STARTED"}
+              </span>
+
+              <h2>
+                {learningData
+                  ? "Continue where you left off"
+                  : "Start your first learning session"}
+              </h2>
+
+              <p>
+                {learningData
+                  ? "Return to your previous learning session and continue working with your selected domain."
+                  : "Choose a domain and explore attribute-based machine learning through an interactive learning process."}
+              </p>
+
+              {loading ? (
+                <Spinner animation="border" size="sm" />
+              ) : learningData ? (
+                <div className="dashboard-current-domain">
+                  <span>Current domain</span>
+                  <strong>{learningData.name}</strong>
                 </div>
-              </Container>
-              {learningData && <Container>-------- OR --------</Container>}
-              <Container>
-                <div>
-                  <Button
-                    variant="success"
-                    onClick={() => handleStartFlow("new")}
+              ) : null}
+            </div>
+
+            <div className="dashboard-main-action">
+              {!loading && learningData ? (
+                <button
+                  className="dashboard-primary-button"
+                  onClick={handleContinue}
+                >
+                  Continue Session
+                  <span>→</span>
+                </button>
+              ) : (
+                !loading && (
+                  <button
+                    className="dashboard-primary-button"
+                    onClick={handleNewSession}
                   >
                     Start New Session
-                  </Button>
-                </div>
-              </Container>
-            </>
-          )}
-        </Card.Body>
-      </Card>
-    </Container>
+                    <span>→</span>
+                  </button>
+                )
+              )}
+            </div>
+          </div>
+        </section>
+
+        {/* Quick access */}
+        <section className="dashboard-section">
+          <div className="dashboard-section-header">
+            <div>
+              <h2>Quick access</h2>
+              <p>Navigate to the main areas of the tutor.</p>
+            </div>
+          </div>
+
+          <div className="dashboard-grid">
+
+            <button
+              className="dashboard-action-card"
+              onClick={handleNewSession}
+            >
+              <div className="dashboard-icon">＋</div>
+              <div>
+                <h3>New Session</h3>
+                <p>Choose a domain and start a new learning session.</p>
+              </div>
+              <span className="dashboard-arrow">→</span>
+            </button>
+
+            <button
+              className="dashboard-action-card"
+              onClick={() => navigate("/history")}
+            >
+              <div className="dashboard-icon">↗</div>
+              <div>
+                <h3>History</h3>
+                <p>Review your previous learning sessions.</p>
+              </div>
+              <span className="dashboard-arrow">→</span>
+            </button>
+
+            <button
+              className="dashboard-action-card"
+              onClick={() => navigate("/instructions")}
+            >
+              <div className="dashboard-icon">?</div>
+              <div>
+                <h3>Instructions</h3>
+                <p>Learn how the ABML Tutor works.</p>
+              </div>
+              <span className="dashboard-arrow">→</span>
+            </button>
+
+          </div>
+        </section>
+
+      </Container>
+    </div>
   );
 };
 

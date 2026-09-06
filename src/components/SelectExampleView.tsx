@@ -8,6 +8,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import Alert from "./Alert";
 import apiClient from "../api/apiClient";
 import "../css/RoundTable.css";
+import "../css/SelectExampleView.css";
 
 interface CriticalInstance {
   critical_index: string;
@@ -182,30 +183,31 @@ function SelectExampleView() {
   }, [isLoading]);
 
   return (
-    <>
-      <div className="container">
-        {alertError && (
-          <Alert onClose={() => setAlertError(null)}>{alertError}</Alert>
-        )}
-        <div
-          className="box-with-border card-view"
-          style={{ marginBottom: "20px" }}
-        >
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            <h2 style={{ margin: 0 }}>Select critical example</h2>
-            {iterationNumber !== null && (
-              <div style={{ color: "#666" }}>
-                {`Iteration ${iterationNumber + 1}`}
-              </div>
-            )}
+    <div className="select-example-page">
+      {alertError && (
+        <Alert onClose={() => setAlertError(null)}>
+          {alertError}
+        </Alert>
+      )}
+
+      <div className="select-example-container">
+
+        {/* Page header */}
+        <div className="select-example-header">
+          <div>
+            <p className="select-example-eyebrow">LEARNING SESSION</p>
+
+            <h1>Select a critical example</h1>
           </div>
+
+          {iterationNumber !== null && (
+            <div className="iteration-badge">
+              Iteration {iterationNumber + 1}
+            </div>
+          )}
         </div>
+
+        {/* Critical examples */}
         {isLoading ? (
           <Backdrop
             sx={{
@@ -216,21 +218,27 @@ function SelectExampleView() {
             open
           >
             <CircularProgress color="inherit" />
-            <div style={{ marginTop: 16, fontSize: "1.2rem" }}>
+
+            <div
+              style={{
+                marginTop: 16,
+                fontSize: "1.2rem",
+              }}
+            >
               {loadingMessage}
             </div>
           </Backdrop>
         ) : (
           <MainTable
-            columns={tableColumns}
-            data={tableData}
-            onRowClick={handleRowClick}
-            expandData={getExpandedData()}
-            dNames={displayNames}
-          />
+              columns={tableColumns}
+              data={tableData}
+              onRowClick={handleRowClick}
+              expandData={getExpandedData()}
+              dNames={displayNames}
+            />
         )}
       </div>
-    </>
+    </div>
   );
 }
 

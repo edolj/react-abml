@@ -447,59 +447,60 @@ const AttributeList: React.FC<Props> = ({
         eventKey="expert"
         title={
           <span style={{ display: "flex", alignItems: "center", gap: "4px" }}>
-            <span
-              style={{ color: "red", display: "flex", alignItems: "center" }}
-            >
-              <FaExclamation />
-            </span>
             Expert
           </span>
         }
       >
         <div className="pt-3">
-          <Grid container>
-            {renderAttributes(
-              attributes.filter(
-                (attr) =>
-                  expertAttr.includes(attr.key) ||
-                  attrTypes?.[attr.key] === "target"
-              )
-            )}
-          </Grid>
+          <div className="attribute-grid-wrapper">
+            <Grid container>
+              {renderAttributes(
+                attributes.filter(
+                  (attr) =>
+                    expertAttr.includes(attr.key) ||
+                    attrTypes?.[attr.key] === "target"
+                )
+              )}
+            </Grid>
+          </div>
         </div>
       </Tab>
 
       {/* Numeric Attributes */}
       <Tab eventKey="numeric" title="General 1">
         <div className="pt-3">
-          <Grid container>
-            {renderAttributes(
-              attributes.filter(
-                (attr) =>
-                  ((attrTypes?.[attr.key] === "continuous" ||
-                    ratioAttr.includes(attr.key) ||
-                    eurAttr.includes(attr.key)) &&
-                    !expertAttr.includes(attr.key)) ||
-                  attrTypes?.[attr.key] === "target"
-              )
-            )}
-          </Grid>
+          <div className="attribute-grid-wrapper">
+            <Grid container>
+              {renderAttributes(
+                attributes.filter(
+                  (attr) =>
+                    ((attrTypes?.[attr.key] === "continuous" ||
+                      ratioAttr.includes(attr.key) ||
+                      eurAttr.includes(attr.key)) &&
+                      !expertAttr.includes(attr.key)) ||
+                    attrTypes?.[attr.key] === "target"
+                )
+              )}
+            </Grid>
+          </div>
         </div>
       </Tab>
 
       {/* Categorical Attributes */}
       <Tab eventKey="categorical" title="General 2">
         <div className="pt-3">
-          <Grid container>
-            {renderAttributes(
-              attributes.filter(
-                (attr) =>
-                  (attrTypes?.[attr.key] === "discrete" &&
-                    !expertAttr.includes(attr.key)) ||
-                  attrTypes?.[attr.key] === "target"
-              )
-            )}
-          </Grid>
+          <div className="attribute-grid-wrapper">
+            <Grid container>
+              {renderAttributes(
+                attributes.filter(
+                  (attr) =>
+                    (attrTypes?.[attr.key] === "discrete" &&
+                      !expertAttr.includes(attr.key)) ||
+                    attrTypes?.[attr.key] === "target"
+                )
+              )}
+            </Grid>
+          </div>
         </div>
       </Tab>
     </Tabs>

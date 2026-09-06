@@ -9,6 +9,7 @@ import { getObject } from "../api/apiHomePage";
 import apiClient from "../api/apiClient";
 import "react-toastify/dist/ReactToastify.css";
 import "../css/PrimaryButton.css";
+import "../css/ArgumentView.css";
 import Alert from "./Alert";
 import Tooltip from "@mui/material/Tooltip";
 import Backdrop from "@mui/material/Backdrop";
@@ -391,6 +392,9 @@ function ArgumentView() {
           mScore: mScore,
         };
         setSummaryData(summaryData);
+        
+        // Start generating tutor feedback in the background
+        getSummary(summaryData);
       })
       .catch((error) => {
         console.error("Argument view POST method error:", error);
@@ -412,7 +416,6 @@ function ArgumentView() {
     // setSelectedFilters([]);
 
     setShowTransition(true);
-    getSummary(summaryData);
   };
 
   const endIteration = async () => {
@@ -505,42 +508,25 @@ function ArgumentView() {
           gap: "10px",
         }}
       >
-        <div
-          className="box-with-border card-view"
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
-          <div style={{ display: "flex", flexDirection: "column" }}>
-            <h4>Details about: {idName}</h4>
-            <span>
-              {targetClassName}: <b style={{ color: "green" }}>{targetClass}</b>
-            </span>
-          </div>
-          {/* {argumentsSent && (
-            <Button variant="outline-success" onClick={doneWithArgumentation}>
-              Next Example
-              <FaArrowRight
-                style={{ marginLeft: "8px", marginBottom: "2px" }}
-              />
-            </Button>
-          )} */}
+        <div className="argument-details">
+          <h1>Details about: {idName}</h1>
+          <span>
+            {targetClassName}:{" "}
+            <b style={{ color: "#198754", fontWeight: 700 }}>
+              {targetClass}
+            </b>
+          </span>
         </div>
 
         {/* M-Score Box */}
         {argumentsSent && (
-          <div className="box-with-border card-view">
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                marginBottom: "12px",
-              }}
-            >
-              <strong>Quality of arguments</strong>
+          <div className="box-with-border card-view argument-quality-card">
+            <div className="argument-quality-header">
+              <div className="argument-quality-title">
+                <h6>Argument quality</h6>
+                <p>How strong is your current argument?</p>
+              </div>
+
               <PrimaryButton onClick={showHintMessage}>
                 <FaLightbulb
                   style={{
@@ -552,12 +538,14 @@ function ArgumentView() {
                 Hint
               </PrimaryButton>
             </div>
+
             <ProgressBar style={{ height: "18px" }}>
               <ProgressBar
                 now={mScore}
                 label={`${mScore}%`}
                 variant="success"
               />
+
               <Tooltip title="How much the argument can be improved" arrow>
                 <ProgressBar
                   now={hintScore - mScore}
@@ -570,51 +558,39 @@ function ArgumentView() {
           </div>
         )}
 
-        <div className="box-with-border card-view">
-          <h6> Select arguments from list </h6>
-          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <div
-              style={{
-                border: "1px solid #ccc",
-                borderRadius: 4,
-                padding: "0.5rem",
-                marginBottom: 8,
-                background: "white",
-                width: "100%",
-                margin: "0 auto",
-                minHeight: "48px",
-              }}
-            >
-              <Bubbles bubbles={selectedFilters} onRemove={removeBubble} onBubbleClick={handleBubbleClick} />
+        <div className="box-with-border card-view argument-builder-card">
+          <div className="argument-builder-header">
+            <div>
+              <h6>Build your argument</h6>
+              <p>Select the attributes that support your assessment.</p>
             </div>
-            <ExpertAttributesModal
-              displayNames={filteredDisplayNames}
-              descriptions={filteredAttrDescs}
+
+            <div className="argument-builder-info">
+              <ExpertAttributesModal
+                displayNames={filteredDisplayNames}
+                descriptions={filteredAttrDescs}
+              />
+            </div>
+          </div>
+
+          <div className="argument-input-wrapper">
+            <Bubbles
+              bubbles={selectedFilters}
+              onRemove={removeBubble}
+              onBubbleClick={handleBubbleClick}
             />
           </div>
-          <div style={{ paddingTop: "10px" }}>
+
+          <div className="argument-alert">
             {alertError && (
-              <Alert onClose={() => setAlertError(null)}>{alertError}</Alert>
+              <Alert onClose={() => setAlertError(null)}>
+                {alertError}
+              </Alert>
             )}
           </div>
-          <div
-            style={{
-              marginTop: 16,
-              marginBottom: 24,
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              gap: 8,
-            }}
-          >
-            <div
-              style={{
-                display: "flex",
-                flexWrap: "wrap",
-                justifyContent: "center",
-                gap: 16,
-              }}
-            >
+
+          <div className="argument-actions">
+            <div className="argument-action-buttons">
               <Button
                 variant="success"
                 onClick={showCriticalExample}
@@ -624,34 +600,29 @@ function ArgumentView() {
               </Button>
 
               {argumentsSent && (
-                <Button variant="outline-success" onClick={doneWithArgumentation}>
+                <Button
+                  variant="outline-success"
+                  onClick={doneWithArgumentation}
+                >
                   Next Example
-                  <FaArrowRight style={{ marginLeft: "8px", marginBottom: "2px" }} />
+                  <FaArrowRight
+                    style={{
+                      marginLeft: "8px",
+                      marginBottom: "2px",
+                    }}
+                  />
                 </Button>
               )}
             </div>
 
             {argumentsSent && mScore < 50 && (
-              <p
-                style={{
-                  color: "#6c757d",
-                  textAlign: "center",
-                  margin: 0,
-                  fontSize: "0.95rem",
-                }}
-              >
+              <p className="argument-hint-text">
                 Nice — try using a hint to make your argument even stronger.
               </p>
             )}
           </div>
 
-          <div
-            style={{
-              width: "100%",
-              margin: "0 auto",
-              marginTop: "40px",
-            }}
-          >
+          <div className="argument-attributes">
             <AttributeList
               attributes={formattedData}
               hasCounterExamples={hasCounterExamples}
@@ -680,7 +651,10 @@ function ArgumentView() {
                 })
               }
               onCategoryAddClick={(key) =>
-                addBubble({ key, displayName: display_names[key] })
+                addBubble({
+                  key,
+                  displayName: display_names[key],
+                })
               }
               onCategoryDeleteClick={(key) => removeBubble(key)}
             />

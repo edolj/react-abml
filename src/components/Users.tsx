@@ -101,7 +101,7 @@ const Users = () => {
     }));
 
     return (
-      <Card key={userData.username} className="box-with-border card-view mb-4">
+      <Card key={userData.username} className="box-with-border card-view history-card mb-4">
         <Card.Body>
           <Card.Title>
             <div>{userData.username}</div>
@@ -190,7 +190,7 @@ const Users = () => {
       .slice(0, 10);
 
     return (
-      <Card key={domainName} className="box-with-border card-view mb-4">
+      <Card key={domainName} className="box-with-border card-view history-card mb-4">
         <Card.Body>
           <Card.Title style={{ fontSize: "1.35rem", fontWeight: 600, marginBottom: "1rem" }}>
             {domainName}

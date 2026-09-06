@@ -3,7 +3,7 @@ import { Container, Card } from "react-bootstrap";
 const Instructions = () => {
   return (
     <Container className="my-4">
-      <Card className="box-with-border card-view">
+      <Card className="box-with-border card-view instructions-card">
         <Card.Body>
           <h2 className="mb-3">How to Use ABML Tutor</h2>
           <p className="text-muted mb-4">

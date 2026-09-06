@@ -1,0 +1,241 @@
+.dashboard-page {
+  min-height: 100vh;
+  padding: 36px 42px 60px;
+}
+
+.dashboard-container {
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
+.dashboard-welcome {
+  margin-bottom: 30px;
+}
+
+.dashboard-eyebrow {
+  margin: 0 0 8px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: #607ad1;
+}
+
+.dashboard-welcome h1 {
+  margin: 0;
+  font-size: 32px;
+  font-weight: 700;
+  color: #181a23;
+}
+
+.dashboard-welcome p {
+  margin: 8px 0 0;
+  color: #6f7482;
+  font-size: 15px;
+}
+
+/* Main card */
+
+.dashboard-main-card {
+  background: #ffffff;
+  border: 1px solid #e4e6ee;
+  border-radius: 16px;
+  box-shadow: 0 4px 18px rgba(25, 35, 60, 0.05);
+  margin-bottom: 42px;
+}
+
+.dashboard-main-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 40px;
+  padding: 34px 38px;
+}
+
+.dashboard-card-label {
+  display: inline-block;
+  margin-bottom: 10px;
+  color: #607ad1;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+}
+
+.dashboard-main-content h2 {
+  margin: 0;
+  font-size: 23px;
+  font-weight: 650;
+  color: #181a23;
+}
+
+.dashboard-main-content p {
+  max-width: 650px;
+  margin: 10px 0 18px;
+  color: #737887;
+  line-height: 1.6;
+}
+
+.dashboard-current-domain {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 14px;
+  background: #f6f7fb;
+  border-radius: 8px;
+}
+
+.dashboard-current-domain span {
+  font-size: 11px;
+  color: #858a98;
+}
+
+.dashboard-current-domain strong {
+  font-size: 14px;
+  color: #292d39;
+}
+
+.dashboard-main-action {
+  flex-shrink: 0;
+}
+
+.dashboard-primary-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 18px;
+  border: none;
+  border-radius: 9px;
+  padding: 13px 18px;
+  background: #607ad1;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.dashboard-primary-button:hover {
+  background: #526bc0;
+  transform: translateY(-1px);
+}
+
+.dashboard-primary-button span {
+  font-size: 18px;
+}
+
+/* Quick access */
+
+.dashboard-section {
+  margin-bottom: 30px;
+}
+
+.dashboard-section-header {
+  margin-bottom: 16px;
+}
+
+.dashboard-section-header h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 650;
+  color: #181a23;
+}
+
+.dashboard-section-header p {
+  margin: 5px 0 0;
+  color: #858a98;
+  font-size: 14px;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.dashboard-action-card {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  min-height: 150px;
+  padding: 22px;
+  text-align: left;
+  background: #ffffff;
+  border: 1px solid #e4e6ee;
+  border-radius: 14px;
+  box-shadow: 0 3px 12px rgba(25, 35, 60, 0.035);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.dashboard-action-card:hover {
+  border-color: #cbd3ec;
+  box-shadow: 0 7px 20px rgba(25, 35, 60, 0.07);
+  transform: translateY(-2px);
+}
+
+.dashboard-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 38px;
+  height: 38px;
+  border-radius: 9px;
+  background: #eef1fc;
+  color: #607ad1;
+  font-size: 20px;
+  font-weight: 500;
+}
+
+.dashboard-action-card h3 {
+  margin: 1px 0 5px;
+  font-size: 15px;
+  font-weight: 650;
+  color: #242733;
+}
+
+.dashboard-action-card p {
+  margin: 0;
+  padding-right: 10px;
+  color: #858a98;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.dashboard-arrow {
+  position: absolute;
+  right: 20px;
+  bottom: 18px;
+  color: #a0a5b1;
+  font-size: 16px;
+}
+
+/* Responsive */
+
+@media (max-width: 900px) {
+  .dashboard-page {
+    padding: 28px 24px 50px;
+  }
+
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-main-content {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 600px) {
+  .dashboard-page {
+    padding: 24px 16px 40px;
+  }
+
+  .dashboard-welcome h1 {
+    font-size: 26px;
+  }
+
+  .dashboard-main-content {
+    padding: 26px 24px;
+  }
+}
