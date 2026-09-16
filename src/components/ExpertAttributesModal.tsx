@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Button, Modal } from "react-bootstrap";
 import { FaInfoCircle } from "react-icons/fa";
-import PrimaryButton from "./PrimaryButton";
 
 type ExpertAttributesModalProps = {
   displayNames?: Record<string, string>;
@@ -26,7 +25,7 @@ function ExpertAttributesModal({
       <Modal show={show} onHide={handleClose} size="lg" scrollable>
         <Modal.Header closeButton style={{ backgroundColor: "#f8f8f8" }}>
           <Modal.Title className="text-center w-100">
-            Attribute Info
+            Informacije o značilki
           </Modal.Title>
         </Modal.Header>
         <Modal.Body style={{ backgroundColor: "#f9f9f9", padding: "20px" }}>
@@ -44,7 +43,7 @@ function ExpertAttributesModal({
             >
               <h5>{displayNames[key]}</h5>
               <hr />
-              <p>{descriptions?.[key] || <em>No description provided.</em>}</p>
+              <p>{descriptions?.[key] || <em>Ni opisa.</em>}</p>
             </div>
           ))}
         </Modal.Body>

@@ -15,7 +15,7 @@ const RegistrationForm = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (password !== passwordConfirm) {
-      setAlertError("Passwords do not match.");
+      setAlertError("Gesli se ne ujemata.");
       return;
     }
 
@@ -27,7 +27,7 @@ const RegistrationForm = () => {
       const errorMessage =
         error.response?.data?.non_field_errors ||
         error.message ||
-        "Registration failed";
+        "Registracija neuspešna.";
       setAlertError(errorMessage);
     }
   };
@@ -45,14 +45,13 @@ const RegistrationForm = () => {
 
         <div className="registration-intro">
           <h1>
-            Start your
+            Začnite svojo
             <br />
-            learning journey.
+            učno pot.
           </h1>
 
           <p>
-            Create an account and explore an interactive learning
-            experience built around argumentation.
+            Ustvarite račun in raziščite interaktivno učno izkušnjo, ki temelji na argumentaciji.
           </p>
         </div>
 
@@ -84,16 +83,16 @@ const RegistrationForm = () => {
       <div className="registration-right">
         <form onSubmit={handleSubmit} className="registration-form">
           <div className="registration-heading">
-            <h2>Create your account</h2>
-            <p>Join ABML Tutor and start learning.</p>
+            <h2>Ustvarite račun</h2>
+            <p>Pridružite se ABML Tutorju in začnite z učenjem.</p>
           </div>
 
           <div className="registration-field">
-            <label htmlFor="username">Username</label>
+            <label htmlFor="username">Uporabniško ime</label>
             <input
               id="username"
               type="text"
-              placeholder="Choose a username"
+              placeholder="Izberite uporabniško ime"
               value={username}
               onChange={(e) => {
                 setUsername(e.target.value);
@@ -105,11 +104,11 @@ const RegistrationForm = () => {
           </div>
 
           <div className="registration-field">
-            <label htmlFor="password">Password</label>
+            <label htmlFor="password">Geslo</label>
             <input
               id="password"
               type="password"
-              placeholder="Create a password"
+              placeholder="Ustvarite geslo"
               value={password}
               onChange={(e) => {
                 setPassword(e.target.value);
@@ -121,11 +120,11 @@ const RegistrationForm = () => {
           </div>
 
           <div className="registration-field">
-            <label htmlFor="passwordConfirm">Confirm password</label>
+            <label htmlFor="passwordConfirm">Potrdite geslo</label>
             <input
               id="passwordConfirm"
               type="password"
-              placeholder="Repeat your password"
+              placeholder="Ponovite geslo"
               value={passwordConfirm}
               onChange={(e) => {
                 setPasswordConfirm(e.target.value);
@@ -141,13 +140,13 @@ const RegistrationForm = () => {
           )}
 
           <button type="submit" className="registration-button">
-            Create account
+            Ustvari račun
           </button>
 
           <p className="registration-login-text">
-            Already have an account?{" "}
+            Že imate račun?{" "}
             <Link to="/" className="login-link">
-              Login here
+              Prijavite se tukaj
             </Link>
           </p>
         </form>

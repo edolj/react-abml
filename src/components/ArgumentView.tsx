@@ -39,10 +39,10 @@ type SkillType = {
 };
 
 const loadingMessages = [
-  "Processing arguments...",
-  "Searching for possible counter examples...",
-  "Double-checking everything...",
-  "Still working... hang tight!",
+  "Obdelava argumentov...",
+  "Iskanje možnih protiprimerov...",
+  "Preverjanje...",
+  "Še vedno delam ... počakajte!",
 ];
 
 function ArgumentView() {
@@ -258,9 +258,9 @@ function ArgumentView() {
     );
 
     const message = attrList.length
-      ? `Argument can be improved with:\n${attrList.join("\n")}`
-      : `Argument can be improved by removing one of selected.`;
-    const score = ""; // "Quality: " + hintScore / 100;
+      ? `Argument izboljšati z:\n${attrList.join("\n")}`
+      : `Argument izboljšati z odstranitvijo ene od izbranih značilk.`;
+    const score = ""; // "Kakovost: " + hintScore / 100;
     showToast(score, message);
   };
 
@@ -509,7 +509,7 @@ function ArgumentView() {
         }}
       >
         <div className="argument-details">
-          <h1>Details about: {idName}</h1>
+          <h1>Podrobnosti o: {idName}</h1>
           <span>
             {targetClassName}:{" "}
             <b style={{ color: "#198754", fontWeight: 700 }}>
@@ -523,8 +523,8 @@ function ArgumentView() {
           <div className="box-with-border card-view argument-quality-card">
             <div className="argument-quality-header">
               <div className="argument-quality-title">
-                <h6>Argument quality</h6>
-                <p>How strong is your current argument?</p>
+                <h6>Kakovost argumenta</h6>
+                <p>Kako kakovosten je vaš trenutni argument?</p>
               </div>
 
               <PrimaryButton onClick={showHintMessage}>
@@ -535,7 +535,7 @@ function ArgumentView() {
                     color: "white",
                   }}
                 />
-                Hint
+                Namig
               </PrimaryButton>
             </div>
 
@@ -546,7 +546,7 @@ function ArgumentView() {
                 variant="success"
               />
 
-              <Tooltip title="How much the argument can be improved" arrow>
+              <Tooltip title="Za koliko je mogoče izboljšati argument" arrow>
                 <ProgressBar
                   now={hintScore - mScore}
                   label={`${hintScore - mScore}%`}
@@ -561,8 +561,8 @@ function ArgumentView() {
         <div className="box-with-border card-view argument-builder-card">
           <div className="argument-builder-header">
             <div>
-              <h6>Build your argument</h6>
-              <p>Select the attributes that support your assessment.</p>
+              <h6>Ustvarite argument</h6>
+              <p>Izberite značilke, ki podpirajo vašo oceno.</p>
             </div>
 
             <div className="argument-builder-info">
@@ -596,7 +596,7 @@ function ArgumentView() {
                 onClick={showCriticalExample}
                 className="custom-primary-button"
               >
-                Send arguments
+                Pošlji argumente
               </Button>
 
               {argumentsSent && (
@@ -604,7 +604,7 @@ function ArgumentView() {
                   variant="outline-success"
                   onClick={doneWithArgumentation}
                 >
-                  Next Example
+                  Naslednji primer
                   <FaArrowRight
                     style={{
                       marginLeft: "8px",
@@ -617,7 +617,7 @@ function ArgumentView() {
 
             {argumentsSent && mScore < 50 && (
               <p className="argument-hint-text">
-                Nice — try using a hint to make your argument even stronger.
+                Odlično — poskusite uporabiti namig, da bo vaš argument še boljši.
               </p>
             )}
           </div>
@@ -639,7 +639,7 @@ function ArgumentView() {
                   key,
                   value,
                   operator: ">=",
-                  displayName: display_names[key] + " is high",
+                  displayName: display_names[key] + " je visoko",
                 })
               }
               onLowClick={(key, value) =>
@@ -647,7 +647,7 @@ function ArgumentView() {
                   key,
                   value,
                   operator: "<=",
-                  displayName: display_names[key] + " is low",
+                  displayName: display_names[key] + " je nizko",
                 })
               }
               onCategoryAddClick={(key) =>
@@ -703,7 +703,7 @@ function ArgumentView() {
           <DialogContent>
             <Stack spacing={3} alignItems="center" textAlign="center">
               <Typography variant="h6" sx={{ mb: 2 }}>
-                Tutor Feedback
+                Povratne informacije tutorja
               </Typography>
               {summaryLoading && (
                 <div
@@ -714,7 +714,7 @@ function ArgumentView() {
                   }}
                 >
                   <div className="card-header mb-2">
-                    <strong>Key Takeaways</strong>
+                    <strong>Ključne ugotovitve</strong>
                   </div>
                   <div className="card-body">
                     <Placeholder as="p" animation="glow">
@@ -746,7 +746,7 @@ function ArgumentView() {
                 color="primary"
                 onClick={() => endIteration()}
               >
-                Continue
+                Nadaljuj
               </Button>
             </Stack>
           </DialogContent>
@@ -764,7 +764,7 @@ function ArgumentView() {
           <div style={{ padding: 12 }}>
             <TextField
               size="small"
-              placeholder="Bound (optional)"
+              placeholder="Meja (izbirno)"
               autoFocus
               value={selectedBubble?.bound ?? ""}
               onChange={(e) => handleBoundChange(e.target.value)}

@@ -77,7 +77,7 @@ const DomainView = () => {
         setFile(null);
       })
       .catch((err) =>
-        setErrorMsg(err.response?.data?.error || "Upload failed")
+        setErrorMsg(err.response?.data?.error || "Nalaganje ni uspelo")
       )
       .finally(() => setLoading(false));
   };
@@ -109,7 +109,7 @@ const DomainView = () => {
       })
       .catch((err) => {
         setErrorMsg(
-          err.response?.data?.error || "Failed to delete domain."
+          err.response?.data?.error || "Brisanje domene ni uspelo."
         );
       })
       .finally(() => {
@@ -131,11 +131,8 @@ const DomainView = () => {
         {/* Page heading */}
         <div className="domain-page-header">
           <div>
-            <p className="domain-eyebrow">NEW SESSION</p>
-            <h1>Start a new session</h1>
-            {/* <p>
-              Select a domain to begin your learning session.
-            </p> */}
+            <p className="domain-eyebrow">NOVA SEJA</p>
+            <h1>Začnite novo sejo</h1>
           </div>
         </div>
 
@@ -145,9 +142,9 @@ const DomainView = () => {
 
             <div className="domain-card-header">
               <div>
-                <h2>Available domains</h2>
+                <h2>Razpoložljive domene</h2>
                 <p>
-                  Select a domain to begin your learning session.
+                  Izberite domeno za začetek učne seje.
                 </p>
               </div>
 
@@ -185,7 +182,7 @@ const DomainView = () => {
                           <h3>{domain.name}</h3>
 
                           <div className="domain-attribute-count">
-                            {domain.attributes.length} attributes
+                            {domain.attributes.length} značilk
                           </div>
 
                           {isSuperuser && (
@@ -199,7 +196,7 @@ const DomainView = () => {
                                 }}
                               >
                                 <FaEdit />
-                                <span>Edit</span>
+                                <span>Uredi</span>
                               </Button>
 
                               <Button
@@ -236,7 +233,7 @@ const DomainView = () => {
                   ) : (
                     <>
                       <FaUpload />
-                      <span>Add Domain</span>
+                      <span>Dodaj domeno</span>
                     </>
                   )}
                 </Button>
@@ -247,7 +244,7 @@ const DomainView = () => {
                 onClick={() => handleStartFlow("new")}
                 disabled={!selectedDomain}
               >
-                <span>Start</span>
+                <span>Začni</span>
                 <FaArrowRight />
               </Button>
             </div>
@@ -264,7 +261,7 @@ const DomainView = () => {
       >
         <Modal.Header closeButton>
           <Modal.Title className="w-100 text-center">
-            Upload New Domain
+            Naloži novo domeno
           </Modal.Title>
         </Modal.Header>
 
@@ -276,7 +273,7 @@ const DomainView = () => {
             >
               <Form.Control
                 type="text"
-                placeholder="Enter domain name"
+                placeholder="Vnesite ime domene"
                 value={domainName}
                 onChange={(e) =>
                   setDomainName(e.target.value)
@@ -313,7 +310,7 @@ const DomainView = () => {
               setShowUploadModal(false)
             }
           >
-            Cancel
+            Prekliči
           </Button>
 
           <Button
@@ -324,7 +321,7 @@ const DomainView = () => {
             {loading ? (
               <Spinner animation="border" size="sm" />
             ) : (
-              "Upload"
+              "Naloži"
             )}
           </Button>
         </Modal.Footer>
@@ -338,12 +335,12 @@ const DomainView = () => {
       >
         <Modal.Header closeButton>
           <Modal.Title className="w-100 text-center">
-            Confirm Deletion
+            Potrditev brisanja
           </Modal.Title>
         </Modal.Header>
 
         <Modal.Body className="text-center">
-          Are you sure you want to delete this domain?
+          Ali ste prepričani, da želite izbrisati to domeno?
         </Modal.Body>
 
         <Modal.Footer className="justify-content-center">
@@ -353,14 +350,14 @@ const DomainView = () => {
               setShowDeleteModal(false)
             }
           >
-            Cancel
+            Prekliči
           </Button>
 
           <Button
             variant="danger"
             onClick={confirmDeleteDomain}
           >
-            Confirm
+            Potrdi
           </Button>
         </Modal.Footer>
       </Modal>

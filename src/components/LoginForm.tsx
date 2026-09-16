@@ -23,7 +23,7 @@ const LoginForm = () => {
       navigate("/home");
     } catch (error) {
       console.error("Login error:", error);
-      setAlertError("Wrong username or password");
+      setAlertError("Napačno uporabniško ime ali geslo");
     }
   };
 
@@ -38,11 +38,10 @@ const LoginForm = () => {
         </div>
 
         <div className="login-intro">
-          <h1>Learn through<br />argumentation.</h1>
+          <h1>Učite se skozi <br />argumentacijo.</h1>
 
           <p>
-            Explore critical examples, build arguments, and learn
-            through an interactive tutoring experience.
+            Raziščite kritične primere, oblikujte argumente in se učite skozi interaktivno učno izkušnjo.
           </p>
         </div>
 
@@ -70,12 +69,12 @@ const LoginForm = () => {
       <div className="login-right">
         <form onSubmit={handleSubmit} className="login-form">
           <div className="login-heading">
-            <h2>Welcome back</h2>
-            <p>Sign in to continue to ABML Tutor.</p>
+            <h2>Dobrodošli</h2>
+            <p>Prijavite se in nadaljujte v ABML Tutorju.</p>
           </div>
 
           <div className="login-field">
-            <label htmlFor="username">Username</label>
+            <label htmlFor="username">Uporabniško ime</label>
             <input
               id="username"
               type="text"
@@ -84,13 +83,13 @@ const LoginForm = () => {
                 setUsername(e.target.value);
                 setAlertError(null);
               }}
-              placeholder="Enter your username"
+              placeholder="Vnesite uporabniško ime"
               className="login-input"
             />
           </div>
 
           <div className="login-field">
-            <label htmlFor="password">Password</label>
+            <label htmlFor="password">Geslo</label>
             <input
               id="password"
               type="password"
@@ -99,7 +98,7 @@ const LoginForm = () => {
                 setPassword(e.target.value);
                 setAlertError(null);
               }}
-              placeholder="Enter your password"
+              placeholder="Vnesite geslo"
               className="login-input"
             />
           </div>
@@ -107,13 +106,13 @@ const LoginForm = () => {
           {alertError && <div className="error-text">{alertError}</div>}
 
           <button type="submit" className="login-button">
-            Login
+            Prijava
           </button>
 
           <p className="login-register-text">
-            Don't have an account?{" "}
+            Še nimate računa?{" "}
             <Link to="/register" className="register-link">
-              Register here
+              Registrirajte se tukaj
             </Link>
           </p>
         </form>

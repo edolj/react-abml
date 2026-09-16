@@ -42,7 +42,7 @@ const HomePage = () => {
         <section className="dashboard-welcome">
           <div>
             <p className="dashboard-eyebrow">ABML TUTOR</p>
-            <h1>Welcome back!</h1>
+            <h1>Dobrodošli!</h1>
             {/* <p>
               Continue your learning journey or start a new ABML session.
             </p> */}
@@ -54,26 +54,26 @@ const HomePage = () => {
           <div className="dashboard-main-content">
             <div>
               <span className="dashboard-card-label">
-                {learningData ? "CONTINUE LEARNING" : "GET STARTED"}
+                {learningData ? "NADALJUJ UČENJE" : "ZAČNI"}
               </span>
 
               <h2>
                 {learningData
-                  ? "Continue where you left off"
-                  : "Start your first learning session"}
+                  ? "Nadaljujte, kjer ste končali"
+                  : "Začnite svojo prvo učno sejo"}
               </h2>
 
               <p>
                 {learningData
-                  ? "Return to your previous learning session and continue working with your selected domain."
-                  : "Choose a domain and explore attribute-based machine learning through an interactive learning process."}
+                  ? "Vrnite se k prejšnji učni seji in nadaljujte delo z izbrano domeno."
+                  : "Izberite domeno in spoznajte strojno učenje, ki temelji na značilkah, skozi interaktiven učni proces."}
               </p>
 
               {loading ? (
                 <Spinner animation="border" size="sm" />
               ) : learningData ? (
                 <div className="dashboard-current-domain">
-                  <span>Current domain</span>
+                  <span>Trenutna domena</span>
                   <strong>{learningData.name}</strong>
                 </div>
               ) : null}
@@ -85,7 +85,7 @@ const HomePage = () => {
                   className="dashboard-primary-button"
                   onClick={handleContinue}
                 >
-                  Continue Session
+                  Nadaljuj sejo
                   <span>→</span>
                 </button>
               ) : (
@@ -94,7 +94,7 @@ const HomePage = () => {
                     className="dashboard-primary-button"
                     onClick={handleNewSession}
                   >
-                    Start New Session
+                    Začni novo sejo
                     <span>→</span>
                   </button>
                 )
@@ -107,8 +107,8 @@ const HomePage = () => {
         <section className="dashboard-section">
           <div className="dashboard-section-header">
             <div>
-              <h2>Quick access</h2>
-              <p>Navigate to the main areas of the tutor.</p>
+              <h2>Hitri dostop</h2>
+              <p>Dostopajte do glavnih področij tutorja.</p>
             </div>
           </div>
 
@@ -120,8 +120,8 @@ const HomePage = () => {
             >
               <div className="dashboard-icon">＋</div>
               <div>
-                <h3>New Session</h3>
-                <p>Choose a domain and start a new learning session.</p>
+                <h3>Nova seja</h3>
+                <p>Izberite domeno in začnite novo učno sejo.</p>
               </div>
               <span className="dashboard-arrow">→</span>
             </button>
@@ -132,8 +132,8 @@ const HomePage = () => {
             >
               <div className="dashboard-icon">↗</div>
               <div>
-                <h3>History</h3>
-                <p>Review your previous learning sessions.</p>
+                <h3>Zgodovina</h3>
+                <p>Preglejte svoje prejšnje učne seje.</p>
               </div>
               <span className="dashboard-arrow">→</span>
             </button>
@@ -144,8 +144,8 @@ const HomePage = () => {
             >
               <div className="dashboard-icon">?</div>
               <div>
-                <h3>Instructions</h3>
-                <p>Learn how the ABML Tutor works.</p>
+                <h3>Navodila</h3>
+                <p>Spoznajte, kako deluje ABML Tutor.</p>
               </div>
               <span className="dashboard-arrow">→</span>
             </button>

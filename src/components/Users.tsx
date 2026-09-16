@@ -54,7 +54,7 @@ const Users = () => {
       .then((response) => setData(response.data))
       .catch((error) => {
         console.error("Error fetching iterations:", error);
-        setAlertError("Failed to load iteration data.");
+        setAlertError("Nalaganje podatkov o iteracijah ni uspelo.");
       });
   }, [isSuperuser]);
 
@@ -70,11 +70,11 @@ const Users = () => {
 
   const prettify = (arg: string, displayNames: Record<string, string>) => {
     const opsMap: Record<string, string> = {
-      "<=": "is low",
-      ">=": "is high",
-      "<": "is low",
-      ">": "is high",
-      "=": "equals",
+      "<=": "je nizko",
+      ">=": "je visoko",
+      "<": "je nizko",
+      ">": "je visoko",
+      "=": "je enako",
     };
 
     const ops = Object.keys(opsMap);
@@ -106,7 +106,7 @@ const Users = () => {
           <Card.Title>
             <div>{userData.username}</div>
             <div className="text-muted" style={{ fontSize: "0.9rem" }}>
-              Domain: <strong>{userData.domain_name}</strong>
+              Domena: <strong>{userData.domain_name}</strong>
             </div>
           </Card.Title>
 
@@ -125,18 +125,18 @@ const Users = () => {
           )}
 
           {userData.iterations.length === 0 ? (
-            <p className="text-muted fst-italic">No iterations yet.</p>
+            <p className="text-muted fst-italic">Iteracij še ni.</p>
           ) : (
             <ul className="ps-3 mb-0">
               {userData.iterations.map((iter, idx) => (
                 <li key={idx} className="mb-2">
                   <div className="d-flex justify-content-between align-items-start">
                     <div>
-                      <strong>Iteration {iter.iteration_number + 1}:</strong>{" "}
+                      <strong>Iteracija {iter.iteration_number + 1}:</strong>{" "}
                       {isSuperuser ? iter.chosen_arguments.join(", ") : iter.chosen_arguments.map(arg => prettify(arg, userData.display_names)).join(", ")}
                       <br />
                       <small className="text-muted">
-                        Example: {iter.selectedExampleId}
+                        Primer: {iter.selectedExampleId}
                       </small>
                       <br />
                       <small className="text-muted">
@@ -157,7 +157,7 @@ const Users = () => {
   };
 
   const renderStatisticsCard = (domainData: UserIterations[]) => {
-    const domainName = domainData[0]?.domain_name ?? "Unknown";
+    const domainName = domainData[0]?.domain_name ?? "Neznano";
 
     // statistics
     const totalUsers = new Set(
@@ -203,7 +203,7 @@ const Users = () => {
               </div>
 
               <div className="text-muted">
-                Total Users
+                Skupno uporabnikov
               </div>
             </div>
 
@@ -213,7 +213,7 @@ const Users = () => {
               </div>
 
               <div className="text-muted">
-                Total Iterations
+                Skupno iteracij
               </div>
             </div>
           </div>
@@ -253,7 +253,7 @@ const Users = () => {
 
           <Container>
             <Box display="flex" justifyContent="space-between" alignItems="center">
-              <h3>{viewMode === "statistics" ? "General Statistics" : "User History"}</h3>
+              <h3>{viewMode === "statistics" ? "Splošna statistika" : "Zgodovina uporabnika"}</h3>
               {viewMode === "user" && (
                 <PrimaryButton
                   onClick={() => {
@@ -261,7 +261,7 @@ const Users = () => {
                     setViewMode("statistics");
                   }}
                 >
-                  Show Statistics
+                  Prikaži statistiko
                 </PrimaryButton>
               )}
             </Box>
@@ -295,9 +295,9 @@ const Users = () => {
         ) : filteredData.length === 0 ? (
           <Card className="box-with-border card-view">
             <Card.Body className="text-center">
-              <h5>No learning sessions yet</h5>
+              <h5>Učnih sej še ni</h5>
               <p className="text-muted mb-0">
-                Start a new learning session to see your progress and argument history.
+                Začnite novo učno sejo, da boste lahko spremljali svoj napredek in zgodovino argumentov.
               </p>
             </Card.Body>
           </Card>

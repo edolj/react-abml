@@ -49,11 +49,11 @@ const EditDomainView = () => {
         attr_tooltips: attrTooltips,
       })
       .then(() => {
-        toast.success("Changes saved successfully!");
+        toast.success("Spremembe so bile uspešno shranjene!");
       })
       .catch((err) => {
         toast.error(
-          "Failed to save: " + (err.response?.data?.error || "Unknown error.")
+          "Shranjevanje ni uspelo: " + (err.response?.data?.error || "Neznana napaka.")
         );
       });
   };
@@ -64,13 +64,12 @@ const EditDomainView = () => {
       <Container className="my-4">
         <Card className="box-with-border card-view">
           <Card.Header>
-            <h4 className="mb-0 text-center">Edit domain {domain.name}</h4>
+            <h4 className="mb-0 text-center">Uredi domeno {domain.name}</h4>
           </Card.Header>
           <Card.Body>
             <p className="text-muted mb-4 text-center">
-              Use the checkboxes to select expert attributes. You can also
-              provide a display name, a longer description, and an optional
-              tooltip for each attribute.
+              S potrditvenimi polji izberite ekspertne značilke. Za vsako značilko 
+              lahko določite tudi prikazno ime, daljši opis in po želji opis orodnega namiga.
             </p>
             {domain.attributes.map((attr) => (
               <div
@@ -91,7 +90,7 @@ const EditDomainView = () => {
                     </Form.Text>
                     <Form.Control
                       type="input"
-                      placeholder="Enter display name"
+                      placeholder="Vnesite"
                       value={displayNames[attr]}
                       onChange={(e) => handleNameChange(attr, e.target.value)}
                       className="ms-auto"
@@ -103,7 +102,7 @@ const EditDomainView = () => {
                     <Form.Control
                       as="textarea"
                       rows={2}
-                      placeholder="Add description"
+                      placeholder="Dodaj opis"
                       value={attrDescriptions[attr] || ""}
                       onChange={(e) =>
                         handleDescriptionChange(attr, e.target.value)
@@ -113,7 +112,7 @@ const EditDomainView = () => {
                   <div className="ms-auto" style={{ width: "70%" }}>
                     <Form.Control
                       as="input"
-                      placeholder="(Optional) Tooltip description"
+                      placeholder="(Izbirno) Opis orodnega namiga"
                       value={attrTooltips[attr] || ""}
                       onChange={(e) =>
                         handleTooltipChange(attr, e.target.value)
@@ -125,7 +124,7 @@ const EditDomainView = () => {
             ))}
             <div className="text-center mt-4">
               <Button variant="success" onClick={handleSave}>
-                Save
+                Shrani
               </Button>
             </div>
           </Card.Body>

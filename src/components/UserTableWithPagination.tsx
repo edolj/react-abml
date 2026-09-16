@@ -69,7 +69,7 @@ const UserTableWithPagination: React.FC<UserTableProps> = ({
       {/* Search bar */}
       <Box sx={{ mb: 2 }}>
         <TextField
-          label="Search"
+          label="Iskanje"
           variant="outlined"
           fullWidth
           value={searchText}
@@ -92,9 +92,9 @@ const UserTableWithPagination: React.FC<UserTableProps> = ({
           >
             <TableRow>
               <TableCell>ID</TableCell>
-              <TableCell>Username</TableCell>
-              <TableCell>Date Joined</TableCell>
-              <TableCell>Last login</TableCell>
+              <TableCell>Uporabniško ime</TableCell>
+              <TableCell>Datum pridružitve</TableCell>
+              <TableCell>Zadnja prijava</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -117,7 +117,7 @@ const UserTableWithPagination: React.FC<UserTableProps> = ({
             {paginatedUsers.length === 0 && (
               <TableRow>
                 <TableCell colSpan={3} align="center">
-                  No users found
+                  Uporabnikov ni bilo mogoče najti
                 </TableCell>
               </TableRow>
             )}

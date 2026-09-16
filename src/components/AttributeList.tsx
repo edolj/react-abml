@@ -99,13 +99,13 @@ const AttributeList: React.FC<Props> = ({
               <Box display="flex" alignItems="center" height="100%">
                 <Grid item md={hasCounterExamples ? 2 : 3}>
                   <Typography fontWeight="bold" sx={{ color: "white", pl: 1 }}>
-                    Attribute
+                    Atribut
                   </Typography>
                 </Grid>
 
                 <Grid item md={1}>
                   {activeTab === "expert" && (
-                    <Tooltip title="Learning Progress" arrow>
+                    <Tooltip title="Napredek pri učenju" arrow>
                       <Typography align="center" variant="subtitle1">
                         🎯
                       </Typography>
@@ -123,7 +123,7 @@ const AttributeList: React.FC<Props> = ({
                       pr: tabAlign === "right" ? 1 : 0,
                     }}
                   >
-                    Value
+                    Vrednost
                   </Typography>
                 </Grid>
 
@@ -148,7 +148,7 @@ const AttributeList: React.FC<Props> = ({
                             padding: "0.5rem 0rem",
                           }}
                         >
-                          Counter Example {idx + 1}
+                          Protiprimer {idx + 1}
                         </Typography>
                       </Grid>
                     </React.Fragment>
@@ -178,7 +178,7 @@ const AttributeList: React.FC<Props> = ({
                       padding: "0.5rem 0rem",
                     }}
                   >
-                    Select
+                    Izberi
                   </Typography>
                 </Grid>
               </Box>
@@ -447,7 +447,7 @@ const AttributeList: React.FC<Props> = ({
         eventKey="expert"
         title={
           <span style={{ display: "flex", alignItems: "center", gap: "4px" }}>
-            Expert
+            Ekspert
           </span>
         }
       >
@@ -467,7 +467,7 @@ const AttributeList: React.FC<Props> = ({
       </Tab>
 
       {/* Numeric Attributes */}
-      <Tab eventKey="numeric" title="General 1">
+      <Tab eventKey="numeric" title="Splošno 1">
         <div className="pt-3">
           <div className="attribute-grid-wrapper">
             <Grid container>
@@ -487,7 +487,7 @@ const AttributeList: React.FC<Props> = ({
       </Tab>
 
       {/* Categorical Attributes */}
-      <Tab eventKey="categorical" title="General 2">
+      <Tab eventKey="categorical" title="Splošno 2">
         <div className="pt-3">
           <div className="attribute-grid-wrapper">
             <Grid container>

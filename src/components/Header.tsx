@@ -41,7 +41,7 @@ const Header = () => {
         </div>
 
         <nav className="sidebar-navigation">
-          <div className="sidebar-section-label">MENU</div>
+          <div className="sidebar-section-label">MENI</div>
 
           <button
             className={`sidebar-link ${
@@ -50,7 +50,7 @@ const Header = () => {
             onClick={() => navigate("/home")}
           >
             <FaHome />
-            <span>Dashboard</span>
+            <span>Nadzorna plošča</span>
           </button>
 
           <button
@@ -60,7 +60,7 @@ const Header = () => {
             onClick={() => navigate("/selectDomain")}
           >
             <FaPlus />
-            <span>New Session</span>
+            <span>Nova seja</span>
           </button>
 
           <button
@@ -72,7 +72,7 @@ const Header = () => {
             }
           >
             <FaChartBar />
-            <span>{isSuperuser ? "Users" : "History"}</span>
+            <span>{isSuperuser ? "Uporabniki" : "Zgodovina"}</span>
           </button>
 
           <button
@@ -82,7 +82,7 @@ const Header = () => {
             onClick={() => navigate("/instructions")}
           >
             <FaInfoCircle />
-            <span>Instructions</span>
+            <span>Navodila</span>
           </button>
         </nav>
       </aside>
@@ -98,7 +98,7 @@ const Header = () => {
             onClick={handleLogout}
           >
             <FaSignOutAlt />
-            <span>Logout</span>
+            <span>Odjava</span>
           </button>
         </div>
       </header>

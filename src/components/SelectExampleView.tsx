@@ -18,10 +18,10 @@ interface CriticalInstance {
 }
 
 const loadingMessages = [
-  "Learning rules...",
-  "Searching for critical examples...",
-  "Double-checking everything...",
-  "Still working... hang tight!",
+  "Učenje pravil...",
+  "Iskanje kritičnih primerov...",
+  "Preverjanje...",
+  "Še vedno delam ... počakajte!",
 ];
 
 function SelectExampleView() {
@@ -39,13 +39,13 @@ function SelectExampleView() {
   const [expertAttr, setExpertAttr] = useState<string[]>([]);
   const [displayNames, setDisplayNames] = useState<Record<string, string>>({});
   const [attrTypes, setAttributeTypes] = useState<Record<string, string>>({});
-  const [targetClassName, setTargetClassName] = useState("Class");
+  const [targetClassName, setTargetClassName] = useState("Razred");
 
   const tableData = formatCriticalInstances(criticalInstances);
 
   const tableColumns = [
     { Header: "ID", accessor: "column1" },
-    { Header: "Critical", accessor: "column2" },
+    { Header: "Kritičnost", accessor: "column2" },
     { Header: targetClassName, accessor: "column3" },
   ];
 
@@ -96,7 +96,7 @@ function SelectExampleView() {
     const classAttr = Object.keys(attrTypes).find(
       (attr) => attrTypes[attr] === "target"
     );
-    if (classAttr) setTargetClassName(displayNames[classAttr] || "Class");
+    if (classAttr) setTargetClassName(displayNames[classAttr] || "Razred");
   }, [attrTypes]);
 
   const fetchAttributeData = () => {
@@ -160,7 +160,7 @@ function SelectExampleView() {
         console.error("Error fetching critical instances:", error);
         setIsLoading(false);
         setAlertError(
-          "Failed to fetch critical examples. Please try again later."
+          "Pridobivanje kritičnih primerov ni uspelo. Poskusite znova pozneje."
         );
       });
   }, []);
@@ -195,14 +195,14 @@ function SelectExampleView() {
         {/* Page header */}
         <div className="select-example-header">
           <div>
-            <p className="select-example-eyebrow">LEARNING SESSION</p>
+            <p className="select-example-eyebrow">UČNA SEJA</p>
 
-            <h1>Select a critical example</h1>
+            <h1>Izberite kritični primer</h1>
           </div>
 
           {iterationNumber !== null && (
             <div className="iteration-badge">
-              Iteration {iterationNumber + 1}
+              Iteracija {iterationNumber + 1}
             </div>
           )}
         </div>

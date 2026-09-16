@@ -5,87 +5,88 @@ const Instructions = () => {
     <Container className="my-4">
       <Card className="box-with-border card-view instructions-card">
         <Card.Body>
-          <h2 className="mb-3">How to Use ABML Tutor</h2>
+          <h2 className="mb-3">Kako uporabljati ABML Tutor</h2>
           <p className="text-muted mb-4">
-            This guide will help you understand how to work with the tutor
-            effectively.
+            Ta navodila vam bodo pomagala razumeti, kako učinkovito uporabljati tutorja.
           </p>
 
           <ol>
             <li className="mb-3">
-              <strong>Home page:</strong> Start a new learning session or continue a
-              previously saved one.
+              <strong>Začetna stran:</strong> Začnite novo učno sejo ali nadaljujte
+              predhodno shranjeno sejo.
             </li>
 
             <li className="mb-3">
-              <strong>Select a domain:</strong> Choose the domain you want to practice.
+              <strong>Izberite domeno:</strong> Izberite domeno, ki jo želite vaditi.
             </li>
 
             <li className="mb-3">
-              <strong>Choose a critical example:</strong> Select one example from the
-              dataset for argumentation.
+              <strong>Izberite kritični primer:</strong> Izberite en primer iz
+              podatkovne zbirke za argumentacijo.
             </li>
 
             <li className="mb-3">
-              <strong>Create your argument:</strong>
+              <strong>Ustvarite svoj argument:</strong>
               <ul>
                 <li>
-                  Numerical attributes: Click <strong>High</strong> or{" "}
-                  <strong>Low</strong> to add the attribute as an argument.
+                  Številske značilke: Kliknite <strong>Visoko</strong> ali{" "}
+                  <strong>Nizko</strong>, da dodate značilko kot argument.
                 </li>
                 <li>
-                  Optionally, click a selected numerical argument to specify a <strong>bound (k)</strong> for more precise reasoning.
+                  Po želji kliknite izbrani številski argument in določite{" "}
+                  <strong>mejo (k)</strong> za natančnejše sklepanje.
                 </li>
                 <li>
-                  Categorical attributes: Select the checkbox to add the attribute.
+                  Kategorične značilke: Izberite potrditveno polje, da dodate
+                  značilko.
                 </li>
                 <li>
-                  You can select up to <strong>three arguments</strong>.
+                  Izberete lahko največ <strong>tri argumente</strong>.
                 </li>
               </ul>
             </li>
 
             <li className="mb-3">
-              <strong>Submit your argument:</strong>
+              <strong>Pošljite svoj argument:</strong>
               <ul>
                 <li>
-                  Click <strong>Send Arguments</strong> to evaluate your argument.
+                  Kliknite <strong>Pošlji argumente</strong>, da ocenite svoj
+                  argument.
                 </li>
                 <li>
-                  The tutor calculates an <strong>M-score</strong> and searches for
-                  counterexamples.
+                  Tutor izračuna <strong>M-oceno</strong> in poišče protiprimere.
                 </li>
               </ul>
             </li>
 
             <li className="mb-3">
-              <strong>Improve your argument:</strong>
+              <strong>Izboljšajte svoj argument:</strong>
               <ul>
                 <li>
-                  The green bar represents the current quality of your argument.
+                  Zelena vrstica predstavlja trenutno kakovost vašega argumenta.
                 </li>
                 <li>
-                  The yellow bar indicates the potential improvement.
+                  Rumena vrstica prikazuje možnost za izboljšanje.
                 </li>
                 <li>
-                  Use the <strong>Hint</strong> button if you need guidance.
+                  Če potrebujete pomoč, uporabite gumb <strong>Namig</strong>.
                 </li>
                 <li>
-                  If counterexamples are displayed, compare them with the selected
-                  example and refine your argument.
+                  Če so prikazani protiprimeri, jih primerjajte z izbranim
+                  primerom in izboljšajte svoj argument.
                 </li>
               </ul>
             </li>
 
             <li className="mb-3">
-              <strong>Continue learning:</strong> Once you are satisfied with your
-              argument, click <strong>Next Example</strong> to proceed.
+              <strong>Nadaljujte z učenjem:</strong> Ko ste zadovoljni s svojim
+              argumentom, kliknite <strong>Naslednji primer</strong> za nadaljevanje.
             </li>
           </ol>
 
           <p className="text-muted">
-            You can return to the home page at any time to start a new session
-            or resume a previous one.
+            Na začetno stran se lahko kadar koli vrnete in začnete novo sejo ali
+            nadaljujete prejšnjo.
           </p>
         </Card.Body>
       </Card>
