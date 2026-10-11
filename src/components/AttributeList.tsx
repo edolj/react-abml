@@ -291,7 +291,7 @@ const AttributeList: React.FC<Props> = ({
                     {/* Skill mastery */}
                     <Grid item md={1}>
                       {progress !== null && (
-                        <Tooltip title="Learning Progress" arrow>
+                        <Tooltip title="Napredek pri učenju" arrow>
                           <ProgressBar
                             now={progress * 100}
                             striped

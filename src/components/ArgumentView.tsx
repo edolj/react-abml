@@ -175,7 +175,7 @@ function ArgumentView() {
       const filtered = prev.filter((b) => b.key !== newBubble.key);
 
       if (filtered.length >= 3) {
-        toast.warn("You can select up to 3 arguments only.", {
+        toast.warn("Argument lahko vsebuje največ tri razloge.", {
           position: "top-right",
           autoClose: 3000,
         });
@@ -224,11 +224,11 @@ function ArgumentView() {
 
   const showHintMessage = () => {
     if (hintBestRule === "") {
-      showToast("", "First input your arguments.");
+      showToast("", "Najprej pošljite argument.");
       return;
     }
     if (hintBestRule === "No hints") {
-      showToast("", "Good job! No hints needed. 👍");
+      showToast("", "Odlično! Namig ni potreben. 👍");
       return;
     }
 
@@ -259,14 +259,14 @@ function ArgumentView() {
 
     const message = attrList.length
       ? `Argument izboljšati z:\n${attrList.join("\n")}`
-      : `Argument izboljšati z odstranitvijo ene od izbranih značilk.`;
+      : `Argument lahko izboljšate tako, da odstranite enega od razlogov.`;
     const score = ""; // "Kakovost: " + hintScore / 100;
     showToast(score, message);
   };
 
   const showCriticalExample = () => {
     if (selectedFilters.length === 0) {
-      toast.warn("Please select at least one argument.");
+      toast.warn("Izberite vsaj en razlog.");
       return;
     }
 
@@ -276,7 +276,7 @@ function ArgumentView() {
 
         if (Number.isNaN(boundValue)) {
           toast.error(
-            `Bound for "${item.displayName}" must be a valid number.`
+            `Meja za "${item.displayName}" mora biti število.`
           );
           return;
         }
@@ -285,14 +285,14 @@ function ArgumentView() {
 
         if (item.operator === "<=" && boundValue < currentValue) {
           toast.error(
-            `Bound for "${item.displayName}" must be greater than or equal to ${item.value}.`
+            `Meja za "${item.displayName}" mora biti večja ali enaka ${item.value}.`
           );
           return;
         }
 
         if (item.operator === ">=" && boundValue > currentValue) {
           toast.error(
-            `Bound for "${item.displayName}" must be less than or equal to ${item.value}.`
+            `Meja za "${item.displayName}" mora biti manjša ali enaka ${item.value}.`
           );
           return;
         }
@@ -401,7 +401,7 @@ function ArgumentView() {
 
         setAlertError(
           error.response?.data?.error ||
-            "An unexpected error occurred. Please try again."
+            "Prišlo je do nepričakovane napake. Poskusite znova."
         );
         setIsLoading(false);
       });
@@ -409,7 +409,7 @@ function ArgumentView() {
 
   const doneWithArgumentation = () => {
     if (!argumentsSent) {
-      toast.warn("Please send your arguments first.");
+      toast.warn("Najprej pošljite argument.");
       return;
     }
 
@@ -439,7 +439,7 @@ function ArgumentView() {
       navigate(-1);
     } catch (error) {
       console.error("Error during argumentation submission:", error);
-      setAlertError("Failed to submit data. Please try again.");
+      setAlertError("Shranjevanje ni uspelo. Poskusite znova.");
     }
   };
 
@@ -596,7 +596,7 @@ function ArgumentView() {
                 onClick={showCriticalExample}
                 className="custom-primary-button"
               >
-                Pošlji argumente
+                Pošlji argument
               </Button>
 
               {argumentsSent && (
@@ -617,7 +617,7 @@ function ArgumentView() {
 
             {argumentsSent && mScore < 50 && (
               <p className="argument-hint-text">
-                Odlično — poskusite uporabiti namig, da bo vaš argument še boljši.
+                Argument šibek — poskusite uporabiti namig, da bo vaš argument še boljši.
               </p>
             )}
           </div>
@@ -729,7 +729,7 @@ function ArgumentView() {
               {summaryText && !summaryLoading && (
                 <div className="box-with-border card-view custom-summary-bg">
                   <div className="card-header d-flex justify-content-between align-items-center mb-2">
-                    <strong>Key Takeaways</strong>
+                    <strong>Ključne ugotovitve</strong>
                     {/* <button
                       className="btn-close"
                       onClick={() => setSummaryText(null)}
