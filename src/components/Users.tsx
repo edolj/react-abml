@@ -173,7 +173,7 @@ const Users = () => {
     domainData.forEach((user) => {
       user.iterations.forEach((iter) => {
         iter.chosen_arguments.forEach((arg) => {
-          const cleanArg = arg.replace(/(<=|>=|<|>|=)/g, "").trim();
+          const cleanArg = arg.split(/<=|>=|<|>|=/)[0].trim();
 
           argumentCounts[cleanArg] =
             (argumentCounts[cleanArg] || 0) + 1;

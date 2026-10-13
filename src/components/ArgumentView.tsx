@@ -228,7 +228,11 @@ function ArgumentView() {
       return;
     }
     if (hintBestRule === "No hints") {
-      showToast("", "Odlično! Namig ni potreben. 👍");
+      if (mScore < 50) {
+        showToast("", "Z izbranimi atributi tega primera ni mogoče bolje razložiti. Poskusite z drugimi atributi.");
+      } else {
+        showToast("", "Odlično! Namig ni potreben. 👍");
+      }
       return;
     }
 
@@ -615,7 +619,7 @@ function ArgumentView() {
               )}
             </div>
 
-            {argumentsSent && mScore < 50 && (
+            {argumentsSent && mScore < 50 && hintBestRule !== "No hints" && (
               <p className="argument-hint-text">
                 Argument šibek — poskusite uporabiti namig, da bo vaš argument še boljši.
               </p>
