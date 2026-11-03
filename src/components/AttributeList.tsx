@@ -54,7 +54,7 @@ const AttributeList: React.FC<Props> = ({
   onCategoryAddClick,
   onCategoryDeleteClick,
 }) => {
-  const formatValue = (key: string, value: string | number) => {
+  const formatValue = (key: string, value: string | number | undefined) => {
     if (value === "" || value === undefined || value === null) return "-";
 
     if (eurAttr.includes(key)) {
