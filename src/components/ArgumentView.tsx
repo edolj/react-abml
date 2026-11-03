@@ -1,6 +1,6 @@
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { Dialog, DialogContent, Stack } from "@mui/material";
-import { Typography, Popover, TextField } from "@mui/material";
+import { Popover, TextField } from "@mui/material";
 import { useState, useEffect } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import { Button, Placeholder } from "react-bootstrap";
@@ -706,9 +706,6 @@ function ArgumentView() {
         >
           <DialogContent>
             <Stack spacing={3} alignItems="center" textAlign="center">
-              <Typography variant="h6" sx={{ mb: 2 }}>
-                Povratne informacije tutorja
-              </Typography>
               {summaryLoading && (
                 <div
                   className="box-with-border card-view custom-summary-bg"
