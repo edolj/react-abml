@@ -112,7 +112,7 @@ const EditDomainView = () => {
             {activeTab === "opisi" && (
               <div className="edit-domain-tab-content">
                 <p className="edit-domain-hint">
-                  Prikazno ime se pokaže v tabeli namesto tehničnega identifikatorja. Opis in namig sta neobvezna.
+                  Prikazno ime se pokaže v tabeli namesto tehničnega identifikatorja. Opis in kratek opis sta neobvezna.
                 </p>
                 <div className="edit-desc-list">
                     {[...domain.attributes]
@@ -149,7 +149,7 @@ const EditDomainView = () => {
                           <div className="edit-field">
                             <label>Opis</label>
                             <textarea
-                              placeholder="Kratka razlaga za učenca…"
+                              placeholder="Prikaže se v oknu z opisi atributov"
                               value={attrDescriptions[attr] || ""}
                               onChange={(e) =>
                                 setAttrDesc((prev) => ({
@@ -160,9 +160,9 @@ const EditDomainView = () => {
                             />
                           </div>
                           <div className="edit-field">
-                            <label>Namig</label>
+                            <label>Kratek opis</label>
                             <textarea
-                              placeholder="Neobvezno…"
+                              placeholder="Prikaže se ob prehodu miške"
                               value={attrTooltips[attr] || ""}
                               onChange={(e) =>
                                 setAttrTooltips((prev) => ({

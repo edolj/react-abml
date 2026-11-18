@@ -105,6 +105,8 @@ function ArgumentView() {
   const [loadingMessage, setLoadingMessage] = useState(loadingMessages[0]);
 
   const [mScore, setMScore] = useState(0.0);
+  const [numCounterExamples, setNumCounterExamples] = useState(0);
+  const [numHints, setNumHints] = useState(0);
   const [hintScore, setHintMScore] = useState(0.0);
   const [hintBestRule, setBestRule] = useState("");
   const [hasCounterExamples, setHasCounterExamples] = useState(false);
@@ -265,6 +267,7 @@ function ArgumentView() {
       ? `Argument izboljšati z:\n${attrList.join("\n")}`
       : `Argument lahko izboljšate tako, da odstranite enega od razlogov.`;
     const score = ""; // "Kakovost: " + hintScore / 100;
+    setNumHints(prev => prev + 1);
     showToast(score, message);
   };
 
@@ -365,6 +368,7 @@ function ArgumentView() {
         }
         setMScore(Math.floor(data.arg_m_score * 100));
         setHintMScore(Math.floor(data.best_m_score * 100));
+        setNumCounterExamples(data.num_counter_examples);
 
         setIsLoading(false);
         setArgumentsSent(true);
@@ -431,6 +435,9 @@ function ArgumentView() {
       mScore: mScore,
       index: criticalIndex,
       bkt_correct: bktCorrect,
+      potential: hintScore,
+      num_counter_examples: numCounterExamples,
+      num_hints: numHints,
     };
 
     try {
