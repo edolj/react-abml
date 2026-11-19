@@ -3,7 +3,7 @@ import { Dialog, DialogContent, Stack } from "@mui/material";
 import { Popover, TextField } from "@mui/material";
 import { useState, useEffect } from "react";
 import { ToastContainer, toast } from "react-toastify";
-import { Button, Placeholder } from "react-bootstrap";
+import { Button, Placeholder, Spinner } from "react-bootstrap";
 import { FaArrowRight, FaLightbulb } from "react-icons/fa";
 import { getObject } from "../api/apiHomePage";
 import apiClient from "../api/apiClient";
@@ -126,6 +126,7 @@ function ArgumentView() {
   const [summaryLoading, setSummaryLoading] = useState(false);
   const [summaryText, setSummaryText] = useState<string | null>(null);
   const [showTransition, setShowTransition] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const [selectedBubble, setSelectedBubble] = useState<Argument | null>(null);
@@ -427,6 +428,9 @@ function ArgumentView() {
   };
 
   const endIteration = async () => {
+    if (isSaving) return;
+    setIsSaving(true);
+
     // Data to be sent in the request body
     const requestData = {
       selectedExampleId: idName,
@@ -450,7 +454,8 @@ function ArgumentView() {
       navigate(-1);
     } catch (error) {
       console.error("Error during argumentation submission:", error);
-      setAlertError("Shranjevanje ni uspelo. Poskusite znova.");
+      toast.error("Shranjevanje ni uspelo. Poskusite znova.");
+      setIsSaving(false);
     }
   };
 
@@ -749,12 +754,15 @@ function ArgumentView() {
                   </div>
                 </div>
               )}
-              <Button
-                variant="success"
-                color="primary"
-                onClick={() => endIteration()}
-              >
-                Nadaljuj
+              <Button variant="success" onClick={endIteration} disabled={isSaving}>
+                {isSaving ? (
+                  <>
+                    <Spinner as="span" animation="border" size="sm" className="me-2" />
+                    Shranjevanje...
+                  </>
+                ) : (
+                  "Nadaljuj"
+                )}
               </Button>
             </Stack>
           </DialogContent>
